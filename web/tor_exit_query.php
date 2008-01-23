@@ -304,35 +304,39 @@ if ($QueryIP != null)
 	}
 }
 
-$pageTitle = "Tor Exit Query";
-include("header.php");
-
 ?>
 
-<table width='100%' cellspacing='2' cellpadding='2'>
-<tr>
-<td>
+<!-- Begin Page Render -->
 
-<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8'>
+<title>Tor Network Status -- Tor Exit Query</title>
+<link rel='StyleSheet' TYPE='Text/CSS' HREF='css/main.css'>
+</head>
+
+<body class='BOD'>
+<br><br>
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 
 <tr>
-<td class="HRN">Tor Exit Query</td>
+<td class='PT'><br><a href='index.php'>Tor Network Status</a> -- Tor Exit Query<br><br></td>
 </tr>
 
 <tr>
-<td style="white-space: normal;" class='TRS'><div><br/><br/><b>You can use this page to determine if an IP
-address is an active Tor server, and optionally see if that Tor server's Exit
-Policy would permit it to exit to a certain destination IP address and port.</b><br/></div></td>
+<td class='TRC'><br><br><br><b>You can use this page to determine if an IP address is an active Tor server, and optionally see if that Tor server's Exit Policy would permit it to exit to a certain destination IP address and port.</b><br></td>
 </tr>
 
 <?php
 	echo "<tr>\n";
-	echo "<td class='TRS' style='text-align: center;'><br/><br/><b>";
+	echo "<td class='TRC'><br><br><b>";
 
 	// No Query IP entered, or bogus information entered
 	if ($QueryIP == null)
 	{
-		echo "<font color='#ff0000'>-You must enter a Query IP, at minimum-</font><br/><br/>";
+		echo "<font color='#ff0000'>-You must enter a Query IP, at minimum-</font><br><br>";
 	}
 	
 	// Query IP entered, but either the DestinationIP or DestinationPort is empty or bogus
@@ -340,16 +344,16 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 	{
 		if ($PositiveMatch_IP == 1)
 		{
-			echo "<font color='#00dd00'>-The IP Address you entered matches one or more active Tor servers-</font><br/><br/>";
+			echo "<font color='#00dd00'>-The IP Address you entered matches one or more active Tor servers-</font><br><br>";
 			for($i=1 ; $i < ($Count + 1) ; $i++)
 			{
-				echo "Server name: <a class='tab' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
+				echo "Server name: <a class='plain' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br>";
 			}
-			echo "<br/>";
+			echo "<br>";
 		}
 		else if ($PositiveMatch_IP == 0)
 		{
-			echo "<font color='#ff0000'>-The IP Address you entered is NOT an active Tor server-</font><br/><br/>";
+			echo "<font color='#ff0000'>-The IP Address you entered is NOT an active Tor server-</font><br><br>";
 		}
 	}
 	
@@ -358,23 +362,23 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 	{
 		if ($PositiveMatch_IP == 1)
 		{
-			echo "<font color='#00dd00'>-The IP Address you entered matches one or more active Tor servers-</font><br/><br/>";
+			echo "<font color='#00dd00'>-The IP Address you entered matches one or more active Tor servers-</font><br><br>";
 			for($i=1 ; $i < ($Count + 1) ; $i++)
 			{
-				echo "Server name: <a class='tab' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
+				echo "Server name: <a class='plain' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br>";
 				if ($PositiveMatch_ExitPolicy[$i] == 1)
 				{
-					echo "<font color='#00dd00'>-This Tor server would allow exiting to your destination-</font><br/><br/>";
+					echo "<font color='#00dd00'>-This Tor server would allow exiting to your destination-</font><br><br>";
 				}
 				else if ($PositiveMatch_ExitPolicy[$i] == 0)
 				{
-					echo "<font color='#ff0000'>-This Tor server would NOT allow exiting to your destination-</font><br/><br/>";
+					echo "<font color='#ff0000'>-This Tor server would NOT allow exiting to your destination-</font><br><br>";
 				}
 			}
 		}
 		else if ($PositiveMatch_IP == 0)
 		{
-			echo "<font color='#ff0000'>-The IP Address you entered is NOT an active Tor server-</font><br/><br/>";
+			echo "<font color='#ff0000'>-The IP Address you entered is NOT an active Tor server-</font><br><br>";
 		}
 	}
 
@@ -383,22 +387,22 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 ?>
 
 <tr>
-<td class='TRSCN'><br/>
+<td class='TRSCN'><br>
 
 <table width='20%' cellpadding='8' cellspacing='2' border='1' align='center'>
 <tr>
 <td class='TRSCN'>
-<br/>
+<br>
 
 <?php
-	echo "<form action='$Self' method='post'>\n";
-	echo "<b>IP Address to Query:<br/><span class='TRSM'>(Required)</span></b><br/>\n";
-	echo "<input type='text' name='QueryIP' class='BOX' maxlength='15' size='20' value='" . htmlspecialchars($QueryIP, ENT_QUOTES) . "' /><br/><br/><br/>\n"; 
-	echo "<b>Destination IP Address:<br/><span class='TRSM'>(Optional)</span></b><br/>\n";
-	echo "<input type='text' name='DestinationIP' class='BOX' maxlength='15' size='20' value='" . htmlspecialchars($DestinationIP, ENT_QUOTES) . "' /><br/><br/>\n";
-	echo "<b>Destination Port:<br/><span class='TRSM'>(Optional)</span></b><br/>\n";
-	echo "<input type='text' name='DestinationPort' class='BOX' maxlength='5' size='6' value='" . htmlspecialchars($DestinationPort, ENT_QUOTES) . "' /><br/><br/><br/>\n";
-	echo "<input type='submit' value='Submit Query' /><br/><br/>\n";
+	echo "<form action='$Self' method='POST'>\n";
+	echo "<b>IP Address to Query:<br><span class='TRSM'>(Required)</span></b><br>\n";
+	echo "<input type='text' name='QueryIP' class='BOX' maxlength='15' size='20' value='" . htmlspecialchars($QueryIP, ENT_QUOTES) . "' /><br><br><br>\n"; 
+	echo "<b>Destination IP Address:<br><span class='TRSM'>(Optional)</span></b><br>\n";
+	echo "<input type='text' name='DestinationIP' class='BOX' maxlength='15' size='20' value='" . htmlspecialchars($DestinationIP, ENT_QUOTES) . "' /><br><br>\n";
+	echo "<b>Destination Port:<br><span class='TRSM'>(Optional)</span></b><br>\n";
+	echo "<input type='text' name='DestinationPort' class='BOX' maxlength='5' size='6' value='" . htmlspecialchars($DestinationPort, ENT_QUOTES) . "' /><br><br><br>\n";
+	echo "<input type='submit' value='Submit Query'><br><br>\n";
 	echo "</form>\n";
 ?>
 
@@ -406,19 +410,17 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 </tr>
 </table>
 
-<br/><br/>
+<br><br>
 </td>
 </tr>
 
 </table>
 
-</td></tr></table>
-
-<br/>
+<br><br><br>
 
 <table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='TRC'><?php echo $footerText; ?></td>
+<td class='TRC'><b><a class='plain' href='index.php'>Tor Network Status</a> v<?php echo "$TorNetworkStatus_Version"; ?><br><a class='plain' href='/CHANGES' target='_new'>View Complete Change History</a><br>Copyright (c) 2006-2007, Joseph B. Kowalski<br>Source code is available under <a class='plain' href='/LICENSE' target='_new'>BSD license</a> at <a class='plain' href='http://torstatus.kgprog.com/tns.tar.gz' target='_new'>torstatus.kgprog.com</a></b></td>
 </tr>
 </table>
 </body>
