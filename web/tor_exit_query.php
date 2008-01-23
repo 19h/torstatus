@@ -304,30 +304,32 @@ if ($QueryIP != null)
 	}
 }
 
-$pageTitle = "Tor Exit Query";
-include("header.php");
+?><!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-?>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<title>Tor Network Status -- Tor Exit Query</title>
+<link rel='stylesheet' type='text/css' href='css/main.css' />
+</head>
 
-<table width='100%' cellspacing='2' cellpadding='2'>
+<body class='BOD'>
+<br/><br/>
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+
 <tr>
-<td>
-
-<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
-
-<tr>
-<td class="HRN">Tor Exit Query</td>
+<td class='PT'><br/><a href='index.php'>Tor Network Status</a> -- Tor Exit Query<br/><br/></td>
 </tr>
 
 <tr>
-<td style="white-space: normal;" class='TRS'><div><br/><br/><b>You can use this page to determine if an IP
-address is an active Tor server, and optionally see if that Tor server's Exit
-Policy would permit it to exit to a certain destination IP address and port.</b><br/></div></td>
+<td class='TRC'><br/><br/><br/><b>You can use this page to determine if an IP address is an active Tor server, and optionally see if that Tor server's Exit Policy would permit it to exit to a certain destination IP address and port.</b><br/></td>
 </tr>
 
 <?php
 	echo "<tr>\n";
-	echo "<td class='TRS' style='text-align: center;'><br/><br/><b>";
+	echo "<td class='TRC'><br/><br/><b>";
 
 	// No Query IP entered, or bogus information entered
 	if ($QueryIP == null)
@@ -343,7 +345,7 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 			echo "<font color='#00dd00'>-The IP Address you entered matches one or more active Tor servers-</font><br/><br/>";
 			for($i=1 ; $i < ($Count + 1) ; $i++)
 			{
-				echo "Server name: <a class='tab' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
+				echo "Server name: <a class='plain' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
 			}
 			echo "<br/>";
 		}
@@ -361,7 +363,7 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 			echo "<font color='#00dd00'>-The IP Address you entered matches one or more active Tor servers-</font><br/><br/>";
 			for($i=1 ; $i < ($Count + 1) ; $i++)
 			{
-				echo "Server name: <a class='tab' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
+				echo "Server name: <a class='plain' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
 				if ($PositiveMatch_ExitPolicy[$i] == 1)
 				{
 					echo "<font color='#00dd00'>-This Tor server would allow exiting to your destination-</font><br/><br/>";
@@ -412,9 +414,7 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 
 </table>
 
-</td></tr></table>
-
-<br/>
+<br/><br/><br/>
 
 <table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>

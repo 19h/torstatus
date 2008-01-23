@@ -1,41 +1,12 @@
-Portions Copyright (c) 2006-2007, Joseph B. Kowalski
+Copyright (c) 2006-2007, Joseph B. Kowalski
 Portions Copyright (c) 2007 Kasimir Gabert
 See LICENSE for licensing information
 
 TorStatus - Tor Network Status Changes
 
 ===============================================================================
-Version 4 Changes {{{
-===============================================================================
---Version 4.0--
-* (ticket 56) The DNSEL database no longer is left in memory
-* (ticket 58) Read-write history now works through extra-info/digest
-* (ticket 8) A logo was created for TorStatus
-* (ticket 53) Graphs have been moved to a Perl based framework
-* (ticket 64) The interface was greatly modified-includes JS now, but works
-  equally well without it
-* (ticket 65) tns_update.pl now just needs to be run
-* (ticket 66) The HSDir flag was added
-* (ticket 68) tns_update will no longer break if there are multiple router
-  names that are the same as the nickname for the opinion source
-* (ticket 43 49) Up and down arrows were fixed to work with more browsers
-* (ticket 52) A search option is now at the top for ease of use
-* (ticket 47) Names of countries are now used intead of just the country code
-
-===============================================================================
-}}}
-===============================================================================
-
-===============================================================================
 Version 3 Changes {{{
 ===============================================================================
---Version 3.6--
-* Will no longer crash with an error if the database is not populated
-* An interface has been added to the WHOIS data
-* The guard image is now a shield
-* (ticket 40) It will now work with modern versions of Tor
-* A Debian agent daemon has been created
-
 --Version 3.5--
 * Complete interface redesign
 * Integrated operating system detection in by default
