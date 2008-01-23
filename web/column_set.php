@@ -142,8 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		$CR_ACTIVE != 'Stable'			&&
 		$CR_ACTIVE != 'Running'			&&
 		$CR_ACTIVE != 'Valid'			&&
-		$CR_ACTIVE != 'V2Dir'			&&
-		$CR_ACTIVE != 'HSDir')
+		$CR_ACTIVE != 'V2Dir')
 	{
 		$CR_ACTIVE = null;
 	}
@@ -172,8 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		$CR_INACTIVE != 'Stable'			&&
 		$CR_INACTIVE != 'Running'			&&
 		$CR_INACTIVE != 'Valid'			&&
-		$CR_INACTIVE != 'V2Dir'			&&
-		$CR_INACTIVE != 'HSDir')
+		$CR_INACTIVE != 'V2Dir')
 	{
 		$CR_INACTIVE = null;
 	}
@@ -236,33 +234,55 @@ else
 	$_SESSION['ColumnList_INACTIVE'] = $ColumnList_INACTIVE;
 }
 
-$pageTitle = "Column Display Preferences";
-include("header.php");
-
 ?>
 
-<table width='100%' cellspacing='2' cellpadding='2'>
-<tr>
-<td>
+<!-- Begin Page Render -->
 
-<table class='displayTable' width='100%' cellspacing='0' cellpadding='0' align='center'>
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8'>
+<title>Tor Network Status -- Column Display Preferences</title>
+<link rel='StyleSheet' TYPE='Text/CSS' HREF='css/main.css'>
+</head>
+
+<body class='BOD'>
+
+<br><br>
+
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+
 <tr>
-<td class='HRN'>Column Display Preferences Detail</td>
+<td class='PT'><br><a href='index.php'>Tor Network Status</a> -- Column Display Preferences<br><br></td>
+</tr>
+
+</table>
+
+<br><br>
+
+<table width='50%' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+	
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Column Display Preferences Detail</td>
 </tr>
 <tr>
 <td class='TRSCN'>
 
 <?php
 
-	echo "<form action='$Self' method='post'>\n";
-	echo "<table border='0' align='center' cellpadding='10' cellspacing='8'>\n";
+	echo "<form action='$Self' method='POST'>\n";
+	echo "<table border=0 align='center' cellpadding='10' cellspacing='8'>\n";
 	echo "<tr>\n";
 	echo "<td align='center'>\n";
-	echo "<table border='0' align='center'>\n";
+	echo "<table border=0 align='center'>\n";
 	echo "<tr>\n";
 	echo "<td class='TRSCN' align='center'>\n";
-	echo "<input class='BTNCOLSEL' name='Remove' type='submit' value='Remove Column &gt;&gt;' />\n";
-	echo "<br/>\n";
+	echo "<input class='BTNCOLSEL' name='Remove' type='submit' value='Remove Column &gt;&gt;'>\n";
+	echo "<br>\n";
 	echo "<select name='CR_ACTIVE' size='20' class='BOXCOLSEL'>\n";
 	foreach($ColumnList_ACTIVE as $value)
 	{
@@ -276,17 +296,17 @@ include("header.php");
 		}
 	}
 	echo "</select>\n";
-	echo "<br/><b>Currently Selected Columns</b>\n";
+	echo "<br><b>Currently Selected Columns</b>\n";
 	echo "</td>\n";
 	echo "<td align='left'>\n";
-	echo "<input class='BTNUPDOWN' name='Up' type='submit' value='Up' /><br/><input class='BTNUPDOWN' name='Down' type='submit' value='Down' />\n";	
+	echo "<input class='BTNUPDOWN' name='Up' type='submit' value='Up'><br><input class='BTNUPDOWN' name='Down' type='submit' value='Down'>\n";	
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
 	echo "</td>\n";
 	echo "<td class='TRSCN' align='center'>\n";
-	echo "<input class='BTNCOLSEL' name='Add' type='submit' value='&lt;&lt; Add Column' />\n";
-	echo "<br/>\n";
+	echo "<input class='BTNCOLSEL' name='Add' type='submit' value='&lt;&lt; Add Column'>\n";
+	echo "<br>\n";
 	echo "<select name='CR_INACTIVE' size='20' class='BOXCOLSEL'>\n";
 	foreach($ColumnList_INACTIVE as $value)
 	{
@@ -300,27 +320,29 @@ include("header.php");
 		}
 	}
 	echo "</select>\n";
-	echo "<br/><b>Available Columns</b>\n";
+	echo "<br><b>Available Columns</b>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
 	echo "</form>\n";
 ?>
 
-<a class='tab' href='index.php'><b>Done / Return to Main Page</b></a>
-<br/><br/>
+<a class='plain' href='index.php'><b>Done / Return to Main Page</b></a>
+<br><br>
 
 </td>
 </tr>
 </table>
 
-</td></tr></table>
+</td>
+</tr>
+</table>
 
-<br/>
+<br>
 
 <table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='TRC'><?php echo $footerText; ?></td>
+<td class='TRC'><b><a class='plain' href='index.php'>Tor Network Status</a> v<?php echo "$TorNetworkStatus_Version"; ?><br><a class='plain' href='/CHANGES' target='_new'>View Complete Change History</a><br>Copyright (c) 2006-2007, Joseph B. Kowalski<br>Source code is available under <a class='plain' href='/LICENSE' target='_new'>BSD license</a> at <a class='plain' href='http://torstatus.kgprog.com/tns.tar.gz' target='_new'>torstatus.kgprog.com</a></b></td>
 </tr>
 </table>
 </body>

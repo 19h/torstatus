@@ -36,35 +36,19 @@ $DescriptorCount = 0;
 $CurrentResultSet = 0;
 $RowCounter = 0;
 
-// Determine whether or not SSL is being used
-if ($DetermineUsingSSL == 1)
-{
-	if ($_SERVER['HTTPS'])
-	{
-		$UsingSSL = 1;
-		// Set the squid value to the SSL version of the Squid value
-		$UsingSquid = $SSLUsingSquid;
-	}
-	else
-	{
-		$UsingSSL = 0;
-	}
-}
-
 $Self = $_SERVER['PHP_SELF'];
 $Host = $_SERVER['HTTP_HOST'];
 $forwardedFor = $_SERVER['HTTP_X_FORWARDED_FOR'];
 $xff = array_map( 'trim', explode( ',',$forwardedFor ) );
 $xff = array_reverse( $xff );
+$RemoteIP = $xff[0];
 if ($UsingSquid == 1)
 {
 	$ServerIP = $RealServerIP;
-	$RemoteIP = $xff[0];
 }
 else
 {
 	$ServerIP = $_SERVER['SERVER_ADDR'];
-	$RemoteIP = $_SERVER['REMOTE_ADDR'];
 }
 $ServerPort = $_SERVER['SERVER_PORT'];
 $RemoteIPDBCount = null;
@@ -92,259 +76,9 @@ $FStable = null;
 $FRunning = null;
 $FValid = null;
 $FV2Dir = null;
-$FHSDir = null;
 $CSField = null;
 $CSMod = null;
 $CSInput = null;
-
-// Create a database of country codes to be used to convert into
-// the names of the countries
-$country_codes = array (
-"nna" => "Unknown Origin",
-"ac" => "Ascension Island",
-"ad" => "Andorra",
-"ae" => "United Arab Emirates",
-"af" => "Afghanistan",
-"ag" => "Antigua And Barbuda",
-"ai" => "Anguilla",
-"al" => "Albania",
-"am" => "Armenia",
-"an" => "Netherlands Antilles",
-"ao" => "Angola",
-"aq" => "Antarctica",
-"ar" => "Argentina",
-"as" => "American Samoa",
-"at" => "Austria",
-"au" => "Australia",
-"aw" => "Aruba",
-"az" => "Azerbaijan",
-"ba" => "Bosnia And Herzegowina",
-"bb" => "Barbados",
-"be" => "Belgium",
-"bf" => "Burkina Faso",
-"bg" => "Bulgaria",
-"bh" => "Bahrain",
-"bi" => "Burundi",
-"bj" => "Benin",
-"bm" => "Bermuda",
-"bn" => "Brunei Darussalam",
-"bo" => "Bolivia",
-"br" => "Brazil",
-"bs" => "Bahamas",
-"bt" => "Bhutan",
-"bv" => "Bouvet Island",
-"bw" => "Botswana",
-"by" => "Belarus",
-"bz" => "Belize",
-"ca" => "Canada",
-"cc" => "Cocos (Keeling) Islands",
-"cd" => "Congo (Democratic Republic)",
-"cf" => "Central African Republic",
-"cg" => "Congo (Republic)",
-"ch" => "Switzerland",
-"ci" => "Cote D'Ivoire",
-"ck" => "Cook Islands",
-"cl" => "Chile",
-"cm" => "Cameroon",
-"cn" => "China",
-"co" => "Colombia",
-"cr" => "Costa Rica",
-"cu" => "Cuba",
-"cv" => "Cape Verde",
-"cx" => "Christmas Island",
-"cy" => "Cyprus",
-"cz" => "Czech Republic",
-"de" => "Germany",
-"dj" => "Djibouti",
-"dk" => "Denmark",
-"dm" => "Dominica",
-"do" => "Dominican Republic",
-"dz" => "Algeria",
-"ec" => "Ecuador",
-"ee" => "Estonia",
-"eg" => "Egypt",
-"er" => "Eritrea",
-"es" => "Spain",
-"et" => "Ethiopia",
-"fi" => "Finland",
-"fj" => "Fiji",
-"fk" => "Falkland Islands (Malvinas)",
-"fm" => "Micronesia, Federated States Of",
-"fo" => "Faroe Islands",
-"fr" => "France",
-"ga" => "Gabon",
-"gb" => "United Kingdom",
-"gd" => "Grenada",
-"ge" => "Georgia",
-"gf" => "French Guiana",
-"gg" => "Guernsey",
-"gh" => "Ghana",
-"gi" => "Gibraltar",
-"gl" => "Greenland",
-"gm" => "Gambia",
-"gn" => "Guinea",
-"gp" => "Guadeloupe",
-"gq" => "Equatorial Guinea",
-"gr" => "Greece",
-"gs" => "South Georgia And The South Sandwich Islands",
-"gt" => "Guatemala",
-"gu" => "Guam",
-"gw" => "Guinea-Bissau",
-"gy" => "Guyana",
-"hk" => "Hong Kong",
-"hm" => "Heard And Mc Donald Islands",
-"hn" => "Honduras",
-"hr" => "Croatia (local name: Hrvatska)",
-"ht" => "Haiti",
-"hu" => "Hungary",
-"id" => "Indonesia",
-"ie" => "Ireland",
-"il" => "Israel",
-"im" => "Isle of Man",
-"in" => "India",
-"io" => "British Indian Ocean Territory",
-"iq" => "Iraq",
-"ir" => "Iran (Islamic Republic Of)",
-"is" => "Iceland",
-"it" => "Italy",
-"je" => "Jersey",
-"jm" => "Jamaica",
-"jo" => "Jordan",
-"jp" => "Japan",
-"ke" => "Kenya",
-"kg" => "Kyrgyzstan",
-"kh" => "Cambodia",
-"ki" => "Kiribati",
-"km" => "Comoros",
-"kn" => "Saint Kitts And Nevis",
-"kr" => "Korea, Republic Of",
-"kw" => "Kuwait",
-"ky" => "Cayman Islands",
-"kz" => "Kazakhstan",
-"la" => "Lao People's Democratic Republic",
-"lb" => "Lebanon",
-"lc" => "Saint Lucia",
-"li" => "Liechtenstein",
-"lk" => "Sri Lanka",
-"lr" => "Liberia",
-"ls" => "Lesotho",
-"lt" => "Lithuania",
-"lu" => "Luxembourg",
-"lv" => "Latvia",
-"ly" => "Libyan Arab Jamahiriya",
-"ma" => "Morocco",
-"mc" => "Monaco",
-"md" => "Moldova, Republic Of",
-"mg" => "Madagascar",
-"mh" => "Marshall Islands",
-"mk" => "Macedonia, The Former Yugoslav Republic Of",
-"ml" => "Mali",
-"mm" => "Myanmar",
-"mn" => "Mongolia",
-"mo" => "Macau",
-"mp" => "Northern Mariana Islands",
-"mq" => "Martinique",
-"mr" => "Mauritania",
-"ms" => "Montserrat",
-"mt" => "Malta",
-"mu" => "Mauritius",
-"mv" => "Maldives",
-"mw" => "Malawi",
-"mx" => "Mexico",
-"my" => "Malaysia",
-"mz" => "Mozambique",
-"na" => "Namibia",
-"nc" => "New Caledonia",
-"ne" => "Niger",
-"nf" => "Norfolk Island",
-"ng" => "Nigeria",
-"ni" => "Nicaragua",
-"nl" => "Netherlands",
-"no" => "Norway",
-"np" => "Nepal",
-"nr" => "Nauru",
-"nu" => "Niue",
-"nz" => "New Zealand",
-"om" => "Oman",
-"pa" => "Panama",
-"pe" => "Peru",
-"pf" => "French Polynesia",
-"pg" => "Papua New Guinea",
-"ph" => "Philippines",
-"pk" => "Pakistan",
-"pl" => "Poland",
-"pm" => "St. Pierre And Miquelon",
-"pn" => "Pitcairn",
-"pr" => "Puerto Rico",
-"pt" => "Portugal",
-"pw" => "Palau",
-"py" => "Paraguay",
-"qa" => "Qatar",
-"re" => "Reunion",
-"ro" => "Romania",
-"ru" => "Russian Federation",
-"rw" => "Rwanda",
-"sa" => "Saudi Arabia",
-"sb" => "Solomon Islands",
-"sc" => "Seychelles",
-"sd" => "Sudan",
-"se" => "Sweden",
-"sg" => "Singapore",
-"sh" => "St. Helena",
-"si" => "Slovenia",
-"sj" => "Svalbard And Jan Mayen Islands",
-"sk" => "Slovakia (Slovak Republic)",
-"sl" => "Sierra Leone",
-"sm" => "San Marino",
-"sn" => "Senegal",
-"so" => "Somalia",
-"sr" => "Suriname",
-"st" => "Sao Tome And Principe",
-"su" => "Soviet Union",
-"sv" => "El Salvador",
-"sy" => "Syrian Arab Republic",
-"sz" => "Swaziland",
-"tc" => "Turks And Caicos Islands",
-"td" => "Chad",
-"tf" => "French Southern Territories",
-"tg" => "Togo",
-"th" => "Thailand",
-"tj" => "Tajikistan",
-"tk" => "Tokelau",
-"tm" => "Turkmenistan",
-"tn" => "Tunisia",
-"to" => "Tonga",
-"tp" => "East Timor",
-"tr" => "Turkey",
-"tt" => "Trinidad And Tobago",
-"tv" => "Tuvalu",
-"tw" => "Taiwan, Province Of China",
-"tz" => "Tanzania, United Republic Of",
-"ua" => "Ukraine",
-"ug" => "Uganda",
-"uk" => "United Kingdom",
-"um" => "United States Minor Outlying Islands",
-"us" => "United States",
-"uy" => "Uruguay",
-"uz" => "Uzbekistan",
-"va" => "Vatican City State (Holy See)",
-"vc" => "Saint Vincent And The Grenadines",
-"ve" => "Venezuela",
-"vg" => "Virgin Islands (British)",
-"vi" => "Virgin Islands (U.S.)",
-"vn" => "Viet Nam",
-"vu" => "Vanuatu",
-"wf" => "Wallis And Futuna Islands",
-"ws" => "Samoa",
-"ye" => "Yemen",
-"yt" => "Mayotte",
-"yu" => "Yugoslavia",
-"za" => "South Africa",
-"zm" => "Zambia",
-"zr" => "Zaire",
-"zw" => "Zimbabwe",
-
-);
 
 // Function Declarations
 function IsIPInSubnet($IP,$Subnet)
@@ -423,19 +157,17 @@ function GenerateHeaderRow()
 			$FStable,
 			$FRunning,
 			$FValid,
-			$FV2Dir,
-			$FHSDir;
+			$FV2Dir;
 
 	$HeaderRowString .= "<tr>\n";
 
-	$ccso = "&nbsp;<a class='header' href='$Self?SR=CountryCode&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/></a>&nbsp;&nbsp;";
-	if ($SR == 'CountryCode' && $SO == 'Asc') { $ccso = "&nbsp;<a class='header' href='$Self?SR=CountryCode&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/></a>&nbsp;&nbsp;"; }
+	$HeaderRowString .= "<td class='THN'>Count</td>\n";
 
-	if($SR == 'Name'){$HeaderRowString .= "<td class='HRS'>$ccso";} else{$HeaderRowString .= "<td class='HRN'>$ccso";} 
-	if ($SR == 'Name' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Name&amp;SO=Desc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";}
-	else if ($SR == 'Name' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Name&amp;SO=Asc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";}
-	else $HeaderRowString .= "<a class='header' href='$Self?SR=Name&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";
-	$HeaderRowString .= "&nbsp;Router Name</a></td>\n";
+	if($SR == 'Name'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
+	if ($SR == 'Name' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Name&amp;SO=Desc'>";}
+	else if ($SR == 'Name' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Name&amp;SO=Asc'>";}
+	else $HeaderRowString .= "<a href='$Self?SR=Name&amp;SO=Asc'>";
+	$HeaderRowString .= "Router Name</a></td>\n";
 
 	foreach($ColumnList_ACTIVE as $value)
 	{
@@ -443,66 +175,121 @@ function GenerateHeaderRow()
 		{
 			case "Fingerprint":
    			if($SR == 'Fingerprint'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'Fingerprint' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Fingerprint&amp;SO=Desc'>";}
-			else if ($SR == 'Fingerprint' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Fingerprint&amp;SO=Asc'>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=Fingerprint&amp;SO=Asc'>";
+			if ($SR == 'Fingerprint' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Fingerprint&amp;SO=Desc'>";}
+			else if ($SR == 'Fingerprint' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Fingerprint&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=Fingerprint&amp;SO=Asc'>";
 			$HeaderRowString .= "Fingerprint</a></td>\n";
    			break;
 
+			case "CountryCode":
+			if($SR == 'CountryCode'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
+			if ($SR == 'CountryCode' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=CountryCode&amp;SO=Desc'>";}
+			else if ($SR == 'CountryCode' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=CountryCode&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=CountryCode&amp;SO=Asc'>";
+			$HeaderRowString .= "Country<br>Code</a></td>\n";
+			break;
+
 			case "Bandwidth":
 			if($SR == 'Bandwidth'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'Bandwidth' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Bandwidth&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";}
-			else if ($SR == 'Bandwidth' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Bandwidth&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=Bandwidth&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";
-			$HeaderRowString .= "&nbsp;Bandwidth <span class='TRSM'>(KB/s)</span></a></td>\n";
+			if ($SR == 'Bandwidth' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Bandwidth&amp;SO=Desc'>";}
+			else if ($SR == 'Bandwidth' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Bandwidth&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=Bandwidth&amp;SO=Asc'>";
+			$HeaderRowString .= "Bandwidth<br><span class='TRSM'>(KB/s)</span></a></td>\n";
 			break;
 
 			case "Uptime":
 			if($SR == 'Uptime'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'Uptime' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Uptime&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";}
-			else if ($SR == 'Uptime' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Uptime&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=Uptime&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";
-			$HeaderRowString .= " Uptime</a></td>\n";
+			if ($SR == 'Uptime' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Uptime&amp;SO=Desc'>";}
+			else if ($SR == 'Uptime' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Uptime&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=Uptime&amp;SO=Asc'>";
+			$HeaderRowString .= "Uptime<br><span class='TRSM'>(Days)</span></a></td>\n";
 			break;
 
 			case "LastDescriptorPublished":
 			if($SR == 'LastDescriptorPublished'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'LastDescriptorPublished' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=LastDescriptorPublished&amp;SO=Desc'>";}
-			else if ($SR == 'LastDescriptorPublished' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=LastDescriptorPublished&amp;SO=Asc'>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=LastDescriptorPublished&amp;SO=Asc'>";
-			$HeaderRowString .= "Last Descriptor<br/><span class='TRSM'>(GMT)</span></a></td>\n";
+			if ($SR == 'LastDescriptorPublished' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=LastDescriptorPublished&amp;SO=Desc'>";}
+			else if ($SR == 'LastDescriptorPublished' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=LastDescriptorPublished&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=LastDescriptorPublished&amp;SO=Asc'>";
+			$HeaderRowString .= "Last Descriptor<br><span class='TRSM'>(GMT)</span></a></td>\n";
 			break;
 
 			case "Hostname":
 			if($SR == 'Hostname'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'Hostname' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Hostname&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";}
-			else if ($SR == 'Hostname' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Hostname&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=Hostname&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";
-			$HeaderRowString .= " Hostname</a></td>\n";
+			if ($SR == 'Hostname' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Hostname&amp;SO=Desc'>";}
+			else if ($SR == 'Hostname' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Hostname&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=Hostname&amp;SO=Asc'>";
+			$HeaderRowString .= "Hostname</a></td>\n";
+			break;
+
+			case "IP":
+			if($SR == 'IP'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
+			if ($SR == 'IP' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=IP&amp;SO=Desc'>";}
+			else if ($SR == 'IP' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=IP&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=IP&amp;SO=Asc'>";
+			$HeaderRowString .= "IP Address</a></td>\n";
 			break;
 
 			case "ORPort":
 			if($SR == 'ORPort'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'ORPort' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=ORPort&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";}
-			else if ($SR == 'ORPort' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=ORPort&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=ORPort&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";
-			$HeaderRowString .= " ORPort</a></td>\n";
+			if ($SR == 'ORPort' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=ORPort&amp;SO=Desc'>";}
+			else if ($SR == 'ORPort' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=ORPort&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=ORPort&amp;SO=Asc'>";
+			$HeaderRowString .= "ORPort</a></td>\n";
 			break;
 
 			case "DirPort":
 			if($SR == 'DirPort'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'DirPort' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=DirPort&amp;SO=Desc'><img src='img/sortingarrowup.png' alt='&#9652;' class='sorting'/>";}
-			else if ($SR == 'DirPort' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=DirPort&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=DirPort&amp;SO=Asc'><img src='img/sortingarrowdown.png' alt='&#9662;' class='sorting'/>";
-			$HeaderRowString .= " DirPort</a></td>\n";
+			if ($SR == 'DirPort' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=DirPort&amp;SO=Desc'>";}
+			else if ($SR == 'DirPort' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=DirPort&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=DirPort&amp;SO=Asc'>";
+			$HeaderRowString .= "DirPort</a></td>\n";
+			break;
+
+			case "Platform":
+			if($SR == 'Platform'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
+			if ($SR == 'Platform' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Platform&amp;SO=Desc'>";}
+			else if ($SR == 'Platform' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Platform&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=Platform&amp;SO=Asc'>";
+			$HeaderRowString .= "Platform</a></td>\n";
 			break;
 
 			case "Contact":
 			if($SR == 'Contact'){$HeaderRowString .= "<td class='HRS'>";} else{$HeaderRowString .= "<td class='HRN'>";} 
-			if ($SR == 'Contact' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Contact&amp;SO=Desc'>";}
-			else if ($SR == 'Contact' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=Contact&amp;SO=Asc'>";}
+			if ($SR == 'Contact' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Contact&amp;SO=Desc'>";}
+			else if ($SR == 'Contact' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Contact&amp;SO=Asc'>";}
 			else $HeaderRowString .= "<a href='$Self?SR=Contact&amp;SO=Asc'>";
 			$HeaderRowString .= "Contact</a></td>\n";
+			break;
+
+			case "Authority":
+			if(($FAuthority == '0') && ($SR == 'FAuthority'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FAuthority == '0') && ($SR != 'FAuthority'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FAuthority == '1') && ($SR == 'FAuthority'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FAuthority == '1') && ($SR != 'FAuthority'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}	
+			else if(($FAuthority == 'OFF') && ($SR == 'FAuthority'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FAuthority' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FAuthority&amp;SO=Desc'>";}
+			else if ($SR == 'FAuthority' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FAuthority&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FAuthority&amp;SO=Asc'>";
+			$HeaderRowString .= "Authority</a></td>\n";
 			break;
 
 			case "BadDir":
@@ -530,9 +317,9 @@ function GenerateHeaderRow()
 			{
 				$HeaderRowString .= "<td class='HRN'>";
 			}
-			if ($SR == 'FBadDirectory' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Desc'>";}
-			else if ($SR == 'FBadDirectory' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Asc'>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Asc'>";
+			if ($SR == 'FBadDirectory' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FBadDirectory&amp;SO=Desc'>";}
+			else if ($SR == 'FBadDirectory' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FBadDirectory&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FBadDirectory&amp;SO=Asc'>";
 			$HeaderRowString .= "Bad Dir</a></td>\n";
 			break;
 
@@ -561,12 +348,290 @@ function GenerateHeaderRow()
 			{
 				$HeaderRowString .= "<td class='HRN'>";
 			}
-			if ($SR == 'FBadExit' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Desc'>";}
-			else if ($SR == 'FBadExit' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Asc'>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Asc'>";
+			if ($SR == 'FBadExit' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FBadExit&amp;SO=Desc'>";}
+			else if ($SR == 'FBadExit' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FBadExit&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FBadExit&amp;SO=Asc'>";
 			$HeaderRowString .= "Bad Exit</a></td>\n";
 			break;
 
+			case "Exit":
+			if(($FExit == '0') && ($SR == 'FExit'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FExit == '0') && ($SR != 'FExit'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FExit == '1') && ($SR == 'FExit'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FExit == '1') && ($SR != 'FExit'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FExit == 'OFF') && ($SR == 'FExit'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FExit' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FExit&amp;SO=Desc'>";}
+			else if ($SR == 'FExit' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FExit&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FExit&amp;SO=Asc'>";
+			$HeaderRowString .= "Exit</a></td>\n";
+			break;
+
+			case "Fast":
+			if(($FFast == '0') && ($SR == 'FFast'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FFast == '0') && ($SR != 'FFast'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FFast == '1') && ($SR == 'FFast'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FFast == '1') && ($SR != 'FFast'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FFast == 'OFF') && ($SR == 'FFast'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+				}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FFast' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FFast&amp;SO=Desc'>";}
+			else if ($SR == 'FFast' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FFast&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FFast&amp;SO=Asc'>";
+			$HeaderRowString .= "Fast</a></td>\n";
+			break;
+
+			case "Guard":
+			if(($FGuard == '0') && ($SR == 'FGuard'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FGuard == '0') && ($SR != 'FGuard'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FGuard == '1') && ($SR == 'FGuard'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FGuard == '1') && ($SR != 'FGuard'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FGuard == 'OFF') && ($SR == 'FGuard'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FGuard' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FGuard&amp;SO=Desc'>";}
+			else if ($SR == 'FGuard' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FGuard&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FGuard&amp;SO=Asc'>";
+			$HeaderRowString .= "Guard</a></td>\n";
+			break;
+
+			case "Hibernating":
+			if(($FHibernating == '0') && ($SR == 'Hibernating'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FHibernating == '0') && ($SR != 'Hibernating'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FHibernating == '1') && ($SR == 'Hibernating'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FHibernating == '1') && ($SR != 'Hibernating'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FHibernating == 'OFF') && ($SR == 'Hibernating'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'Hibernating' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=Hibernating&amp;SO=Desc'>";}
+			else if ($SR == 'Hibernating' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=Hibernating&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=Hibernating&amp;SO=Asc'>";
+			$HeaderRowString .= "Hibernating</a></td>\n";
+			break;
+
+			case "Named":
+			if(($FNamed == '0') && ($SR == 'FNamed'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FNamed == '0') && ($SR != 'FNamed'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FNamed == '1') && ($SR == 'FNamed'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FNamed == '1') && ($SR != 'FNamed'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FNamed == 'OFF') && ($SR == 'FNamed'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FNamed' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FNamed&amp;SO=Desc'>";}
+			else if ($SR == 'FNamed' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FNamed&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FNamed&amp;SO=Asc'>";
+			$HeaderRowString .= "Named</a></td>\n";
+			break;
+
+			case "Stable":
+			if(($FStable == '0') && ($SR == 'FStable'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FStable == '0') && ($SR != 'FStable'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FStable == '1') && ($SR == 'FStable'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FStable == '1') && ($SR != 'FStable'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FStable == 'OFF') && ($SR == 'FStable'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FStable' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FStable&amp;SO=Desc'>";}
+			else if ($SR == 'FStable' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FStable&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FStable&amp;SO=Asc'>";
+			$HeaderRowString .= "Stable</a></td>\n";
+			break;
+
+			case "Running":
+			if(($FRunning == '0') && ($SR == 'FRunning'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FRunning == '0') && ($SR != 'FRunning'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FRunning == '1') && ($SR == 'FRunning'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FRunning == '1') && ($SR != 'FRunning'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FRunning == 'OFF') && ($SR == 'FRunning'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FRunning' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FRunning&amp;SO=Desc'>";}
+			else if ($SR == 'FRunning' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FRunning&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FRunning&amp;SO=Asc'>";
+			$HeaderRowString .= "Running</a></td>\n";
+			break;
+
+			case "Valid":
+			if(($FValid == '0') && ($SR == 'FValid'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FValid == '0') && ($SR != 'FValid'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FValid == '1') && ($SR == 'FValid'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FValid == '1') && ($SR != 'FValid'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FValid == 'OFF') && ($SR == 'FValid'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FValid' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FValid&amp;SO=Desc'>";}
+			else if ($SR == 'FValid' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FValid&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FValid&amp;SO=Asc'>";
+			$HeaderRowString .= "Valid</a></td>\n";
+			break;
+
+			case "V2Dir":
+			if(($FV2Dir == '0') && ($SR == 'FV2Dir'))
+			{
+				$HeaderRowString .= "<td class='HRFNOS'>";
+			} 
+			else if(($FV2Dir == '0') && ($SR != 'FV2Dir'))
+			{
+				$HeaderRowString .= "<td class='HRFNO'>";
+			}
+			else if(($FV2Dir == '1') && ($SR == 'FV2Dir'))
+			{
+				$HeaderRowString .= "<td class='HRFYESS'>";
+			}
+			else if(($FV2Dir == '1') && ($SR != 'FV2Dir'))
+			{
+				$HeaderRowString .= "<td class='HRFYES'>";
+			}
+			else if(($FV2Dir == 'OFF') && ($SR == 'FV2Dir'))
+			{
+				$HeaderRowString .= "<td class='HRS'>";
+			}
+			else
+			{
+				$HeaderRowString .= "<td class='HRN'>";
+			}
+			if ($SR == 'FV2Dir' && $SO == 'Asc'){$HeaderRowString .= "<a href='$Self?SR=FV2Dir&amp;SO=Desc'>";}
+			else if ($SR == 'FV2Dir' && $SO == 'Desc'){$HeaderRowString .= "<a href='$Self?SR=FV2Dir&amp;SO=Asc'>";}
+			else $HeaderRowString .= "<a href='$Self?SR=FV2Dir&amp;SO=Asc'>";
+			$HeaderRowString .= "V2Dir</a></td>\n";
+			break;
 		}
 	}
 	
@@ -575,275 +640,86 @@ function GenerateHeaderRow()
 
 function DisplayRouterRow()
 {
-	global $CurrentResultSet, $record, $ColumnList_ACTIVE, $country_codes;
-	if ($record['BadExit'])
-	{
-		echo "<tr class='B'>";
-	}
-	else
-	{
-	if ($record['Running'] == 0 && $record['Hibernating'] == 0)
-	{
-		echo "<tr class='d'>";
-	}
-	else if ($record['Running'] == 0 && $record['Hibernating'] == 1)
-	{
-		echo "<tr class='R'>";
-	}
-	else
-	{
-		echo "<tr class='r'>";
-	}
-	}
+	global $CurrentResultSet, $record, $ColumnList_ACTIVE;
 
-	if ($record['Named'] == 1)
-	{
-		echo "<td class='TRR'>";
-	}
-	else
-	{
-		echo "<td class='TRr'>";
-	}
-	$countrycode = strtolower($record['CountryCode']);
-	if ($countrycode == "") { $countrycode = "nna"; $record['CountryCode'] = "NNA"; }
-	echo "<img src='img/flags/".$countrycode.".gif' class='flag' width='18px' alt='".$record['CountryCode']."' title='".$country_codes[strtolower($record['CountryCode'])]."'/>&nbsp;<a href='router_detail.php?FP=" . $record['Fingerprint'] . "'>" . $record['Name'] . "</a></td>";
+	echo "<tr class='r'>\n";
+	echo "<td class='THN'>" . ($CurrentResultSet + 1) . "</td>\n";
+	echo "<td class='TRR'><a href='router_detail.php?FP=" . $record['Fingerprint'] . "'>" . $record['Name'] . "</a></td>\n";
+
 	foreach($ColumnList_ACTIVE as $value)
 	{
 		switch (TRUE) 
 		{
-			case
-			($value == "Hostname"):
-			echo "<td class='TDS'>";
-			$innerTable = 0;
-			if (isset($record['Authority']) || isset($record['Stable']) || isset($record['Platform']) || isset($record['Guard']) || isset($record['Fast']) || isset($record['Exit']) || isset($record['V2Dir']) || isset($record['Valid']) || isset($record['HSDir']))
-			{
-				$innerTable = 1;
-				echo "<table class='iT'><tr><td class='iT'>";
-			}
-			echo $record[$value];
-			if (isset($record['IP']))
-			{
-				if (defined("WHOISPath"))
-				{
-				echo " [<a class='who' href='".WHOISPath.$record['IP']."'>".$record['IP']."</a>]";
-				}
-				else
-				{
-				echo " [".$record['IP']."]";
-				}
-			}
-			if ($record['Fast'] == 1)
-			{
-				echo "</td><td><img src='img/status/Fast.png' title='Fast Server' alt='Fast Server' />";
-			}
-			if ($record['Valid'] == 0)
-			{
-				echo "</td><td><img src='img/status/Disputed.png' title='Not Listed By All Directory Servers' alt='Disputed Server' />";
-			}
-			if ($record['Exit'] == 1)
-			{
-				echo "</td><td><img src='img/status/Exit.png' title='Exit Server' alt='Exit Server' />";
-			}
-			if ($record['V2Dir'] == 1)
-			{
-				echo "</td><td><img src='img/status/Dir.png' title='Directory Server' alt='Directory Server' />";
-			}
-			if ($record['HSDir'] == 1)
-			{
-				echo "</td><td><img src='img/status/HSDir.png' title='HS Directory Server' alt='HS Directory Server' />";
-			}
-			if ($record['Guard'] == 1)
-			{
-				echo "</td><td><img src='img/status/Guard.png' title='Guard Server' alt='Guard Server' />";
-			}
-			if ($record['Stable'] == 1)
-			{
-				echo "</td><td><img src='img/status/Stable.png' title='Stable Server' alt='Stable Server'/>";
-			}
-			if ($record['Authority'] == 1)
-			{
-				echo "</td><td><img src='img/status/Authority.png' title='Authority Server' alt='Authority Server'/>";
-			}
-			if (isset($record['Platform']))
-			{
-				$image = "NotAvailable";
-				// Map the platform to something we know
-				if (strpos($record['Platform'],'Linux',$record['Platform']) || strpos($record['Platform'],'linux',$record['Platform']))
-				{
-					$image = "Linux";
-				}
-				if (strpos($record['Platform'],'Windows XP'))
-				{
-					$image = "WindowsXP";
-				}
-				else if (strpos($record['Platform'],'Windows') && strpos($record['Platform'],'server'))
-				{
-					$image = "WindowsServer";
-				}
-				else if (strpos($record['Platform'],'Windows'))
-				{
-					$image = "WindowsOther";
-				}
-				if (strpos($record['Platform'],'Darwin'))
-				{
-					$image = "Darwin";
-				}
-				if (strpos($record['Platform'],'DragonFly'))
-				{
-					$image = "DragonFly";
-				}
-				if (strpos($record['Platform'],'FreeBSD'))
-				{
-					$image = "FreeBSD";
-				}
-				if (strpos($record['Platform'],'NetBSD'))
-				{
-					$image = "NetBSD";
-				}
-				if (strpos($record['Platform'],'IRIX'))
-				{
-					$image = "IRIX64";
-				}
-				if (strpos($record['Platform'],'Cygwin'))
-				{
-					$image = "Cygwin";
-				}
-				if (strpos($record['Platform'],'SunOS'))
-				{
-					$image = "SunOS";
-				}
-				if (strpos($record['Platform'],'OpenBSD'))
-				{
-					$image = "OpenBSD";
-				}
-				echo "</td><td><img src='img/os-icons/$image.png' title='".htmlentities($record['Platform'],ENT_QUOTES)."' alt='".htmlentities($record['Platform'],ENT_QUOTES)."' />";
-			}
-			if ($innerTable)
-			{
-				echo "</td></tr></table>";
-			}
-			echo "</td>";
-			break;
-
-			case
-			($value == "Bandwidth"):
-			// Determine the bandwidth colors
-			$bandwidth = $record[$value];
-			if ($record[$value] <= 1000)
-			{
-				$background = "bwr";
-				$foreground = "1";
-			}
-			else if ($record[$value] > 1000 && $record[$value] <= 2000)
-			{
-				$background = "bwr1";
-				$foreground = "2";
-			}
-			else if ($record[$value] > 2000 && $record[$value] <= 3000)
-			{
-				$background = "bwr2";
-				$foreground = "3";
-			}
-			else if ($record[$value] > 3000 && $record[$value] <= 4000)
-			{
-				$background = "bwr3";
-				$foreground = "4";
-			}
-			else if ($record[$value] > 4000 && $record[$value] <= 5000)
-			{
-				$background = "bwr4";
-				$foreground = "5";
-			}
-			else if ($record[$value] > 5000 && $record[$value] <= 6000)
-			{
-				$background = "bwr5";
-				$foreground = "6";
-			}
-			else if ($record[$value] > 6000)
-			{
-				$bandwidth = "1000";
-				$background = "bwr5";
-				$foreground = "6";
-			}
-			$bandwidthtop = 1000/85;
-			if ($bandwidth % 1000 == 0 && $bandwidth != 0)
-			{
-				$bandwidth = 999;
-			}
-			$bandwidth = floor(($bandwidth % 1000)/$bandwidthtop);
-			if ($bandwidth > 85) { $bandwidth = 85; }
-			if ($bandwidth == 0) { $bandwidth = 1; }
-			echo "<td class='TDb'><table cellspacing='0' cellpadding='0' class='bwb'><tr title='".$record[$value]." KBs'><td class='$background'><img src='img/bar/${foreground}.png' width='${bandwidth}px' height='16px' alt='".$record[$value]."' /></td><td>&nbsp;<small>&nbsp;".$record[$value]."</small></td></tr></table></td>";
-			break;
-
   			case
 			(
-				$value == "Fingerprint" 		||  
+				$value == "Fingerprint" 			|| 
+				$value == "Bandwidth" 			|| 
 				$value == "LastDescriptorPublished"	||
+				$value == "Hostname" 			||
+				$value == "IP" 				||
+				$value == "ORPort" 				||
+				$value == "Platform"				||
 				$value == "Contact"
 			):
 
-			echo "<td class='TDS'>" . $record[$value] . "</td>";
+			echo "<td class='TDS'>" . $record[$value] . "</td>\n";
 			break;
 
   			case
 			(
-				$value == "BadDir" 			|| 
-				$value == "BadExit"
+				$value == "Authority" 			|| 
+				$value == "BadDir" 				|| 
+				$value == "BadExit" 				||
+				$value == "Exit" 				|| 
+				$value == "Fast"				||
+				$value == "Guard" 				||
+				$value == "Hibernating"			||
+				$value == "Named" 				||
+				$value == "Stable" 				||
+				$value == "Running"				||
+				$value == "Valid"				||
+				$value == "V2Dir"
 			):
 
-			echo "<td class='F" . $record[$value] . "'></td>";
+			echo "<td class='F" . $record[$value] . "'></td>\n";
 			break;
 
   			case
 			($value == "Uptime"):
 			
-			if ($record[$value] > -1 && $record[$value] < 5)
+			if ($record[$value] > -1)
 			{
-				echo "<td class='TDc'>";
-				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
-				{
-					echo "<img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>";
-				}
-				else
-				{
-					echo "<img src='/img/blank.gif' alt=' ' width='12px' />";
-				}
-				echo $record[$value] . " d</td>";
-			}
-			else if ($record[$value] >= 5)
-			{
-				echo "<td class='TDcb'>";
-				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
-				{
-					echo "<img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>";
-				}
-				else
-				{
-					echo "<img src='/img/blank.gif' alt=' ' width='12px' />";
-				}
-				echo $record[$value] . " d</td>";
+				echo "<td class='TDS'>" . $record[$value] . "</td>\n";
 			}
 			else
 			{
-				echo "<td class='TDc'><img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>N/A</td>";
+				echo "<td class='TDS'>N/A</td>\n";
 			}
 			break;
 
   			case
-			($value == "ORPort" || $value == "DirPort"):
+			($value == "DirPort"):
 			
-			if ($record[$value] > 0 && $record[$value] != 80 && $record[$value] != 443)
+			if ($record[$value] > 0)
 			{
-				echo "<td class='TDc'>" . $record[$value] . "</td>";
-			}
-			else if ($record[$value] == 80 || $record[$value] == 443)
-			{
-				echo "<td class='TDc'><b>" . $record[$value] . "</b></td>";
+				echo "<td class='TDS'>" . $record[$value] . "</td>\n";
 			}
 			else
 			{
-				echo "<td class='TDc'>None</td>";
+				echo "<td class='TDS'>None</td>\n";
+			}
+			break;
+
+  			case
+			($value == "CountryCode"):
+			
+			if ($record[$value] != null)
+			{
+				echo "<td class='TDS'>" . $record[$value] . "</td>\n";
+			}
+			else
+			{
+				echo "<td class='TDS'>N/A</td>\n";
 			}
 			break;
 		}
@@ -925,8 +801,7 @@ if(
 	$SR != "FStable"			&&
 	$SR != "FRunning"			&&
 	$SR != "FValid"			&&
-	$SR != "FV2Dir"			&&
-	$SR != "FHSDir")
+	$SR != "FV2Dir")
 {
 	$SR = "Name";
 } 
@@ -990,10 +865,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	if (isset($_POST["FV2Dir"]))
 	{
 		$FV2Dir = $_POST["FV2Dir"];
-	}
-	if (isset($_POST["FHSDir"]))
-	{
-		$FHSDir = $_POST["FHSDir"];
 	}
 	if (isset($_POST["CSField"]))
 	{
@@ -1059,10 +930,6 @@ else
 	if (isset($_SESSION["FV2Dir"]))
 	{
 		$FV2Dir = $_SESSION["FV2Dir"];
-	}
-	if (isset($_SESSION["FHSDir"]))
-	{
-		$FV2Dir = $_SESSION["FHSDir"];
 	}
 	if (isset($_SESSION["CSField"]))
 	{
@@ -1153,11 +1020,6 @@ if($FValid != '0' && $FValid != '1' && $FValid != 'OFF')
 if($FV2Dir != '0' && $FV2Dir != '1' && $FV2Dir != 'OFF')
 {
 	$FV2Dir = 'OFF';
-}
-
-if($FHSDir != '0' && $FHSDir != '1' && $FHSDir != 'OFF')
-{
-	$FHSDir = 'OFF';
 }
 
 if(
@@ -1355,16 +1217,6 @@ else
 	$_SESSION['FV2Dir'] = $FV2Dir;
 }
 
-if (!isset($_SESSION['FHSDir'])) 
-{
-	$_SESSION['FHSDir'] = $FHSDir;
-} 
-else
-{
-	unset($_SESSION['FHSDir']);
-	$_SESSION['FHSDir'] = $FHSDir;
-}
-
 if (!isset($_SESSION['CSField'])) 
 {
 	$_SESSION['CSField'] = $CSField;
@@ -1407,12 +1259,7 @@ $ActiveDescriptorTable = $record['ActiveDescriptorTable'];
 
 // Get total number of routers from database
 $query = "select count(*) as Count from $ActiveNetworkStatusTable";
-$result = mysql_query($query);
-if (!$result) 
-{
-	echo "It appears that the ".$SQL_Catalog." database has not yet been populated with information.  Please run tns_update.pl from within your root TorStatus directory.  If you continue to run into problems, please submit a bug report at <a href='http://project.torstatus.kgprog.com/'>http://project.torstatus.kgprog.com</a>.";
-	exit;
-}
+$result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 
 $RouterCount = $record['Count'];
@@ -1671,11 +1518,6 @@ if (in_array("V2Dir", $ColumnList_ACTIVE))
 	$query .= ", $ActiveNetworkStatusTable.FV2Dir as V2Dir";
 }
 
-if (in_array("HSDir", $ColumnList_ACTIVE))
-{
-	$query .= ", $ActiveNetworkStatusTable.FHSDir as HSDir";
-}
-
 $query .= ", INET_ATON($ActiveNetworkStatusTable.IP) as NIP from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint";
 
 if ($FAuthority != 'OFF')
@@ -1819,18 +1661,6 @@ if ($FV2Dir != 'OFF')
 	else
 		{
 			$query = $query . " and FV2Dir = $FV2Dir";
-		}
-}
-
-if ($FHSDir != 'OFF')
-{
-	if (strpos($query, "where") === false)
-		{
-			$query = $query . " where FHSDir = $FHSDir";
-		}
-	else
-		{
-			$query = $query . " and FHSDir = $FHSDir";
 		}
 }
 
@@ -2120,765 +1950,567 @@ else
 }
 
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
-
-// Retrieve the mirror list from the database
-$query = "SELECT mirrors FROM `Mirrors` WHERE id=1";
-$result_mirrors = mysql_query($query) or die('There was an error getting the mirror list: ' . mysql_error());
-$mirrorListRow = mysql_fetch_row($result_mirrors);
-$mirrorList = $mirrorListRow[0];
-
-?><!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<title>TorStatus - Tor Network Status</title>
-	<link rel="stylesheet" type="text/css" href="css/main.css" />
-	<link rel="stylesheet" type="text/css" href="css/style.css" />
-	<!--[if lt IE 7.]>
-	<script defer type="text/javascript" src="/js/pngfix.js"></script>
-	<![endif]-->
-</head>
-
-<body>
-<div class="topbar" id="topbar"><br/>
-<table width="100%"><tr><td style="vertical-align: bottom;">
-<a href="/?CSInput=" class="logoimage"><img src="img/logo.png" alt="TorStatus" class="topbarlogo"/></a>
-<span class="logotext"><?php echo $TorNetworkStatus_Version; ?><?php if ($UsingSSL == 1) { ?> - Encrypted connection<?php } elseif ($AllowSSL) { ?> - <a href="<?php echo $SSLLink  ?>" class="plain">Use an encrypted connection <b>(recommended)</b></a><?php } ?></span>
-</td><td style="vertical-align: bottom; text-align: right;">
-<form action="<?php echo $Self; ?>" method="post" name="search">
-<input type="hidden" name="CSMod" value="Contains" />
-<input type="hidden" name="CSField" value="Name" />
-<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"search for a router";?>" onfocus="javascript:if(this.value=='search for a router') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox"><img class="searchbox" alt="Search" src="/img/blank.gif" /></a><noscript><input type="submit" value="Search"/></noscript>
-</form>
-</td></tr></table>
-<?php if (!$CSInput) { ?>
-<script type="text/javascript">
-	document.getElementById('searchbox').style.color = 'gray';
-</script>
-<?php } ?>
-</div>
-<div class="separator"></div>
-<div class="mirrorbar">
-<table width="100%"><tr><td>
-Known mirrors: <b><?php echo $myMirrorName; ?></b> | <?php echo $mirrorList; ?>
-</td><td>
-<div style="width: 100%; text-align: right;" id="expandcollapse">
-<script type="text/javascript">
-<!--
-document.write('<a href="javascript:;" onclick="javascript:expand_infobar();"><img src="/img/infobarexpand.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:expand_infobar();" class="plain">Show Advanced Options</a>');
-// -->
-</script>
-<noscript>
-Good job, you do not have JavaScript enabled!
-</noscript>
-</div>
-</td></tr></table>
-</div>
-<div class="infobar" id="infobar">
-<?php if($DNSEL_Domain != null){echo '<a class="plain" href="dnsel_server.php">DNSEL Server</a> |';} ?>
-<a class="plain" href="tor_exit_query.php">Tor Exit Node Query</a> |
-<a class='plain' href='#AppServer' onclick='javascript:asdToggle = 0;toggleASD();'>TorStatus Server Details</a> |
-<a class='plain' href='#TorServer' onclick='javascript:nsosToggle = 0;toggleNSOS();'>Opinion Source</a> |
-<a class='plain' href='#CustomQuery' onclick='javascript:caqoToggle = 0;toggleCAQO();'>Advanced Query Options</a> |
-<a class='plain' href='column_set.php'>Advanced Display Options</a> |
-<a class='plain' href='#Stats' onclick='javascript:anssToggle = 0;toggleANSS();'>Network Statistic Summary</a> |
-<a class='plain' href='network_detail.php'>Network Statistic Graphs</a><br/>
-<a class='plain' href='query_export.php/Tor_query_EXPORT.csv'>CSV List of Current Result Set</a> |
-<a class='plain' href='ip_list_all.php/Tor_ip_list_ALL.csv'>CSV List of All Current Tor Server IP Addresses</a> |
-<a class='plain' href='ip_list_exit.php/Tor_ip_list_EXIT.csv'>CSV List of All Current Tor Server Exit Node IP Addresses</a>
-</div>
-<script type="text/javascript">
-	<!--
-	var closetextstart = '<div class="infobar" style="display: none;" id="expandcollapse">';
-	var closetexthide = '<a href="javascript:;" onclick="javascript:collapse_infobar();"><img src="/img/infobarcollapse.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:collapse_infobar();" class="plain">Hide Advanced Options</a>';
-	var closetextshow = '<a href="javascript:;" onclick="javascript:expand_infobar();"><img src="/img/infobarexpand.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:expand_infobar();" class="plain">Show Advanced Options</a>';
-	var closetextend = '</div>';
-	document.write(closetextstart + closetextshow + closetextend);
-	function expand_infobar()
-	{
-		document.getElementById('infobar').style.display="block";
-		document.getElementById('expandcollapse').innerHTML = closetexthide;
-	}
-	function collapse_infobar()
-	{
-		document.getElementById('infobar').style.display="none";
-		document.getElementById('expandcollapse').innerHTML = closetextshow;
-	}
-	collapse_infobar();
-	// -->
-</script>
-
-<div class="content">
-
-<br/><br/>
-
-<div class="dropcontainer">
-<div class="dropshadow2">
-<div class="innerbox">
-
-<table class="torcheck" cellpadding="0" cellspacing="0">
-
-
-<?php
-
-if(!(false === strpos($Hidden_Service_URL, $Host)))
-{
-	echo "<font class='usingTor'>-You appear to be accessing this server through the Tor network as a hidden service-</span><br/><br/>";
-}
-else if ($PositiveMatch_IP == 1)
-{
-	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
-	echo "<span class='usingTor'>It appears that you are using the Tor network</span><br/>Your OR is: $RemoteIP<br/>";
-	for($i=1 ; $i < ($Count + 1) ; $i++)
-	{
-		echo "Server name: <a class='tab' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
-		if ($PositiveMatch_ExitPolicy[$i] == 1)
-		{
-			//echo "<span class='usingTor'>-This Tor server would allow exiting to this page-</span>";
-		}
-		else if ($PositiveMatch_ExitPolicy[$i] == 0)
-		{
-			echo "<span class='notUsingTor'>-This Tor server would NOT allow exiting to this page-</span>";
-		}
-	}
-	echo '</td></tr>';
-}
-else
-{
-	echo "<tr><td class='tab'>";
-	echo "<img alt='You are not using Tor' src='/img/notusingtor.png'/>";
-	echo "</td><td class='content'>";
-	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: $RemoteIP";
-	echo "</td></tr>";
-}
-
-if($Hidden_Service_URL != null)
-{
-	echo "<tr>\n";
-	echo "<td class='TRC'><b>";
-	echo "<font color='#3344ee'>This site is available as a Tor Hidden Service at:</font><br/><a class='plain' href='$Hidden_Service_URL'>$Hidden_Service_URL</a><br/><br/>";
-	echo "</b></td>\n";
-	echo "</tr>\n";
-}
 ?>
 
-</table>
+<!-- Begin Page Render -->
 
-</div></div></div>
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
 
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8'>
+<title>Tor Network Status</title>
+<link rel='StyleSheet' TYPE='Text/CSS' HREF='css/main.css'>
+</head>
 
-<table cellspacing="2" cellpadding="2" class="body">
+<body class='BOD'>
+<br><br>
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 
 <tr>
-<td>
+<td class='mirrors'>Known mirrors: <b>torstatus.kgprog.com</b> | <a href="http://anonymizer.blutmagie.de:2505/">anonymizer.blutmagie.de:2505</a></td>
+</tr>
 
-<a href="#Legend" onclick="lgndToggle = 0;javascript:toggleLGND();" class="LegendLink">View the Legend</a>
+<tr>
+<td class='PT'><br><a href='index.php'>Tor Network Status</a><br><br></td>
+</tr>
 
-<table width='100%' cellspacing='0' cellpadding='0' border='0' align='center' class='displayTable'>
+<tr>
+<td class='TRC'><b><br><?php if($DNSEL_Domain != null){echo "<a class='plain' href='dnsel_server.php'>DNSEL Server</a><br>";} ?><a class='plain' href='tor_exit_query.php'>Tor Exit Node Query</a><br><a class='plain' href='#AppServer'>Application Server Details</a><br><a class='plain' href='#TorServer'>Network Status Opinion Source</a><br><a class='plain' href='#CustomQuery'>Custom / Advanced Query Options</a><br><a class='plain' href='#CustomDisplay'>Custom / Advanced Display Options</a><br><a class='plain' href='#Stats'>Aggregate Network Statistic Summary</a><br><a class='plain' href='network_detail.php'>Aggregate Network Statistic Graphs / Details</a><br><br><a class='plain' href='query_export.php/Tor_query_EXPORT.csv'>Comma Separated Value (CSV) List of Current Result Set</a><br><a class='plain' href='ip_list_all.php/Tor_ip_list_ALL.csv'>Comma Separated Value (CSV) List of All Current Tor Server IP Addresses</a><br><a class='plain' href='ip_list_exit.php/Tor_ip_list_EXIT.csv'>Comma Separated Value (CSV) List of All Current Tor Server Exit Node IP Addresses</a><br><br></b></td>
+</tr>
 
 <?php
+	echo "<tr>\n";
+	echo "<td class='TRC'><b>";
 
-// Generate header row
-GenerateHeaderRow();
-
-// Display header row
-echo $HeaderRowString;
-
-// Loop through and display all routers returned by query
-while ($record = mysql_fetch_assoc($result)) 
-{
-
-	if ($RowCounter < $ColumnHeaderInterval)
+	if(!(false === strpos($Hidden_Service_URL, $Host)))
 	{
-		// Display router row
-		DisplayRouterRow();	
-
-		$CurrentResultSet++;
-		$RowCounter++;
+		echo "<font color='#00dd00'>-You appear to be accessing this server through the Tor network as a hidden service-</font><br><br>";
+	}
+	else if ($PositiveMatch_IP == 1)
+	{
+		echo "<font color='#00dd00'>-The IP Address you are coming from matches one or more active Tor servers-</font><br>Your IP Address is: $RemoteIP<br><br>";
+		for($i=1 ; $i < ($Count + 1) ; $i++)
+		{
+			echo "Server name: <a class='plain' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br>";
+			if ($PositiveMatch_ExitPolicy[$i] == 1)
+			{
+				echo "<font color='#00dd00'>-This Tor server would allow exiting to this page-</font><br><br>";
+			}
+			else if ($PositiveMatch_ExitPolicy[$i] == 0)
+			{
+				echo "<font color='#ff0000'>-This Tor server would NOT allow exiting to this page-</font><br><br>";
+			}
+		}
 	}
 	else
 	{
-		// Display header row
-		echo $HeaderRowString;
-	
-		// Display router row
-		DisplayRouterRow();
-	
-		$CurrentResultSet++;
-		$RowCounter = 1;
+		echo "<font color='#ff0000'>-You do not appear to be accessing this server through the Tor network-</font><br>Your IP Address is: $RemoteIP<br><br>";
 	}
-}
+	echo "</b></td>\n";
+	echo "</tr>\n";
+
+	if($Hidden_Service_URL != null)
+	{
+		echo "<tr>\n";
+		echo "<td class='TRC'><b>";
+		echo "<font color='#3344ee'>This site is available as a Tor Hidden Service at:</font><br><a class='plain' href='$Hidden_Service_URL'>$Hidden_Service_URL</a><br><br>";
+		echo "</b></td>\n";
+		echo "</tr>\n";
+	}
+?>
+
+<tr>
+<td class='TDBLACK'>
+
+<table width='100%' cellspacing='2' cellpadding='2' border='0' align='center'>
+
+<?php
+
+	// Generate header row
+	GenerateHeaderRow();
+
+	// Display header row
+	echo $HeaderRowString;
+
+	// Loop through and display all routers returned by query
+	while ($record = mysql_fetch_assoc($result)) 
+	{
+	
+		if ($RowCounter < $ColumnHeaderInterval)
+		{
+			// Display router row
+			DisplayRouterRow();	
+	
+			$CurrentResultSet++;
+			$RowCounter++;
+		}
+		else
+		{
+			// Display header row
+			echo $HeaderRowString;
+		
+			// Display router row
+			DisplayRouterRow();
+		
+			$CurrentResultSet++;
+			$RowCounter = 1;
+		}
+	}
 ?>
 </table>
 </td>
 </tr>
 
 <tr>
-<td><br/></td>
+<td><br></td>
 </tr>
-<tr><td>
+
+</table>
 
 <a name="Stats"></a>
 
-<a href="javascript:toggleANSS();" class="LegendLink" id='anssTableLink'>Aggregate Network Statistic Summary</a>
-
-
-<table width='40%' cellspacing='0' cellpadding='0' class='displayTable' id='anssTable'>
+<table width='40%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='HRN' colspan='3'>Aggregate Network Statistic Summary | <a href='network_detail.php'>Graphs / Details</a></td>
+<td class='TDBLACK'>
+	
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+<tr>
+<td class='THN' colspan='3'>Aggregate Network Statistic Summary | <a href='network_detail.php'>Graphs / Details</a></td>
 </tr>
 
 <?php
 
-// Retrieve statistics from database
-$query = "select
-	(select count(*) from $ActiveNetworkStatusTable) as 'Total',
-	(select count(*) from $ActiveNetworkStatusTable where FAuthority = '1') as 'Authority',
-	(select count(*) from $ActiveNetworkStatusTable where FBadDirectory = '1') as 'BadDirectory',
-	(select count(*) from $ActiveNetworkStatusTable where FBadExit = '1') as 'BadExit',
-	(select count(*) from $ActiveNetworkStatusTable where FExit = '1') as 'Exit',
-	(select count(*) from $ActiveNetworkStatusTable where FFast = '1') as 'Fast',
-	(select count(*) from $ActiveNetworkStatusTable where FGuard = '1') as 'Guard',
-	(select count(*) from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Hibernating = '1') as 'Hibernating',
-	(select count(*) from $ActiveNetworkStatusTable where FNamed = '1') as 'Named',
-	(select count(*) from $ActiveNetworkStatusTable where FStable = '1') as 'Stable',
-	(select count(*) from $ActiveNetworkStatusTable where FRunning = '1') as 'Running',
-	(select count(*) from $ActiveNetworkStatusTable where FValid = '1') as 'Valid',
-	(select count(*) from $ActiveNetworkStatusTable where FV2Dir = '1') as 'V2Dir',
-	(select count(*) from $ActiveNetworkStatusTable where FHSDir = '1') as 'HSDir',
-	(select count(*) from $ActiveNetworkStatusTable where DirPort > 0) as 'DirMirror'";
-	
-$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-$record = mysql_fetch_assoc($result);
+	// Retrieve statistics from database
+	$query = "select
+		(select count(*) from $ActiveNetworkStatusTable) as 'Total',
+		(select count(*) from $ActiveNetworkStatusTable where FAuthority = '1') as 'Authority',
+		(select count(*) from $ActiveNetworkStatusTable where FBadDirectory = '1') as 'BadDirectory',
+		(select count(*) from $ActiveNetworkStatusTable where FBadExit = '1') as 'BadExit',
+		(select count(*) from $ActiveNetworkStatusTable where FExit = '1') as 'Exit',
+		(select count(*) from $ActiveNetworkStatusTable where FFast = '1') as 'Fast',
+		(select count(*) from $ActiveNetworkStatusTable where FGuard = '1') as 'Guard',
+		(select count(*) from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Hibernating = '1') as 'Hibernating',
+		(select count(*) from $ActiveNetworkStatusTable where FNamed = '1') as 'Named',
+		(select count(*) from $ActiveNetworkStatusTable where FStable = '1') as 'Stable',
+		(select count(*) from $ActiveNetworkStatusTable where FRunning = '1') as 'Running',
+		(select count(*) from $ActiveNetworkStatusTable where FValid = '1') as 'Valid',
+		(select count(*) from $ActiveNetworkStatusTable where FV2Dir = '1') as 'V2Dir',
+		(select count(*) from $ActiveNetworkStatusTable where DirPort > 0) as 'DirMirror'";
+		
+	$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+	$record = mysql_fetch_assoc($result);
 
-// Display total number of routers
-if ($RouterCount != 0)
-{
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of Routers:</b></td>\n";
-echo "<td class='TRS'>$RouterCount</td>\n";
-echo "<td class='TRS'>" . round((($RouterCount / $RouterCount) * 100),2) . "%</td>\n";	echo "</tr>\n";
+	// Display total number of routers
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of Routers:</b></td>\n";
+	echo "<td class='TRS'>$RouterCount</td>\n";
+	echo "<td class='TRS'>" . round((($RouterCount / $RouterCount) * 100),2) . "%</td>\n";	echo "</tr>\n";
 
-// Display number of routers in current result set
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Routers in Current Query Result Set:</b></td>\n";
-echo "<td class='TRS'>$CurrentResultSet</td>\n";
-echo "<td class='TRS'>" . round((($CurrentResultSet / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display number of routers in current result set
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Routers in Current Query Result Set:</b></td>\n";
+	echo "<td class='TRS'>$CurrentResultSet</td>\n";
+	echo "<td class='TRS'>" . round((($CurrentResultSet / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are Authority servers
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Authority' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Authority'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Authority'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are Authority servers
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Authority' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Authority'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Authority'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are BadDirectory servers
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Bad Directory' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['BadDirectory'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['BadDirectory'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are BadDirectory servers
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Bad Directory' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['BadDirectory'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['BadDirectory'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are bad exits
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Bad Exit' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['BadExit'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['BadExit'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are bad exits
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Bad Exit' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['BadExit'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['BadExit'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are exits
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Exit' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Exit'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Exit'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are exits
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Exit' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Exit'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Exit'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are fast
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Fast' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Fast'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Fast'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are fast
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Fast' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Fast'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Fast'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are guards
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Guard' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Guard'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Guard'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are guards
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Guard' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Guard'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Guard'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers hibernating
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Hibernating' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Hibernating'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Hibernating'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers hibernating
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Hibernating' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Hibernating'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Hibernating'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are named
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Named' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Named'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Named'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are named
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Named' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Named'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Named'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are stable
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Stable' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Stable'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Stable'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are stable
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Stable' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Stable'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Stable'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are running
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Running' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Running'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Running'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are running
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Running' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Running'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Running'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are valid
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Valid' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['Valid'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['Valid'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are valid
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Valid' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['Valid'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['Valid'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are V2Dir ready
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'V2Dir' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['V2Dir'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['V2Dir'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
+	// Display total number of routers which are V2Dir ready
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'V2Dir' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['V2Dir'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['V2Dir'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 
-// Display total number of routers which are HSDir ready
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'HSDir' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['HSDir'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['HSDir'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
-
-// Display total number of routers mirroring directory
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Total Number of 'Directory Mirror' Routers:</b></td>\n";
-echo "<td class='TRS'>" . $record['DirMirror'] . "</td>\n";
-echo "<td class='TRS'>" . round((($record['DirMirror'] / $RouterCount) * 100),2) . "%</td>\n";
-echo "</tr>\n";
-}
+	// Display total number of routers mirroring directory
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Total Number of 'Directory Mirror' Routers:</b></td>\n";
+	echo "<td class='TRS'>" . $record['DirMirror'] . "</td>\n";
+	echo "<td class='TRS'>" . round((($record['DirMirror'] / $RouterCount) * 100),2) . "%</td>\n";
+	echo "</tr>\n";
 ?>
 </table>
+</td>
+</tr>
+</table>
 
-<script type='text/javascript'>
-<!--
-var anssToggle = 1;
-toggleANSS();
-function toggleANSS()
-{
-	if (anssToggle == 0)
-	{
-		document.getElementById('anssTable').style.display='table';
-		document.getElementById('anssTableLink').innerHTML='Hide Aggregate Network Statistic Summary  <img src="img/blackinfobarcollapse.png" class="infobarbutton"/>';
-		anssToggle = 1;
-	}
-	else
-	{
-		document.getElementById('anssTable').style.display='none';
-		document.getElementById('anssTableLink').innerHTML='Show Aggregate Network Statistic Summary  <img src="img/blackinfobarexpand.png" class="infobarbutton"/>';
-		anssToggle = 0;	
-	}
-}
-// -->
-</script>
-
-
-
-<br/>
+<br>
 
 <a name='TorServer'></a>
 
-<a href="javascript:toggleNSOS();" class="LegendLink" id='nsosTableLink'>Network Status Opinion Source</a>
-
-<table width='*' cellspacing='0' cellpadding='0' class='displayTable' id='nsosTable'>
+<table width='*' cellpadding='0' cellspacing='0' border='0' align='center'>
 <tr>
-<td class='HRN'>Network Status Opinion Source</td>
+
+<td>
+<table width='*' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+<table cellspacing='2' cellpadding='6' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Network Status Opinion Source</td>
 </tr>
 <tr>
 <td class='TRSB'>
 <?php
-
-echo "<b>Nickname:</b><br/><a class='plainbox' href='router_detail.php?FP=$Fingerprint'>" . $Name . "</a><br/>\n";
-echo "<b>Fingerprint:</b><br/>" . chunk_split(strtoupper($Fingerprint), 4, " ") . "<br/>\n";
-echo "<b>Country Code:</b><br/>"; if($CountryCode == null){echo "Unknown";}else{echo $CountryCode;} echo "<br/>\n";
-echo "<b>Contact:</b><br/>"; if($Contact == null){echo "None Given";} else{$Contact = htmlspecialchars($Contact, ENT_QUOTES); echo "$Contact";} echo "<br/>\n";
-echo "<b>Platform:</b><br/>" . $Platform . "<br/>\n";
-echo "<b>IP Address:</b><br/>" . $IP . "<br/>\n";
-echo "<b>Hostname:</b><br/>"; if ($IP == $Hostname){echo "Unavailable";} else{echo "$Hostname";} echo "<br/>\n";
-echo "<b>Onion Router Port:</b><br/>" . $ORPort . "<br/>\n";
-echo "<b>Directory Server Port:</b><br/>"; if($DirPort == 0){echo "None";} else {echo $DirPort;} echo "<br/>\n";
-echo "<b>Last Published Descriptor (GMT):</b><br/>" . $LastDescriptorPublished . "<br/><br/>\n";
-echo "<b>Onion Key:</b><pre>" . $OnionKey . "</pre>\n";
-echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre>\n";
-echo "<b>Descriptor Signature:</b><pre>" . $DescriptorSignature . "</pre>\n";
+	
+	echo "<br>\n";
+	echo "<b>Nickname:</b><br><a class='plain' href='router_detail.php?FP=$Fingerprint'>" . $Name . "</a><br>\n";
+	echo "<b>Fingerprint:</b><br>" . chunk_split(strtoupper($Fingerprint), 4, " ") . "<br>\n";
+	echo "<b>Country Code:</b><br>"; if($CountryCode == null){echo "Unknown";}else{echo $CountryCode;} echo "<br>\n";
+	echo "<b>Contact:</b><br>"; if($Contact == null){echo "None Given";} else{$Contact = htmlspecialchars($Contact, ENT_QUOTES); echo "$Contact";} echo "<br>\n";
+	echo "<b>Platform:</b><br>" . $Platform . "<br>\n";
+	echo "<b>IP Address:</b><br>" . $IP . "<br>\n";
+	echo "<b>Hostname:</b><br>"; if ($IP == $Hostname){echo "Unavailable";} else{echo "$Hostname";} echo "<br>\n";
+	echo "<b>Onion Router Port:</b><br>" . $ORPort . "<br>\n";
+	echo "<b>Directory Server Port:</b><br>"; if($DirPort == 0){echo "None";} else {echo $DirPort;} echo "<br>\n";
+	echo "<b>Last Published Descriptor (GMT):</b><br>" . $LastDescriptorPublished . "<br><br>\n";
+	echo "<b>Onion Key:</b><pre>" . $OnionKey . "</pre>\n";
+	echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre>\n";
+	echo "<b>Descriptor Signature:</b><pre>" . $DescriptorSignature . "</pre>\n";
 ?>
 </td>
 </tr>
 </table>
+</td>
+</tr>
+</table>
+</td>
 
-<script type='text/javascript'>
-<!--
-var nsosToggle = 1;
-toggleNSOS();
-function toggleNSOS()
-{
-	if (nsosToggle == 0)
-	{
-		document.getElementById('nsosTable').style.display='table';
-		document.getElementById('nsosTableLink').innerHTML='Hide Network Status Opinion Source  <img src="img/blackinfobarcollapse.png" class="infobarbutton"/>';
-		nsosToggle = 1;
-	}
-	else
-	{
-		document.getElementById('nsosTable').style.display='none';
-		document.getElementById('nsosTableLink').innerHTML='Show Network Status Opinion Source  <img src="img/blackinfobarexpand.png" class="infobarbutton"/>';
-		nsosToggle = 0;	
-	}
-}
-// -->
-</script>
-
-<br/>
-
-<a name='CustomDisplay' href="column_set.php" class="LegendLink">Custom / Advanced Display Options</a>
-
-<br/>
-
+<td>
+<a name='CustomDisplay'></a>
+<table width='100%' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+<table cellspacing='2' cellpadding='6' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Custom / Advanced Display Options</td>
+</tr>
+<tr>
+<td class='TRS'><br><a class='plain' href='column_set.php'><b>Column Display Preferences</b></a><br><br></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 <a name='CustomQuery'></a>
-
-<a href="javascript:toggleCAQO();" class="LegendLink" id='caqoTableLink'>Custom / Advanced Query Options</a>
-
-<table width='*' cellspacing='0' cellpadding='0' class='displayTable' id='caqoTable'>
+<table width='*' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='HRN'>Custom / Advanced Query Options</td>
+<td class='TDBLACK'>
+<table cellspacing='2' cellpadding='6' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Custom / Advanced Query Options</td>
 </tr>
 <tr>
-<td class='TRS'><br/>
+<td class='TRS'><br>
 <?php
-echo "<form action='$Self' method='post'>\n";
-echo "<b>Sort Router Listing By:</b><br/><span class='TRSM'>(Sorted-by column will be <i>italic</i>)<br/>(Column names can also be clicked to sort)</span><br/>\n";
-echo "<select name='SR' class='BOX'>\n";
-echo "<option value='Name'"; if ($SR == 'Name'){echo " selected='selected'";} echo ">Router Name</option>\n";
-echo "<option value='Fingerprint'"; if ($SR == 'Fingerprint'){echo " selected='selected'";} echo ">Fingerprint</option>\n";
-echo "<option value='CountryCode'"; if ($SR == 'CountryCode'){echo " selected='selected'";} echo ">Country Code</option>\n";
-echo "<option value='Bandwidth'"; if ($SR == 'Bandwidth'){echo " selected='selected'";} echo ">Bandwidth</option>\n";
-echo "<option value='Uptime'"; if ($SR == 'Uptime'){echo " selected='selected'";} echo ">Uptime</option>\n";
-echo "<option value='LastDescriptorPublished'"; if ($SR == 'LastDescriptorPublished'){echo " selected='selected'";} echo ">Last Descriptor Published</option>\n";
-echo "<option value='Hostname'"; if ($SR == 'Hostname'){echo " selected='selected'";} echo ">Hostname</option>\n";
-echo "<option value='IP'"; if ($SR == 'IP'){echo " selected='selected'";} echo ">IP Address</option>\n";
-echo "<option value='ORPort'"; if ($SR == 'ORPort'){echo " selected='selected'";} echo ">ORPort</option>\n";
-echo "<option value='DirPort'"; if ($SR == 'DirPort'){echo " selected='selected'";} echo ">DirPort</option>\n";
-echo "<option value='Platform'"; if ($SR == 'Platform'){echo " selected='selected'";} echo ">Platform</option>\n";
-echo "<option value='Contact'"; if ($SR == 'Contact'){echo " selected='selected'";} echo ">Contact</option>\n";
-echo "<option value='FAuthority'"; if ($SR == 'FAuthority'){echo " selected='selected'";} echo ">Authority</option>\n";
-echo "<option value='FBadDirectory'"; if ($SR == 'FBadDirectory'){echo " selected='selected'";} echo ">Bad Directory</option>\n";
-echo "<option value='FBadExit'"; if ($SR == 'FBadExit'){echo " selected='selected'";} echo ">Bad Exit</option>\n";
-echo "<option value='FExit'"; if ($SR == 'FExit'){echo " selected='selected'";} echo ">Exit</option>\n";
-echo "<option value='FFast'"; if ($SR == 'FFast'){echo " selected='selected'";} echo ">Fast</option>\n";
-echo "<option value='FGuard'"; if ($SR == 'FGuard'){echo " selected='selected'";} echo ">Guard</option>\n";
-echo "<option value='Hibernating'"; if ($SR == 'Hibernating'){echo " selected='selected'";} echo ">Hibernating</option>\n";
-echo "<option value='FNamed'"; if ($SR == 'FNamed'){echo " selected='selected'";} echo ">Named</option>\n";
-echo "<option value='FStable'"; if ($SR == 'FStable'){echo " selected='selected'";} echo ">Stable</option>\n";
-echo "<option value='FRunning'"; if ($SR == 'FRunning'){echo " selected='selected'";} echo ">Running</option>\n";
-echo "<option value='FValid'"; if ($SR == 'FValid'){echo " selected='selected'";} echo ">Valid</option>\n";
-echo "<option value='FV2Dir'"; if ($SR == 'FV2Dir'){echo " selected='selected'";} echo ">V2Dir</option>\n";
-echo "<option value='FHSDir'"; if ($SR == 'FHSDir'){echo " selected='selected'";} echo ">HSDir</option>\n";
-echo "</select><br/><br/>\n";
-echo "<b>Sort Order:</b><br/><span class='TRSM'>(Column names can also be clicked to toggle)</span><br/>\n";
-echo "<select name='SO' class='BOX'>\n";
-echo "<option value='Asc'"; if ($SO == 'Asc'){echo " selected='selected'";} echo ">Ascending</option>\n";
-echo "<option value='Desc'"; if ($SO == 'Desc'){echo " selected='selected'";} echo ">Descending</option>\n";
-echo "</select><br/><br/>\n";
-echo "<b>Require Flags:</b><br/><span class='TRSM'>(Columns flagged YES will have <font color='#00dd00'>green</font> background)<br/>(Columns flagged NO will have <font color='#ff0000'>red</font> background)</span><br/>\n";
-echo "<table width='*' cellspacing='0' cellpadding='0' border='0' align='left'>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Authority:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FAuthority' value='OFF'"; if($FAuthority == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FAuthority' value='1'"; if($FAuthority == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FAuthority' value='0'"; if($FAuthority == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;BadDirectory:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FBadDirectory' value='OFF'"; if($FBadDirectory == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FBadDirectory' value='1'"; if($FBadDirectory == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FBadDirectory' value='0'"; if($FBadDirectory == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;BadExit:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FBadExit' value='OFF'"; if($FBadExit == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FBadExit' value='1'"; if($FBadExit == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FBadExit' value='0'"; if($FBadExit == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Exit:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FExit' value='OFF'"; if($FExit == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FExit' value='1'"; if($FExit == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FExit' value='0'"; if($FExit == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Fast:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FFast' value='OFF'"; if($FFast == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FFast' value='1'"; if($FFast == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FFast' value='0'"; if($FFast == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Guard:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FGuard' value='OFF'"; if($FGuard == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FGuard' value='1'"; if($FGuard == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FGuard' value='0'"; if($FGuard == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Hibernating:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FHibernating' value='OFF'"; if($FHibernating == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FHibernating' value='1'"; if($FHibernating == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FHibernating' value='0'"; if($FHibernating == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Named:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FNamed' value='OFF'"; if($FNamed == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FNamed' value='1'"; if($FNamed == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FNamed' value='0'"; if($FNamed == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Stable:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FStable' value='OFF'"; if($FStable == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FStable' value='1'"; if($FStable == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FStable' value='0'"; if($FStable == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Running:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FRunning' value='OFF'"; if($FRunning == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FRunning' value='1'"; if($FRunning == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FRunning' value='0'"; if($FRunning == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;Valid:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FValid' value='OFF'"; if($FValid == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FValid' value='1'"; if($FValid == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FValid' value='0'"; if($FValid == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;V2Dir:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FV2Dir' value='OFF'"; if($FV2Dir == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FV2Dir' value='1'"; if($FV2Dir == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FV2Dir' value='0'"; if($FV2Dir == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS'>&nbsp;HSDir:</td>\n";
-echo "<td class='TRS'>\n";
-echo "<input type='radio' name='FHSDir' value='OFF'"; if($FHSDir == 'OFF'){echo " checked='checked' />Off&nbsp;\n";}else{echo " />Off&nbsp;\n";}
-echo "<input type='radio' name='FHSDir' value='1'"; if($FHSDir == '1'){echo " checked='checked' />Yes&nbsp;\n";}else{echo " />Yes&nbsp;\n";}
-echo "<input type='radio' name='FHSDir' value='0'"; if($FHSDir == '0'){echo " checked='checked' />No\n";}else{echo " />No\n";}
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class='TRS' colspan='4'><br/>\n";
-echo "<b>Advanced Search:</b><br/><span class='TRSM'>(Clear search box to disable)</span><br/>\n";
-echo "<select name='CSField' class='BOX'>\n";
-echo "<option value='Fingerprint'"; if ($CSField == 'Fingerprint'){echo " selected='selected'";} echo ">Fingerprint</option>\n";
-echo "<option value='Name'"; if ($CSField == 'Name'){echo " selected='selected'";} echo ">Router Name</option>\n";
-echo "<option value='CountryCode'"; if ($CSField == 'CountryCode'){echo " selected='selected'";} echo ">Country Code</option>\n";
-echo "<option value='Bandwidth'"; if ($CSField == 'Bandwidth'){echo " selected='selected'";} echo ">Bandwidth (KB/s)</option>\n";
-echo "<option value='Uptime'"; if ($CSField == 'Uptime'){echo " selected='selected'";} echo ">Uptime (Days)</option>\n";
-echo "<option value='LastDescriptorPublished'"; if ($CSField == 'LastDescriptorPublished'){echo " selected='selected'";} echo ">Last Descriptor Published</option>\n";
-echo "<option value='IP'"; if ($CSField == 'IP'){echo " selected='selected'";} echo ">IP Address</option>\n";
-echo "<option value='Hostname'"; if ($CSField == 'Hostname'){echo " selected='selected'";} echo ">Hostname</option>\n";
-echo "<option value='ORPort'"; if ($CSField == 'ORPort'){echo " selected='selected'";} echo ">Onion Router Port</option>\n";
-echo "<option value='DirPort'"; if ($CSField == 'DirPort'){echo " selected='selected'";} echo ">Directory Server Port</option>\n";
-echo "<option value='Platform'"; if ($CSField == 'Platform'){echo " selected='selected'";} echo ">Platform</option>\n";
-echo "<option value='Contact'"; if ($CSField == 'Contact'){echo " selected='selected'";} echo ">Contact</option>\n";
-echo "</select>\n";
-echo "<select name='CSMod' class='BOX'>\n";
-echo "<option value='Equals'"; if ($CSMod == 'Equals'){echo " selected='selected'";} echo ">Equals</option>\n";
-echo "<option value='Contains'"; if ($CSMod == 'Contains'){echo " selected='selected'";} echo ">Contains</option>\n";
-echo "<option value='LessThan'"; if ($CSMod == 'LessThan'){echo " selected='selected'";} echo ">Is Less Than</option>\n";
-echo "<option value='GreaterThan'"; if ($CSMod == 'GreaterThan'){echo " selected='selected'";} echo ">Is Greater Than</option>\n";
-echo "</select><br/>\n";
-echo "<input type='text' name='CSInput' class='BOX' maxlength='128' size='45' value='" . htmlspecialchars($CSInput, ENT_QUOTES) . "' /><br/><br/>\n";
-echo "&nbsp;&nbsp;<input type='submit' value='Apply Options' /><br/><br/>\n";
-echo "</td>\n";
-echo "</tr>\n";
-echo "</table>\n";
-echo "</form>\n";
+	echo "<form action='$Self' method='POST'>\n";
+	echo "<b>Sort Router Listing By:</b><br><span class='TRSM'>(Sorted-by column will be <i>italic</i>)<br>(Column names can also be clicked to sort)</span><br>\n";
+	echo "<select name='SR' class='BOX'>\n";
+	echo "<option value='Name'"; if ($SR == 'Name'){echo " selected";} echo ">Router Name</option>\n";
+	echo "<option value='Fingerprint'"; if ($SR == 'Fingerprint'){echo " selected";} echo ">Fingerprint</option>\n";
+	echo "<option value='CountryCode'"; if ($SR == 'CountryCode'){echo " selected";} echo ">Country Code</option>\n";
+	echo "<option value='Bandwidth'"; if ($SR == 'Bandwidth'){echo " selected";} echo ">Bandwidth</option>\n";
+	echo "<option value='Uptime'"; if ($SR == 'Uptime'){echo " selected";} echo ">Uptime</option>\n";
+	echo "<option value='LastDescriptorPublished'"; if ($SR == 'LastDescriptorPublished'){echo " selected";} echo ">Last Descriptor Published</option>\n";
+	echo "<option value='Hostname'"; if ($SR == 'Hostname'){echo " selected";} echo ">Hostname</option>\n";
+	echo "<option value='IP'"; if ($SR == 'IP'){echo " selected";} echo ">IP Address</option>\n";
+	echo "<option value='ORPort'"; if ($SR == 'ORPort'){echo " selected";} echo ">ORPort</option>\n";
+	echo "<option value='DirPort'"; if ($SR == 'DirPort'){echo " selected";} echo ">DirPort</option>\n";
+	echo "<option value='Platform'"; if ($SR == 'Platform'){echo " selected";} echo ">Platform</option>\n";
+	echo "<option value='Contact'"; if ($SR == 'Contact'){echo " selected";} echo ">Contact</option>\n";
+	echo "<option value='FAuthority'"; if ($SR == 'FAuthority'){echo " selected";} echo ">Authority</option>\n";
+	echo "<option value='FBadDirectory'"; if ($SR == 'FBadDirectory'){echo " selected";} echo ">Bad Directory</option>\n";
+	echo "<option value='FBadExit'"; if ($SR == 'FBadExit'){echo " selected";} echo ">Bad Exit</option>\n";
+	echo "<option value='FExit'"; if ($SR == 'FExit'){echo " selected";} echo ">Exit</option>\n";
+	echo "<option value='FFast'"; if ($SR == 'FFast'){echo " selected";} echo ">Fast</option>\n";
+	echo "<option value='FGuard'"; if ($SR == 'FGuard'){echo " selected";} echo ">Guard</option>\n";
+	echo "<option value='Hibernating'"; if ($SR == 'Hibernating'){echo " selected";} echo ">Hibernating</option>\n";
+	echo "<option value='FNamed'"; if ($SR == 'FNamed'){echo " selected";} echo ">Named</option>\n";
+	echo "<option value='FStable'"; if ($SR == 'FStable'){echo " selected";} echo ">Stable</option>\n";
+	echo "<option value='FRunning'"; if ($SR == 'FRunning'){echo " selected";} echo ">Running</option>\n";
+	echo "<option value='FValid'"; if ($SR == 'FValid'){echo " selected";} echo ">Valid</option>\n";
+	echo "<option value='FV2Dir'"; if ($SR == 'FV2Dir'){echo " selected";} echo ">V2Dir</option>\n";
+	echo "</select><br><br>\n";
+	echo "<b>Sort Order:</b><br><span class='TRSM'>(Column names can also be clicked to toggle)</span><br>\n";
+	echo "<select name='SO' class='BOX'>\n";
+	echo "<option value='Asc'"; if ($SO == 'Asc'){echo " selected";} echo ">Ascending</option>\n";
+	echo "<option value='Desc'"; if ($SO == 'Desc'){echo " selected";} echo ">Descending</option>\n";
+	echo "</select><br><br>\n";
+	echo "<b>Require Flags:</b><br><span class='TRSM'>(Columns flagged YES will have <font color='#00dd00'>green</font> background)<br>(Columns flagged NO will have <font color='#ff0000'>red</font> background)</span><br>\n";
+	echo "<table width='*' cellspacing='0' cellpadding='0' border='0' align='left'>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Authority:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FAuthority' value='OFF'"; if($FAuthority == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FAuthority' value='1'"; if($FAuthority == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FAuthority' value='0'"; if($FAuthority == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;BadDirectory:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FBadDirectory' value='OFF'"; if($FBadDirectory == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FBadDirectory' value='1'"; if($FBadDirectory == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FBadDirectory' value='0'"; if($FBadDirectory == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;BadExit:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FBadExit' value='OFF'"; if($FBadExit == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FBadExit' value='1'"; if($FBadExit == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FBadExit' value='0'"; if($FBadExit == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Exit:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FExit' value='OFF'"; if($FExit == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FExit' value='1'"; if($FExit == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FExit' value='0'"; if($FExit == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Fast:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FFast' value='OFF'"; if($FFast == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FFast' value='1'"; if($FFast == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FFast' value='0'"; if($FFast == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Guard:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FGuard' value='OFF'"; if($FGuard == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FGuard' value='1'"; if($FGuard == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FGuard' value='0'"; if($FGuard == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Hibernating:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FHibernating' value='OFF'"; if($FHibernating == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FHibernating' value='1'"; if($FHibernating == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FHibernating' value='0'"; if($FHibernating == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Named:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FNamed' value='OFF'"; if($FNamed == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FNamed' value='1'"; if($FNamed == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FNamed' value='0'"; if($FNamed == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Stable:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FStable' value='OFF'"; if($FStable == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FStable' value='1'"; if($FStable == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FStable' value='0'"; if($FStable == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Running:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FRunning' value='OFF'"; if($FRunning == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FRunning' value='1'"; if($FRunning == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FRunning' value='0'"; if($FRunning == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;Valid:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FValid' value='OFF'"; if($FValid == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FValid' value='1'"; if($FValid == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FValid' value='0'"; if($FValid == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS'>&nbsp;V2Dir:</td>\n";
+	echo "<td class='TRS'>\n";
+	echo "<input type='radio' name='FV2Dir' value='OFF'"; if($FV2Dir == 'OFF'){echo " checked>Off&nbsp;\n";}else{echo ">Off&nbsp;\n";}
+	echo "<input type='radio' name='FV2Dir' value='1'"; if($FV2Dir == '1'){echo " checked>Yes&nbsp;\n";}else{echo ">Yes&nbsp;\n";}
+	echo "<input type='radio' name='FV2Dir' value='0'"; if($FV2Dir == '0'){echo " checked>No\n";}else{echo ">No\n";}
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRS' colspan='4'><br>\n";
+	echo "<b>Advanced Search:</b><br><span class='TRSM'>(Clear search box to disable)</span><br>\n";
+	echo "<select name='CSField' class='BOX'>\n";
+	echo "<option value='Fingerprint'"; if ($CSField == 'Fingerprint'){echo " selected";} echo ">Fingerprint</option>\n";
+	echo "<option value='Name'"; if ($CSField == 'Name'){echo " selected";} echo ">Router Name</option>\n";
+	echo "<option value='CountryCode'"; if ($CSField == 'CountryCode'){echo " selected";} echo ">Country Code</option>\n";
+	echo "<option value='Bandwidth'"; if ($CSField == 'Bandwidth'){echo " selected";} echo ">Bandwidth (KB/s)</option>\n";
+	echo "<option value='Uptime'"; if ($CSField == 'Uptime'){echo " selected";} echo ">Uptime (Days)</option>\n";
+	echo "<option value='LastDescriptorPublished'"; if ($CSField == 'LastDescriptorPublished'){echo " selected";} echo ">Last Descriptor Published</option>\n";
+	echo "<option value='IP'"; if ($CSField == 'IP'){echo " selected";} echo ">IP Address</option>\n";
+	echo "<option value='Hostname'"; if ($CSField == 'Hostname'){echo " selected";} echo ">Hostname</option>\n";
+	echo "<option value='ORPort'"; if ($CSField == 'ORPort'){echo " selected";} echo ">Onion Router Port</option>\n";
+	echo "<option value='DirPort'"; if ($CSField == 'DirPort'){echo " selected";} echo ">Directory Server Port</option>\n";
+	echo "<option value='Platform'"; if ($CSField == 'Platform'){echo " selected";} echo ">Platform</option>\n";
+	echo "<option value='Contact'"; if ($CSField == 'Contact'){echo " selected";} echo ">Contact</option>\n";
+	echo "</select>\n";
+	echo "<select name='CSMod' class='BOX'>\n";
+	echo "<option value='Equals'"; if ($CSMod == 'Equals'){echo " selected";} echo ">Equals</option>\n";
+	echo "<option value='Contains'"; if ($CSMod == 'Contains'){echo " selected";} echo ">Contains</option>\n";
+	echo "<option value='LessThan'"; if ($CSMod == 'LessThan'){echo " selected";} echo ">Is Less Than</option>\n";
+	echo "<option value='GreaterThan'"; if ($CSMod == 'GreaterThan'){echo " selected";} echo ">Is Greater Than</option>\n";
+	echo "</select><br>\n";
+	echo "<input type='text' name='CSInput' class='BOX' maxlength='128' size='45' value='" . htmlspecialchars($CSInput, ENT_QUOTES) . "' /><br><br>\n";
+	echo "&nbsp;&nbsp;<input type='submit' value='Apply Options'><br><br>\n";
+	echo "</td>\n";
+	echo "</tr>\n";
+	echo "</table>\n";
+	echo "</form>\n";
 ?>
 </td>
 </tr>
 </table>
-
-<script type='text/javascript'>
-<!--
-var caqoToggle = 1;
-toggleCAQO();
-function toggleCAQO()
-{
-	if (caqoToggle == 0)
-	{
-		document.getElementById('caqoTable').style.display='table';
-		document.getElementById('caqoTableLink').innerHTML='Hide Custom / Advanced Query Options  <img src="img/blackinfobarcollapse.png" class="infobarbutton"/>';
-		caqoToggle = 1;
-	}
-	else
-	{
-		document.getElementById('caqoTable').style.display='none';
-		document.getElementById('caqoTableLink').innerHTML='Show Custom / Advanced Query Options  <img src="img/blackinfobarexpand.png" class="infobarbutton"/>';
-		caqoToggle = 0;	
-	}
-}
-// -->
-</script>
-
-<br/>
-
-<a name="Legend"></a>
-
-<a href="javascript:toggleLGND();" class="LegendLink" id='lgndTableLink'>Table Legend</a>
-
-
-<table width='300px' cellspacing='0' cellpadding='0' class='displayTable' id='lgndTable'>
-<tr><td class='HRN'>Legend:</td></tr>
-<tr class='r'><td style='padding: 1px;'>Router is okay</td></tr>
-<tr class='R'><td style='padding: 1px;'>Router is hibernating</td></tr>
-<tr class='d'><td style='padding: 1px;'><img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>Router is currently down</td></tr>
-<tr class='B'><td style='padding: 1px;'>Router is a bad exit node</td></tr>
+</td>
+</tr>
+</table>
+</td>
+</tr>
 </table>
 
-<script type='text/javascript'>
-<!--
-var lgndToggle = 1;
-toggleLGND();
-function toggleLGND()
-{
-	if (lgndToggle == 0)
-	{
-		document.getElementById('lgndTable').style.display='table';
-		document.getElementById('lgndTableLink').innerHTML='Hide Table Legend  <img src="img/blackinfobarcollapse.png" class="infobarbutton"/>';
-		lgndToggle = 1;
-	}
-	else
-	{
-		document.getElementById('lgndTable').style.display='none';
-		document.getElementById('lgndTableLink').innerHTML='Show Table Legend  <img src="img/blackinfobarexpand.png" class="infobarbutton"/>';
-		lgndToggle = 0;	
-	}
-}
-// -->
-</script>
-
-<br/>
+<br>
 
 <a name="AppServer"></a>
 
-<a href="javascript:toggleASD();" class="LegendLink" id='asdTableLink'>Application Server Details</a>
-
-<br/>
-
-<table cellspacing='0' cellpadding='0' class='displayTable' width='500px' id='asdTable'>
+<table width='50%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='HRN' colspan='2'>Application Server Details</td>
+<td class='TDBLACK'>
+	
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+<tr>
+<td class='THN' colspan='2'>Application Server Details</td>
 </tr>
 
 <?php
 
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Cache Last Updated (Local Server Time):</b></td>\n";
-echo "<td class='TRS'>$LastUpdate $LocalTimeZone</td>\n";
-echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Cache Last Updated (Local Server Time):</b></td>\n";
+	echo "<td class='TRS'>$LastUpdate $LocalTimeZone</td>\n";
+	echo "</tr>\n";
+	
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Last Update Cycle Processing Time (Seconds):</b></td>\n";
+	echo "<td class='TRS'>$LastUpdateElapsed</td>\n";
+	echo "</tr>\n";
 
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Last Update Cycle Processing Time (Seconds):</b></td>\n";
-echo "<td class='TRS'>$LastUpdateElapsed</td>\n";
-echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Current Cache Expire Time (Seconds):</b></td>\n";
+	echo "<td class='TRS'>$Cache_Expire_Time</td>\n";
+	echo "</tr>\n";
 
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Current Cache Expire Time (Seconds):</b></td>\n";
-echo "<td class='TRS'>$Cache_Expire_Time</td>\n";
-echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Number of Routers In Cache:</b></td>\n";
+	echo "<td class='TRS'>$RouterCount</td>\n";
+	echo "</tr>\n";
 
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Number of Routers In Cache:</b></td>\n";
-echo "<td class='TRS'>$RouterCount</td>\n";
-echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Number of Descriptors In Cache:</b></td>\n";
+	echo "<td class='TRS'>$DescriptorCount</td>\n";
+	echo "</tr>\n";
+	
+	// Get script end time
+	$TimeStop = microtime(true);
 
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Number of Descriptors In Cache:</b></td>\n";
-echo "<td class='TRS'>$DescriptorCount</td>\n";
-echo "</tr>\n";
-
-// Get script end time
-$TimeStop = microtime(true);
-
-echo "<tr>\n";
-echo "<td class='TRAR'><b>Approximate Page Generation Time (Seconds):</b></td>\n";
-echo "<td class='TRS'>" . (round(($TimeStop - $TimeStart),4)) . "</td>\n";
-echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRAR'><b>Approximate Page Generation Time (Seconds):</b></td>\n";
+	echo "<td class='TRS'>" . (round(($TimeStop - $TimeStart),4)) . "</td>\n";
+	echo "</tr>\n";
 
 ?>
 </table>
-
-<script type='text/javascript'>
-<!--
-var asdToggle = 1;
-toggleASD();
-function toggleASD()
-{
-	if (asdToggle == 0)
-	{
-		document.getElementById('asdTable').style.display='table';
-		document.getElementById('asdTableLink').innerHTML='Hide Application Server Details  <img src="img/blackinfobarcollapse.png" class="infobarbutton"/>';
-		asdToggle = 1;
-	}
-	else
-	{
-		document.getElementById('asdTable').style.display='none';
-		document.getElementById('asdTableLink').innerHTML='Show Application Server Details  <img src="img/blackinfobarexpand.png" class="infobarbutton"/>';
-		asdToggle = 0;	
-	}
-}
-// -->
-</script>
-
-</td></tr>
+</td>
+</tr>
 </table>
+
+<br>
 
 <table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='TRC'><?php echo $footerText; ?></td>
+<td class='TRC'><b><a class='plain' href='index.php'>Tor Network Status</a> v<?php echo "$TorNetworkStatus_Version"; ?><br><a class='plain' href='/CHANGES' target='_new'>View Complete Change History</a><br>Copyright (c) 2006-2007, Joseph B. Kowalski<br>Source code is available under <a class='plain' href='/LICENSE' target='_new'>BSD license</a> at <a class='plain' href='http://torstatus.kgprog.com/tns.tar.gz' target='_new'>torstatus.kgprog.com</a></b></td>
 </tr>
 </table>
-</div>
 </body>
 </html>
 

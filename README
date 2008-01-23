@@ -1,20 +1,14 @@
+
 Copyright (c) 2006-2007, Joseph B. Kowalski
 See LICENSE for licensing information
 
-WARNING: This file is slightly out of date.  For a more accurate install with
-versions 4.0 and onwards, please see the INSTALL file.
 
-PLEASE NOTE:  You must agree to the terms and conditions for GeoLite and for JPGraph to use this software to its fullest extent.  If you do not agree to the appropriate terms and licenses that are provided with this release, then you may not use those pieces of software.  Basically, this means that "as-is" this software cannot be used commercially.
+To setup the 'TorNetworkStatus' Web Application, follow these instructions:
 
-TorStatus - Tor Network Status
 
-You may download the most current version at:
-http://project.torstatus.kgprog.com/
-To setup the 'TorStatus' Web Application, follow these instructions:
-
-1) Create the MySQL database that the application will use. In the default 
-install directory, there is a MySQL script file that can be used to create 
-the initial database exactly as it needs to be. The default database name is 
+1) Create the MySQL database that the application will use. In the "sql" 
+subdirectory, there is a MySQL script file that can be used to create the 
+initial database exactly as it needs to be. The default database name is 
 "TorNetworkStatus", but you can change this to be any name you want as long as
 it's reflected correctly in the config file. For development, MySQL 5 on Linux
 was used.
@@ -65,8 +59,8 @@ need to be that version or higher. Finally, the Tor server will need to be a
 directory mirror. Only directory mirrors have descriptors for all routers on 
 hand, which this application requires.
 
-6) Copy "config_template.php" to "config.php".  Edit this file to be correct 
-for your environment and your preferences. Here is a run-down of the options:
+6) Edit the "config.php" file to be correct for your environment and your 
+preferences. Here is a run-down of the options:
 
 -- $LocalTorServerIP: The IP address that should be used to connect to the 
 local Tor server's control port. NOTE: This is not the server's public, or 
@@ -89,10 +83,6 @@ option in your Tor config file, you will need to enter the password
 
 -- $SQL_Catalog: Name of the database. Default is "TorNetworkStatus", but this
 may be anything you want. 
-
--- $UsingSquid: Set this if you are currently running a Squid web accelerating
-server.  You will need to set the other appropriate settings in config.php
-under the Squid category for this to work fully.
 
 -- $JPGraph_Path: Set this to the path where you extracted the JPGraph 
 libraries. Note that this is a web path. It can be absolute or relative. If 
@@ -206,24 +196,28 @@ things this way, the refresh interval you've specified in the config file
 will have no bearing. It will be up to you to setup your task scheduling 
 mechanism at the interval you want.
 
-8) Set up the cgi-bin directory to be an actual cgi-bin directory with your
-webserver.  TorStatus will point to /cgi-bin/perlgraph/plot.pl to create Perl
-based graphs.
-
-9) You're done! Load the site in a browser, and if all is well, it should 
+8) You're done! Load the site in a browser, and if all is well, it should 
 work. 
 
-10) Optionally, it may make you feel better to delete the "sql" subdirectory. 
+9) Optionally, it may make you feel better to delete the "sql" subdirectory. 
 Everything else is required.
 
 
+If you wish to contact me, you may do so using the following email address: 
+joe@nighteffect.us
+
+
 Best regards,
+
+
 Joe Kowalski
 
 
 NOTE: This application was developed using Linux, Apache 2, MySQL 5, and PHP 
 5. The application may work fine in other environments, but I have not tested
 this. 
+
+
 
 
 NOTE: This product includes GeoLite data created by MaxMind, available from 

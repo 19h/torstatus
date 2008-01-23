@@ -80,7 +80,7 @@ if ($DNSEL_Domain == null)
 
 <table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='TRC'><?php echo $footerText; ?></td>
+<td class='TRC'><b><a class='plain' href='index.php'>Tor Network Status</a> v<?php echo "$TorNetworkStatus_Version"; ?><br><a class='plain' href='/CHANGES' target='_new'>View Complete Change History</a><br>Copyright (c) 2006-2007, Joseph B. Kowalski<br>Source code is available under <a class='plain' href='/LICENSE' target='_new'>BSD license</a> at <a class='plain' href='http://torstatus.kgprog.com/tns.tar.gz' target='_new'>torstatus.kgprog.com</a></b></td>
 </tr>
 </table>
 </body>

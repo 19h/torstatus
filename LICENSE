@@ -1,12 +1,8 @@
-*IMPORTANT:*
-The data files for GeoLite and JPGraph are packaged with this distribution.
-These files come with their own licenses, and you must agree to those
-licenses to use those files.
-
-
 ==============================================================================
-The 'TorStatus' Web Application and DNSEL Server are distributed
-under this license unless otherwise stated within the individual file:
+The 'TorNetworkStatus' Web Application and DNSEL Server are distributed
+under this license:
+
+Copyright (c) 2006-2007, Joseph B. Kowalski
 
 Redistribution and use in source and binary forms, with or without 
 modification, are permitted provided that the following conditions are met:

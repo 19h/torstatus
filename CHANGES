@@ -1,233 +1,285 @@
-Portions Copyright (c) 2006-2007, Joseph B. Kowalski
-Portions Copyright (c) 2007 Kasimir Gabert
+
+Copyright (c) 2006-2007, Joseph B. Kowalski
 See LICENSE for licensing information
 
-TorStatus - Tor Network Status Changes
 
-===============================================================================
-Version 4 Changes {{{
-===============================================================================
---Version 4.0--
-* (ticket 56) The DNSEL database no longer is left in memory
-* (ticket 58) Read-write history now works through extra-info/digest
-* (ticket 8) A logo was created for TorStatus
-* (ticket 53) Graphs have been moved to a Perl based framework
-* (ticket 64) The interface was greatly modified-includes JS now, but works
-  equally well without it
-* (ticket 65) tns_update.pl now just needs to be run
-* (ticket 66) The HSDir flag was added
-* (ticket 68) tns_update will no longer break if there are multiple router
-  names that are the same as the nickname for the opinion source
-* (ticket 43 49) Up and down arrows were fixed to work with more browsers
-* (ticket 52) A search option is now at the top for ease of use
-* (ticket 47) Names of countries are now used intead of just the country code
+TorNetworkStatus Changes
 
-===============================================================================
-}}}
-===============================================================================
 
-===============================================================================
-Version 3 Changes {{{
-===============================================================================
---Version 3.6--
-* Will no longer crash with an error if the database is not populated
-* An interface has been added to the WHOIS data
-* The guard image is now a shield
-* (ticket 40) It will now work with modern versions of Tor
-* A Debian agent daemon has been created
+--Version 1.0--
 
---Version 3.5--
-* Complete interface redesign
-* Integrated operating system detection in by default
-* Bandwidth change to have a progress bar
-* Legend created
-* WHOIS query integrated for IP addresses
-* Background colors for different router status
-* Overall softer colors
-* Added notifications for Asc or Desc sort orders
+Initial release.
 
---Version 3.4.2--
 
-* (ticket 12) Fixed error with server IP detection for non-Squid servers
-* (ticket 12) Added config option for Squid server
+--Version 1.1--
 
---Version 3.4.1--                             (changes made by Kasimir Gabert)
+Addition of router detail page. 
 
-* Fixed bottom headers for new domain
-* Updated IP detection so it works through Squid
-* Added known mirrors bar
+Addition of real-time-calculated router uptime to router detail page.
 
-TODO:
-* Move the two changes into configuration items
-* Centralize the known mirrors and make it dynamic
+Addition of bandwidth graphs to router detail page. This functionality makes 
+use of the free 'JPGraph' PHP libraries.
 
---Version 3.4--                            (end of changes by Joseph Kowalski)
-Rename of the DNSBL server to DNSEL (DNS Exit List) server. This was by
-recommendation of Roger Dingledine of the Tor project. All filenames, variable
-names, etc, have been adjusted to reflect the rename.
+Addition of country code data to main and router detail pages. This 
+functionality makes use of the free 'GeoIP' PHP API and country database.
 
-Added basic hit counting functionality to the DNSEL server. Now, every five
-minutes, the DNSEL server will write a record to the "DNSEL_LOG" table with a
-timestamp, a TotalResponses counter, and counters of how many "NOERROR",
-"SERVFAIL", "NXDOMAIN", and "NOTIMP" responses it has sent out since it was
-started. This procedure runs in it's own thread, and so should not have any
-measurable effect on performance.
+Separation of database refresh operation from main page render operation. The 
+database refresh operation has been moved out of the web root into it's own 
+script, 'tns_update.php'. This greatly increases page render speed in 
+situations where the local-cache is expired.
 
-Improved the code that detects whether a user is accessing the site via a Tor
-hidden service. Previously, I checked to see if the user was coming from
-127.0.0.1. Now, I check to see if the "HOST" header provided by the client
-upon access exists in the "$Hidden_Service_URL" from the config file. If so,
-we tell them they are accessing the site as a hidden service. If not, we
-proceed on to the normal checks to see if they are accessing through the Tor
-network.
+Addition of 'tns_agent.php' script to handle background scheduled database 
+refresh operations.
 
-Modified the DNSEL server to return SERVFAIL instead of NXDOMAIN for requests
-which are outside of the zone the DNSEL server is authoritative for.
+Movement of the SQL database creation script out of the web root.
 
-Modified the DNSEL server to return NXDOMAIN instead of NOTIMP for requests
-other than type 'A' and 'ANY' when the request is in the authoritative zone.
+Addition of ability to click on a column header on main page to sort. Multiple 
+clicks alternate sort direction.
 
-Modified the documentation / default variables for the DNSEL server to use the
-"ip-port.torhosts.example.com" domain, rather than "tor.dnsel.example.com".
-This encourages users to setup servers that are consistent with the
-"torel-design.txt" document maintained by the Tor project.
+Addition of code to handle situations where a user attempts to load a page 
+while a background database refresh is in progress. In these situations, the 
+user will be notified of the database refresh being in progress, and the page 
+will automatically reload in 10 seconds, retaining any sort or search criteria
+that was initially passed by the user.
 
---Version 3.3--
-Complete rewrite of the DNSBL server in Java. This provided a performance
-increase on the order of approximately 5x over the old Perl version of the
-server. On a Pentium 2.4 GHz machine with 2 GBs of RAM, I was able to
-consistently obtain load test results of 200 queries/sec or more. These tests
-were conducted across the internet, and not on the local machine.
+Various performance improvements during main page render, some major. Code 
+cleanups. Implementation of CSS / HTML restructuring to greatly reduce the 
+size of page.
 
-Addition of the "dnsbl_server.php" page. This page provides usage instructions
-for the DNSBL server, and informs users of it's domain name. Note that the
-link to "dnsbl_server.php" from the main page will only display if you
-set the "$DNSBL_Domain" variable in the "config.php" file, so you can leave
-this variable set to 'null' if you are not running a DNSBL server, or do not
-wish to advertise it on the web site.
 
-Addition of the "$Hidden_Service_URL" variable to the "config.php" file. If
-you are also making the TorNetworkStatus site available through a Tor Hidden
-Service, you can enter the URL here, and a link will be added to the main page.
-If you are not making the site available as a Hidden Service, or do not wish
-to advertise it on the web site, you can leave this variable set to 'null'.
+--Version 1.2--
 
-Removal of the "tor_exit_status" page. This functionality is already provided
-by the main page (Tells a user if they are accessing the site through the Tor
-network or not), and the user already has two options to do custom exit
-queries if desired: The "tor_exit_query" page, and the DNSBL server. Both are
-linked to from the main page.
+Application-wide security fixes. 
 
-Modifications to the "tns_update.php" file and the database create script to
-accommodate the re-write of the DNSBL server.
+Multiple XSS vulnerabilities fixed.
 
---Version 3.2--
-Removed the first type of query that the DNSBL server could perform, which
-was to simply lookup if a provided IP address was an active Tor server or not.
-This was causing confusion amongst some users, and causing people to focus on
-whether or not an IP is a Tor server at all, which is exactly what we are 
-trying to get away from by providing an answer to the more granular question
-"Is this IP address a Tor server that is capable of exiting to my destination
-IP and port?", which is precisely what the second (and now only) query type
-does. This had the added benefit or making the server a little faster, since
-a bit of logic was removed. Please see the "README_DNSBL" file in the source
-distribution for full setup and usage information.
+Possible SQL injection vulnerability fixed.
 
---Version 3.1--
-Nearly a complete redesign of the DNSBL server added in the last version to
-improve performance. Major changes:
+Code cleanups, further performance enhancements. 
+                                                
 
-1) Previously, there was a Perl script which performed the actual listening
-for DNS requests, and when one was received, the script passed on the details
-of the request to a PHP script, which is where the main processing happened.
-The PHP script would then return a value to the Perl script indicating success
-or failure of the request. This had the horrible performance penalty of
-needing to invoke PHP every time a new request was received. Now, the entire
-process is handled within the same Perl script -- All of the PHP code to
-process the DNSBL request has been ported over to Perl -- So there is no
-calling an external executable again and again. Additionally, Perl runs faster
-than PHP with all other factors being equal.
+--Version 1.3--
+                       
+Major changes to the way the application gets it's network status information 
+and router descriptors. 
 
-2) With the old PHP script, since it had to be invoked anew from within the
-Perl script with each request, this also meant that a new database connection
-had to be setup with each request. This also caused a performance penalty.
-Now, since everything is handled from within a single script, a single
-database connection can be maintained the entire time the script is running.
+Previously, for network status information, the application would cycle 
+through the local Tor server's "cached-status" documents of Authority servers 
+you explicitly allowed in the application config file, using a different one 
+for each local-cache refresh. This had two problems. First, it meant that you 
+would get a different number of routers listed, and oftentimes different 
+properties listed for a specific router depending on which Authority server's 
+cached-status doc had been used. Second, and this is the bigger of the two 
+problems, is that this is not the way the Tor network works. The Tor network 
+leaves it up to each client/server to calculate what it believes to be the 
+correct view of the network based on the multiple sources of network status 
+information it has available. This is important for security reasons, and 
+plays a significant role in making it harder for someone to play some bad 
+tricks on network users. So, now network status information is obtained by 
+asking the local Tor server's control port to list all routers it has an 
+opinion about. This ensures the data being presented has been through the 
+proper "voting" process done by the Tor software, and is what the local Tor 
+server believes to be correct.
 
-3) Previously, when the DNSBL script did it's database queries to pull the 
-IP addresses and exit policies of Tor routers, it did it the same way that the
-main application does, which means joining two large tables together on the
-router fingerprint key. While this works fine for the main application and
-it's very large queries, it did not suit the performance needs of a DNS
-server. Now, I have added two new in-memory database tables specifically for
-the DNSBL functionality. These two tables are populated during the update
-cycle, and contain only the necessary information (prejoined) required by the
-DNSBL server. The fact that they are in memory and are a lot smaller than the
-other tables should help the DNSBL server to return queries much quicker.
-These two tables act just like the set of NetworkStatus and Descriptor tables
-in that only one is ever active at a given time. The update cycle will always
-be updating the non-active table in the background while requests can continue
-being served by the active table. When the update is done successfully, a flag
-in the Status table is toggled to tell the application to begin using the
-other table as the active one, and the process repeats -- No downtime for
-updates.
+Previously, for individual router descriptors, the application would do one 
+of two things. One, the default, was to directly ask whichever Authority 
+server was used for the last local-cache refresh. This was bad, as it 
+basically meant that for the duration of the current cache life, every 
+visitor going to the "router_detail" page was causing a request for a 
+descriptor to be sent to that Authority server. Not what we want for the 
+Authority servers, I'm sure. Two, a user could specify that they always wanted
+to use a certain Tor server for descriptor requests. This fixed the issue with
+hammering the Authority servers, but only if people used the option. Now, 
+router descriptors are also obtained through the local Tor server's control 
+port. Also, router descriptors are no longer written to files on the hard 
+drive. This was unnecessary and slow.
 
-Fixed a bug that would cause the DNSBL server to only return "NXDOMAIN"
-responses if the database connection was lost until the script was restarted,
-even if the database connection came back up later. Now, the server will
-return "SERVFAIL" responses while the database server is down, but it will
-resume correct operation once the database server comes back up.
+These changes allowed a lot of clean-up to be done in the config file. There 
+are a lot less variables in there now.
 
-Various other minor bug fixes, mainly relating to the "Tor Exit Status" and 
-"Tor Exit Query" functionality that was added in the last release.
+ 
+--Version 1.4--
 
---Version 3.0--
-Complete redesign of the way that the application determines if you are 
-accessing the site through the Tor network or not, or if the provided IP 
-belongs to a Tor server capable of exiting to the specified IP and port (See 
-section on "Tor Exit Query" page, below). Previously, we would simply check to
-see if the IP address that the user was coming from was a Tor server with the
-'Exit' flag set to true, and tell them they were coming through the Tor
-network if so. Now, we check if the user is coming from the IP address of a
-Tor server, regardless of it's 'Exit' flag status. If so, we pull the Exit 
-Policy for the matching Tor server(s), look at what IP and Port the client is
-accessing us on, and parse the exit policy to determine if the Tor server(s)
-would allow or deny such an access. We then give the user information on each
-Tor server that matches their exit IP, letting them know if it would allow
-access to us or not considering it's exit policy. Finally, we also tell the
-user if it appears that they are coming to the site via a Tor Hidden Service
-or from the local machine directly. This is determined by checking if the user
-is coming to the site from the '127.0.0.1' IP address. Note that the
-application now handles situations where there are multiple Tor servers with
-IP's that match where the user is coming from (Or the IP provided, in the case
-of the "Tor Exit Query" page, see below). In these cases, it will cycle through
-each applicable Tor server to provide Exit Policy match information.
+Addition of an option to export the IP Addresses of all current Tor routers to
+a CSV (Comma Separated Value) file. This may be of some use for people looking
+to get a quick, current list of Tor router IP's, whether to formulate block 
+lists, or to assist with other Tor network status apps / pages.
 
-Addition of "Tor Exit Status" page. This page provides the same information
-about whether a user is accessing the site through the Tor network as is
-available on the main page, but without all the other information. This may be
-easier for someone who just wants a simple answer for "Is my Tor installation
-working?", and should serve as a good entry point for such situations. This
-page also contains a link to the main Tor documentation page.
+Addition of "Bandwidth" and "Uptime" columns to main page. The bandwidth 
+reading is obtained from the "Bandwidth Observed" parameter of the router 
+descriptor and is displayed in KB/s. The uptime reading is obtained from the 
+"Uptime" parameter of the router descriptor and is displayed in days. Both of 
+these columns are sortable.
 
-Addition of "Tor Exit Query" page. This page allows a user to enter in an IP
-to check if it matches that of one or more Tor servers, and, if it does,
-checks to see if those Tor servers are capable of exiting to the destination
-IP address and port that the user provides.
+Back end changes to make the addition of the "Bandwidth" and "Uptime" columns 
+to the main page, described above, possible. These changes consisted of making
+the scheduled background update process request and parse the descriptors of 
+every router that the local Tor server has an opinion about, as identified by
+it's network status request response, so that the bandwidth and uptime 
+information (and everything else in the descriptor) could be inserted into the
+database at this stage to be available for use on the main page. Previously, 
+descriptors were only requested and parsed on an as-needed basis when a user 
+loaded the "router_detail.php" page, and the data parsed from them was not 
+stored. Now, it's all inserted into the database during the main update 
+process which opens up the possibilities for all kinds on new stuff. The 
+downside to doing it this way is that the main update process CAN take 
+considerably longer (especially when the local Tor server is very busy), which
+led to the second major back end change: Using two router (local-cache) tables
+instead of one. Basically, only one table is marked as active at any given 
+time, and all page loads use the active table. When the update process runs, 
+it runs on the non-active table, and marks it as the active table upon 
+successful completion. This prevents users from seeing the "Database refresh in
+progress" error message, as they will instead just be seeing the old data 
+until the new data is ready. I was quite serious about not causing a 
+performance hit to page load times due to the new functionality, and this was
+the solution implemented to avoid that.
+          
 
-Addition of a DNSBL server. This allows a standard, non-web interface method
-for clients to query whether or not an IP address belongs to an active Tor
-server, and whether or not an IP address belongs to an active Tor server that
-would allow exiting to a specified destination IP address and port. Please
-see the "README_DNSBL" file in the source distribution for full setup and
-usage information.
-===============================================================================
-}}}
-===============================================================================
+--Version 1.5--
 
-===============================================================================
-Version 2 Changes {{{
-===============================================================================
+Major performance enhancements to both the background update process and the 
+main page load process.
+
+First, for the update process, we are now obtaining the full network status 
+opinion document and the full recent descriptor document from the control port
+of the Tor server. Previously, we were obtaining the full network status 
+opinion document, and then, as we parsed out this file, we requested server 
+descriptors of the Tor server's control port individually. This tended to 
+sometimes cause somewhat of a load on the Tor server and cause the descriptors
+to be fed back very slowly, sometimes taking up to a half hour for a full 
+refresh. Now, since we grab both full documents all at once, it only takes the
+Tor server a few seconds to provide them. Second, we are now writing the 
+parsed network status information and the parsed descriptor information into 
+two separate database tables (NetworkStatus & Descriptor). This makes for 
+cleaner design and tables with less columns. And, in keeping with the spirit 
+of the updates made in Version 1.4, there is two of each of these tables 
+(NetworkStatus & Descriptor) so that one set can be updated while the other 
+set can continue to be used by folks loading the page and running queries, 
+etc., until the new set is ready.
+
+Performance improvements to the load time of the main page were obtained by 
+switching to the MySQL MyISAM storage engine, instead of the InnoDB engine we 
+had been using previously. MyISAM is significantly faster than InnoDB, and, 
+since we currently don't make use of transactions, there is no reason not to 
+use it. Also, indexes were added to the NetworkStatus and Descriptor tables 
+on the "Fingerprint" column, since this is what is used for the join of these
+two tables during page load. This further increased the query speed.
+
+Some other small performance improvements were implemented, especially on the
+"router_detail.php" page.
+
+The update process now has more robust error handling.
+
+Addition of "Count" column to main page.
+
+Addition of green check marks and red x's to indicate whether a flag is "Yes" 
+or "No". Previously, it would just print "Yes" or "No".
+
+Modifications of font selections and background images to hopefully achieve 
+two things: Fit more in a smaller space, and make the page easier to read.
+
+
+--Version 1.6--     
+
+The application now performs reverse-DNS lookups during the update process and
+stores this information in the database. This enables a user to choose whether
+they would like addresses displayed as IP or Hostname. Of course, whichever 
+display they choose, it is sortable.
+
+Added Hostname information to the router detail page as well.
+
+Added "Last Update Elapsed Time" field to main page. Good way to see if your 
+system is experiencing problems during the background updates.
+
+Added "Current Descriptor Signature" field to the main page for the Network 
+Status Source router information section. 
+
+Minor CSS changes to improve layout and formatting in certain situations.  
+
+
+--Version 1.7-- 
+
+Changes to the way variable handling is done. I moved all state maintaining 
+variables into PHP session, such as all of the "Flags" variables and the 
+Address Display Mode, SortRequest, and SortOrder variables. Also, wherever 
+possible because of addition to session, variables were removed from the URL's
+in the anchor tags of the generated page. The only ones that were left in 
+URL's were variables that need to be manipulated by clicking on a link, namely
+the SortRequest and SortOrder variables. This makes the URL's in the anchor 
+tags of the generated page much shorter and cleaner, since a whole lot less is
+being passed around via GET. This in turn reduces the generated page size, 
+sometimes considerably depending on the custom query options in effect. 
+Another nice benefit to doing things this way is that if a user has custom 
+options set, completely browses away from the site, and later comes back 
+within their same browser session, all of their options will be configured as
+they were when they left.
+
+Also, variables that needed to remain in URL's have shorter names to further 
+reduce the amount of data being passed around via GET, and hence the length 
+of the URL's in the generated page.
+
+Further cleanups to HTML formatting and CSS on both the main page and the 
+router detail page.
+
+Addition of timer to bottom of main page to indicate how long page generation
+took on the server.
+
+ 
+--Version 1.8--  
+
+Changes / cleanup to CSS. All CSS information is now defined in one external 
+style sheet which resides in the "web/css" directory, and the different parts 
+of the code that need the style sheet simply reference it rather than defining
+everything at the top of every HTML page output to the browser.
+
+Addition of row highlighting for Mozilla Firefox / Opera. This makes it easier
+to visually track which row you are currently moused over. This feature does 
+not currently work in Internet Explorer since that would require JavaScript, 
+and I'm trying to keep this app JavaScript free for those who browse with it 
+disabled.
+
+When sorting by IP Addresses, they are now sorted naturally, rather than as 
+strings. This should make the IP Address search quite a bit more meaningful. 
+This change also applies to the CSV (Comma Separated Value) file list of IP's.
+
+
+--Version 1.9--  
+
+Added proper escaping of problem characters to all strings that get populated 
+from data parsed from router descriptors and network status documents before 
+database inserts are performed. This should prevent the update process from 
+dying when these characters are encountered, which would sometimes happen. 
+
+Now using the standard "gethostbyaddr" PHP function to do hostname lookups. 
+Previously, I was doing some custom parsing on the output of the Unix "host" 
+command, as I thought it would be faster, but, after comparing the two, I see 
+no speed degradation with using "gethostbyaddr". The advantage of using 
+"gethostbyaddr" over "host" is that we are not using a platform-specific 
+command which limits where the application can run without modification. 
+
+Addition of Advanced Search functionality, which lets you perform free-text 
+searches on the following data: Fingerprint, Router Name, Country Code, 
+Bandwidth, Uptime, Last Descriptor Published, IP Address, Hostname, Onion 
+Router Port, Directory Server Port, Platform, & Contact. You can apply the 
+following modifiers when searching the above data: Equals, Contains, Is Less 
+Than, or Is Greater Than. The Advanced Search works in conjunction with the 
+other Custom Query options (Sort By, Sort Order, Address Display Mode, and 
+Require Flags), allowing a great deal of flexibility to customize the result 
+set as desired. 
+
+Addition of indexes where necessary in the database to better facilitate 
+speedy free-text searches.
+
+Addition of "Hostname" field to "Tor Server Providing Network Status Opinion" 
+section.
+
+Addition of feature to tell user if they are accessing the page through the 
+Tor network or not, color coded.
+
+Additional escaping of potentially troublesome HTML characters before 
+displaying on page for "Contact" field on main page and router detail page.
+
+ 
 --Version 2.0--
 
 Small performance enhancement to background update process. When clearing old 
@@ -533,289 +585,187 @@ Removed "IRIX" as a listed operating system on the "Platform Graph", as it
 seems there have been no Tor servers running on this OS for some time now.
 
 Other minor fixes/enhancements.
-===============================================================================
-}}}
-===============================================================================
+
+
+--Version 3.0--
+Complete redesign of the way that the application determines if you are 
+accessing the site through the Tor network or not, or if the provided IP 
+belongs to a Tor server capable of exiting to the specified IP and port (See 
+section on "Tor Exit Query" page, below). Previously, we would simply check to
+see if the IP address that the user was coming from was a Tor server with the
+'Exit' flag set to true, and tell them they were coming through the Tor
+network if so. Now, we check if the user is coming from the IP address of a
+Tor server, regardless of it's 'Exit' flag status. If so, we pull the Exit 
+Policy for the matching Tor server(s), look at what IP and Port the client is
+accessing us on, and parse the exit policy to determine if the Tor server(s)
+would allow or deny such an access. We then give the user information on each
+Tor server that matches their exit IP, letting them know if it would allow
+access to us or not considering it's exit policy. Finally, we also tell the
+user if it appears that they are coming to the site via a Tor Hidden Service
+or from the local machine directly. This is determined by checking if the user
+is coming to the site from the '127.0.0.1' IP address. Note that the
+application now handles situations where there are multiple Tor servers with
+IP's that match where the user is coming from (Or the IP provided, in the case
+of the "Tor Exit Query" page, see below). In these cases, it will cycle through
+each applicable Tor server to provide Exit Policy match information.
+
+Addition of "Tor Exit Status" page. This page provides the same information
+about whether a user is accessing the site through the Tor network as is
+available on the main page, but without all the other information. This may be
+easier for someone who just wants a simple answer for "Is my Tor installation
+working?", and should serve as a good entry point for such situations. This
+page also contains a link to the main Tor documentation page.
+
+Addition of "Tor Exit Query" page. This page allows a user to enter in an IP
+to check if it matches that of one or more Tor servers, and, if it does,
+checks to see if those Tor servers are capable of exiting to the destination
+IP address and port that the user provides.
+
+Addition of a DNSBL server. This allows a standard, non-web interface method
+for clients to query whether or not an IP address belongs to an active Tor
+server, and whether or not an IP address belongs to an active Tor server that
+would allow exiting to a specified destination IP address and port. Please
+see the "README_DNSBL" file in the source distribution for full setup and
+usage information.
+
+
+--Version 3.1--
+Nearly a complete redesign of the DNSBL server added in the last version to
+improve performance. Major changes:
+
+1) Previously, there was a Perl script which performed the actual listening
+for DNS requests, and when one was received, the script passed on the details
+of the request to a PHP script, which is where the main processing happened.
+The PHP script would then return a value to the Perl script indicating success
+or failure of the request. This had the horrible performance penalty of
+needing to invoke PHP every time a new request was received. Now, the entire
+process is handled within the same Perl script -- All of the PHP code to
+process the DNSBL request has been ported over to Perl -- So there is no
+calling an external executable again and again. Additionally, Perl runs faster
+than PHP with all other factors being equal.
+
+2) With the old PHP script, since it had to be invoked anew from within the
+Perl script with each request, this also meant that a new database connection
+had to be setup with each request. This also caused a performance penalty.
+Now, since everything is handled from within a single script, a single
+database connection can be maintained the entire time the script is running.
+
+3) Previously, when the DNSBL script did it's database queries to pull the 
+IP addresses and exit policies of Tor routers, it did it the same way that the
+main application does, which means joining two large tables together on the
+router fingerprint key. While this works fine for the main application and
+it's very large queries, it did not suit the performance needs of a DNS
+server. Now, I have added two new in-memory database tables specifically for
+the DNSBL functionality. These two tables are populated during the update
+cycle, and contain only the necessary information (prejoined) required by the
+DNSBL server. The fact that they are in memory and are a lot smaller than the
+other tables should help the DNSBL server to return queries much quicker.
+These two tables act just like the set of NetworkStatus and Descriptor tables
+in that only one is ever active at a given time. The update cycle will always
+be updating the non-active table in the background while requests can continue
+being served by the active table. When the update is done successfully, a flag
+in the Status table is toggled to tell the application to begin using the
+other table as the active one, and the process repeats -- No downtime for
+updates.
+
+Fixed a bug that would cause the DNSBL server to only return "NXDOMAIN"
+responses if the database connection was lost until the script was restarted,
+even if the database connection came back up later. Now, the server will
+return "SERVFAIL" responses while the database server is down, but it will
+resume correct operation once the database server comes back up.
+
+Various other minor bug fixes, mainly relating to the "Tor Exit Status" and 
+"Tor Exit Query" functionality that was added in the last release.
+
+
+--Version 3.2--
+Removed the first type of query that the DNSBL server could perform, which
+was to simply lookup if a provided IP address was an active Tor server or not.
+This was causing confusion amongst some users, and causing people to focus on
+whether or not an IP is a Tor server at all, which is exactly what we are 
+trying to get away from by providing an answer to the more granular question
+"Is this IP address a Tor server that is capable of exiting to my destination
+IP and port?", which is precisely what the second (and now only) query type
+does. This had the added benefit or making the server a little faster, since
+a bit of logic was removed. Please see the "README_DNSBL" file in the source
+distribution for full setup and usage information.
+
+
+--Version 3.3--
+Complete rewrite of the DNSBL server in Java. This provided a performance
+increase on the order of approximately 5x over the old Perl version of the
+server. On a Pentium 2.4 GHz machine with 2 GBs of RAM, I was able to
+consistently obtain load test results of 200 queries/sec or more. These tests
+were conducted across the internet, and not on the local machine.
+
+Addition of the "dnsbl_server.php" page. This page provides usage instructions
+for the DNSBL server, and informs users of it's domain name. Note that the
+link to "dnsbl_server.php" from the main page will only display if you
+set the "$DNSBL_Domain" variable in the "config.php" file, so you can leave
+this variable set to 'null' if you are not running a DNSBL server, or do not
+wish to advertise it on the web site.
+
+Addition of the "$Hidden_Service_URL" variable to the "config.php" file. If
+you are also making the TorNetworkStatus site available through a Tor Hidden
+Service, you can enter the URL here, and a link will be added to the main page.
+If you are not making the site available as a Hidden Service, or do not wish
+to advertise it on the web site, you can leave this variable set to 'null'.
+
+Removal of the "tor_exit_status" page. This functionality is already provided
+by the main page (Tells a user if they are accessing the site through the Tor
+network or not), and the user already has two options to do custom exit
+queries if desired: The "tor_exit_query" page, and the DNSBL server. Both are
+linked to from the main page.
+
+Modifications to the "tns_update.php" file and the database create script to
+accommodate the re-write of the DNSBL server.
+
+
+--Version 3.4--
+Rename of the DNSBL server to DNSEL (DNS Exit List) server. This was by
+recommendation of Roger Dingledine of the Tor project. All filenames, variable
+names, etc, have been adjusted to reflect the rename.
+
+Added basic hit counting functionality to the DNSEL server. Now, every five
+minutes, the DNSEL server will write a record to the "DNSEL_LOG" table with a
+timestamp, a TotalResponses counter, and counters of how many "NOERROR",
+"SERVFAIL", "NXDOMAIN", and "NOTIMP" responses it has sent out since it was
+started. This procedure runs in it's own thread, and so should not have any
+measurable effect on performance.
+
+Improved the code that detects whether a user is accessing the site via a Tor
+hidden service. Previously, I checked to see if the user was coming from
+127.0.0.1. Now, I check to see if the "HOST" header provided by the client
+upon access exists in the "$Hidden_Service_URL" from the config file. If so,
+we tell them they are accessing the site as a hidden service. If not, we
+proceed on to the normal checks to see if they are accessing through the Tor
+network.
+
+Modified the DNSEL server to return SERVFAIL instead of NXDOMAIN for requests
+which are outside of the zone the DNSEL server is authoritative for.
+
+Modified the DNSEL server to return NXDOMAIN instead of NOTIMP for requests
+other than type 'A' and 'ANY' when the request is in the authoritative zone.
+
+Modified the documentation / default variables for the DNSEL server to use the
+"ip-port.torhosts.example.com" domain, rather than "tor.dnsel.example.com".
+This encourages users to setup servers that are consistent with the
+"torel-design.txt" document maintained by the Tor project.
 
 ===============================================================================
-Version 1 Changes {{{
+--Version 3.4.1--                             (changes made by Kasimir Gabert)
+
+* Fixed bottom headers for new domain
+* Updated IP detection so it works through Squid
+* Added known mirrors bar
+
+TODO:
+* Move the two changes into configuration items
+* Centralize the known mirrors and make it dynamic
 ===============================================================================
---Version 1.0--
-
-Initial release.
 
 
---Version 1.1--
 
-Addition of router detail page. 
-
-Addition of real-time-calculated router uptime to router detail page.
-
-Addition of bandwidth graphs to router detail page. This functionality makes 
-use of the free 'JPGraph' PHP libraries.
-
-Addition of country code data to main and router detail pages. This 
-functionality makes use of the free 'GeoIP' PHP API and country database.
-
-Separation of database refresh operation from main page render operation. The 
-database refresh operation has been moved out of the web root into it's own 
-script, 'tns_update.php'. This greatly increases page render speed in 
-situations where the local-cache is expired.
-
-Addition of 'tns_agent.php' script to handle background scheduled database 
-refresh operations.
-
-Movement of the SQL database creation script out of the web root.
-
-Addition of ability to click on a column header on main page to sort. Multiple 
-clicks alternate sort direction.
-
-Addition of code to handle situations where a user attempts to load a page 
-while a background database refresh is in progress. In these situations, the 
-user will be notified of the database refresh being in progress, and the page 
-will automatically reload in 10 seconds, retaining any sort or search criteria
-that was initially passed by the user.
-
-Various performance improvements during main page render, some major. Code 
-cleanups. Implementation of CSS / HTML restructuring to greatly reduce the 
-size of page.
-
-
---Version 1.2--
-
-Application-wide security fixes. 
-
-Multiple XSS vulnerabilities fixed.
-
-Possible SQL injection vulnerability fixed.
-
-Code cleanups, further performance enhancements. 
-                                                
-
---Version 1.3--
-                       
-Major changes to the way the application gets it's network status information 
-and router descriptors. 
-
-Previously, for network status information, the application would cycle 
-through the local Tor server's "cached-status" documents of Authority servers 
-you explicitly allowed in the application config file, using a different one 
-for each local-cache refresh. This had two problems. First, it meant that you 
-would get a different number of routers listed, and oftentimes different 
-properties listed for a specific router depending on which Authority server's 
-cached-status doc had been used. Second, and this is the bigger of the two 
-problems, is that this is not the way the Tor network works. The Tor network 
-leaves it up to each client/server to calculate what it believes to be the 
-correct view of the network based on the multiple sources of network status 
-information it has available. This is important for security reasons, and 
-plays a significant role in making it harder for someone to play some bad 
-tricks on network users. So, now network status information is obtained by 
-asking the local Tor server's control port to list all routers it has an 
-opinion about. This ensures the data being presented has been through the 
-proper "voting" process done by the Tor software, and is what the local Tor 
-server believes to be correct.
-
-Previously, for individual router descriptors, the application would do one 
-of two things. One, the default, was to directly ask whichever Authority 
-server was used for the last local-cache refresh. This was bad, as it 
-basically meant that for the duration of the current cache life, every 
-visitor going to the "router_detail" page was causing a request for a 
-descriptor to be sent to that Authority server. Not what we want for the 
-Authority servers, I'm sure. Two, a user could specify that they always wanted
-to use a certain Tor server for descriptor requests. This fixed the issue with
-hammering the Authority servers, but only if people used the option. Now, 
-router descriptors are also obtained through the local Tor server's control 
-port. Also, router descriptors are no longer written to files on the hard 
-drive. This was unnecessary and slow.
-
-These changes allowed a lot of clean-up to be done in the config file. There 
-are a lot less variables in there now.
-
- 
---Version 1.4--
-
-Addition of an option to export the IP Addresses of all current Tor routers to
-a CSV (Comma Separated Value) file. This may be of some use for people looking
-to get a quick, current list of Tor router IP's, whether to formulate block 
-lists, or to assist with other Tor network status apps / pages.
-
-Addition of "Bandwidth" and "Uptime" columns to main page. The bandwidth 
-reading is obtained from the "Bandwidth Observed" parameter of the router 
-descriptor and is displayed in KB/s. The uptime reading is obtained from the 
-"Uptime" parameter of the router descriptor and is displayed in days. Both of 
-these columns are sortable.
-
-Back end changes to make the addition of the "Bandwidth" and "Uptime" columns 
-to the main page, described above, possible. These changes consisted of making
-the scheduled background update process request and parse the descriptors of 
-every router that the local Tor server has an opinion about, as identified by
-it's network status request response, so that the bandwidth and uptime 
-information (and everything else in the descriptor) could be inserted into the
-database at this stage to be available for use on the main page. Previously, 
-descriptors were only requested and parsed on an as-needed basis when a user 
-loaded the "router_detail.php" page, and the data parsed from them was not 
-stored. Now, it's all inserted into the database during the main update 
-process which opens up the possibilities for all kinds on new stuff. The 
-downside to doing it this way is that the main update process CAN take 
-considerably longer (especially when the local Tor server is very busy), which
-led to the second major back end change: Using two router (local-cache) tables
-instead of one. Basically, only one table is marked as active at any given 
-time, and all page loads use the active table. When the update process runs, 
-it runs on the non-active table, and marks it as the active table upon 
-successful completion. This prevents users from seeing the "Database refresh in
-progress" error message, as they will instead just be seeing the old data 
-until the new data is ready. I was quite serious about not causing a 
-performance hit to page load times due to the new functionality, and this was
-the solution implemented to avoid that.
-          
-
---Version 1.5--
-
-Major performance enhancements to both the background update process and the 
-main page load process.
-
-First, for the update process, we are now obtaining the full network status 
-opinion document and the full recent descriptor document from the control port
-of the Tor server. Previously, we were obtaining the full network status 
-opinion document, and then, as we parsed out this file, we requested server 
-descriptors of the Tor server's control port individually. This tended to 
-sometimes cause somewhat of a load on the Tor server and cause the descriptors
-to be fed back very slowly, sometimes taking up to a half hour for a full 
-refresh. Now, since we grab both full documents all at once, it only takes the
-Tor server a few seconds to provide them. Second, we are now writing the 
-parsed network status information and the parsed descriptor information into 
-two separate database tables (NetworkStatus & Descriptor). This makes for 
-cleaner design and tables with less columns. And, in keeping with the spirit 
-of the updates made in Version 1.4, there is two of each of these tables 
-(NetworkStatus & Descriptor) so that one set can be updated while the other 
-set can continue to be used by folks loading the page and running queries, 
-etc., until the new set is ready.
-
-Performance improvements to the load time of the main page were obtained by 
-switching to the MySQL MyISAM storage engine, instead of the InnoDB engine we 
-had been using previously. MyISAM is significantly faster than InnoDB, and, 
-since we currently don't make use of transactions, there is no reason not to 
-use it. Also, indexes were added to the NetworkStatus and Descriptor tables 
-on the "Fingerprint" column, since this is what is used for the join of these
-two tables during page load. This further increased the query speed.
-
-Some other small performance improvements were implemented, especially on the
-"router_detail.php" page.
-
-The update process now has more robust error handling.
-
-Addition of "Count" column to main page.
-
-Addition of green check marks and red x's to indicate whether a flag is "Yes" 
-or "No". Previously, it would just print "Yes" or "No".
-
-Modifications of font selections and background images to hopefully achieve 
-two things: Fit more in a smaller space, and make the page easier to read.
-
-
---Version 1.6--     
-
-The application now performs reverse-DNS lookups during the update process and
-stores this information in the database. This enables a user to choose whether
-they would like addresses displayed as IP or Hostname. Of course, whichever 
-display they choose, it is sortable.
-
-Added Hostname information to the router detail page as well.
-
-Added "Last Update Elapsed Time" field to main page. Good way to see if your 
-system is experiencing problems during the background updates.
-
-Added "Current Descriptor Signature" field to the main page for the Network 
-Status Source router information section. 
-
-Minor CSS changes to improve layout and formatting in certain situations.  
-
-
---Version 1.7-- 
-
-Changes to the way variable handling is done. I moved all state maintaining 
-variables into PHP session, such as all of the "Flags" variables and the 
-Address Display Mode, SortRequest, and SortOrder variables. Also, wherever 
-possible because of addition to session, variables were removed from the URL's
-in the anchor tags of the generated page. The only ones that were left in 
-URL's were variables that need to be manipulated by clicking on a link, namely
-the SortRequest and SortOrder variables. This makes the URL's in the anchor 
-tags of the generated page much shorter and cleaner, since a whole lot less is
-being passed around via GET. This in turn reduces the generated page size, 
-sometimes considerably depending on the custom query options in effect. 
-Another nice benefit to doing things this way is that if a user has custom 
-options set, completely browses away from the site, and later comes back 
-within their same browser session, all of their options will be configured as
-they were when they left.
-
-Also, variables that needed to remain in URL's have shorter names to further 
-reduce the amount of data being passed around via GET, and hence the length 
-of the URL's in the generated page.
-
-Further cleanups to HTML formatting and CSS on both the main page and the 
-router detail page.
-
-Addition of timer to bottom of main page to indicate how long page generation
-took on the server.
-
- 
---Version 1.8--  
-
-Changes / cleanup to CSS. All CSS information is now defined in one external 
-style sheet which resides in the "web/css" directory, and the different parts 
-of the code that need the style sheet simply reference it rather than defining
-everything at the top of every HTML page output to the browser.
-
-Addition of row highlighting for Mozilla Firefox / Opera. This makes it easier
-to visually track which row you are currently moused over. This feature does 
-not currently work in Internet Explorer since that would require JavaScript, 
-and I'm trying to keep this app JavaScript free for those who browse with it 
-disabled.
-
-When sorting by IP Addresses, they are now sorted naturally, rather than as 
-strings. This should make the IP Address search quite a bit more meaningful. 
-This change also applies to the CSV (Comma Separated Value) file list of IP's.
-
-
---Version 1.9--  
-
-Added proper escaping of problem characters to all strings that get populated 
-from data parsed from router descriptors and network status documents before 
-database inserts are performed. This should prevent the update process from 
-dying when these characters are encountered, which would sometimes happen. 
-
-Now using the standard "gethostbyaddr" PHP function to do hostname lookups. 
-Previously, I was doing some custom parsing on the output of the Unix "host" 
-command, as I thought it would be faster, but, after comparing the two, I see 
-no speed degradation with using "gethostbyaddr". The advantage of using 
-"gethostbyaddr" over "host" is that we are not using a platform-specific 
-command which limits where the application can run without modification. 
-
-Addition of Advanced Search functionality, which lets you perform free-text 
-searches on the following data: Fingerprint, Router Name, Country Code, 
-Bandwidth, Uptime, Last Descriptor Published, IP Address, Hostname, Onion 
-Router Port, Directory Server Port, Platform, & Contact. You can apply the 
-following modifiers when searching the above data: Equals, Contains, Is Less 
-Than, or Is Greater Than. The Advanced Search works in conjunction with the 
-other Custom Query options (Sort By, Sort Order, Address Display Mode, and 
-Require Flags), allowing a great deal of flexibility to customize the result 
-set as desired. 
-
-Addition of indexes where necessary in the database to better facilitate 
-speedy free-text searches.
-
-Addition of "Hostname" field to "Tor Server Providing Network Status Opinion" 
-section.
-
-Addition of feature to tell user if they are accessing the page through the 
-Tor network or not, color coded.
-
-Additional escaping of potentially troublesome HTML characters before 
-displaying on page for "Contact" field on main page and router detail page.
-===============================================================================
-}}}
-===============================================================================
 
 NOTE: This product includes GeoLite data created by MaxMind, available from 
 http://www.maxmind.com/.
-
