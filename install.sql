@@ -197,7 +197,7 @@ CREATE TABLE `NetworkStatus1` (
   `FRunning` tinyint(1) unsigned default NULL,
   `FValid` tinyint(1) unsigned default NULL,
   `FV2Dir` tinyint(1) unsigned default NULL,
-  `HSDir` tinyint(1) unsigned default NULL,
+  `FHSDir` tinyint(1) unsigned default NULL,
   PRIMARY KEY  (`ID`),
   KEY `Index_Fingerprint` (`Fingerprint`),
   KEY `Index_Name` (`Name`),
@@ -238,7 +238,7 @@ CREATE TABLE `NetworkStatus2` (
   `FRunning` tinyint(1) unsigned default NULL,
   `FValid` tinyint(1) unsigned default NULL,
   `FV2Dir` tinyint(1) unsigned default NULL,
-  `HSDir` tinyint(1) unsigned default NULL,
+  `FHSDir` tinyint(1) unsigned default NULL,
   PRIMARY KEY  (`ID`),
   KEY `Index_Fingerprint` (`Fingerprint`),
   KEY `Index_Name` (`Name`),
@@ -307,14 +307,8 @@ CREATE TABLE `Status` (
 -- 
 -- Insert the required rows into the database
 --
-ALTER TABLE `NetworkStatusSource` DISABLE KEYS;
 INSERT INTO `NetworkStatusSource` (`ID`,`Fingerprint`,`Name`,`LastDescriptorPublished`,`IP`,`ORPort`,`DirPort`,`Platform`,`Contact`,`Uptime`,`BandwidthMAX`,`BandwidthBURST`,`BandwidthOBSERVED`,`OnionKey`,`SigningKey`,`WriteHistoryLAST`,`WriteHistoryINC`,`WriteHistorySERDATA`,`ReadHistoryLAST`,`ReadHistoryINC`,`ReadHistorySERDATA`,`ExitPolicySERDATA`,`FamilySERDATA`,`Hibernating`,`DescriptorSignature`) VALUES (1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-ALTER TABLE `NetworkStatusSource` ENABLE KEYS;
 
-ALTER TABLE `Status` DISABLE KEYS;
 INSERT INTO `Status` (`ID`,`LastUpdate`,`LastUpdateElapsed`,`ActiveNetworkStatusTable`,`ActiveDescriptorTable`,`ActiveDNSELTable`) VALUES (1,'2000-01-01 00:00:00',NULL,NULL,NULL,NULL);
-ALTER TABLE `Status` ENABLE KEYS;
 
-ALTER TABLE `Mirrors` DISABLE KEYS;
 INSERT INTO `Mirrors` (`id`,`mirrors`) VALUES (1,'');
-ALERT TABLE `Mirrors` ENABLE KEYS;

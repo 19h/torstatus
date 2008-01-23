@@ -8,7 +8,7 @@
 // This config file utilizes folds.  For VIM, you may activate this using
 // :set foldmethod=marker
 
-$TorNetworkStatus_Version = "3.6trunk";
+$TorNetworkStatus_Version = "4.0";
 
 // ++++++++++ Tor Connection ++++++++++ {{{
 
@@ -58,8 +58,8 @@ $myMirrorName = "MyMirrorName";
 // $SourceFingerprint = "optionalfingerprint";
 // Change this value to 0 if you do not wish to download the mirror list
 $useMirrorList = 1;
-$mirrorListURI = "http://trunk.torstatus.kgprog.com/currentmirrors.php";
-$manualMirrorList = array('all.de' => 'http://torstatus.all.de/','blutmagie' => 'http://torstatus.blutmagie.de/','kgprog' => 'http://torstatus.kgprog.com','Kradense' => 'http://kradense.whsites.net/tns/', 'cyberphunk' => 'http://torstatus.cyberphunk.org/');
+$mirrorListURI = "http://torstatus.kgprog.com/currentmirrors.php";
+$manualMirrorList = array('all.de' => 'http://torstatus.all.de/','blutmagie' => 'http://torstatus.blutmagie.de/','kgprog' => 'http://torstatus.kgprog.com','kradense' => 'http://kradense.whsites.net/tns/', 'cyberphunk' => 'http://torstatus.cyberphunk.org/', 'arachne' => 'http://arachne.doesntexist.org/', 'hermetix' => 'http://tns.hermetix.org/', 'all.de' => 'http://tns.hermetix.org/');
 
 // }}}
 
