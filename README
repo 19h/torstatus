@@ -1,20 +1,18 @@
 Copyright (c) 2006-2007, Joseph B. Kowalski
+Portions Copyright (c) 2007 Kasimir Gabert
 See LICENSE for licensing information
-
-WARNING: This file is slightly out of date.  For a more accurate install with
-versions 4.0 and onwards, please see the INSTALL file.
 
 PLEASE NOTE:  You must agree to the terms and conditions for GeoLite and for JPGraph to use this software to its fullest extent.  If you do not agree to the appropriate terms and licenses that are provided with this release, then you may not use those pieces of software.  Basically, this means that "as-is" this software cannot be used commercially.
 
-TorStatus - Tor Network Status
+TorStatus - Tor Network Status Changes
 
 You may download the most current version at:
 http://project.torstatus.kgprog.com/
 To setup the 'TorStatus' Web Application, follow these instructions:
 
-1) Create the MySQL database that the application will use. In the default 
-install directory, there is a MySQL script file that can be used to create 
-the initial database exactly as it needs to be. The default database name is 
+1) Create the MySQL database that the application will use. In the "sql" 
+subdirectory, there is a MySQL script file that can be used to create the 
+initial database exactly as it needs to be. The default database name is 
 "TorNetworkStatus", but you can change this to be any name you want as long as
 it's reflected correctly in the config file. For development, MySQL 5 on Linux
 was used.
@@ -207,8 +205,8 @@ will have no bearing. It will be up to you to setup your task scheduling
 mechanism at the interval you want.
 
 8) Set up the cgi-bin directory to be an actual cgi-bin directory with your
-webserver.  TorStatus will point to /cgi-bin/perlgraph/plot.pl to create Perl
-based graphs.
+webserver.  TorStatus will point to /cgi-bin/whois.pl to generate the whois
+data for each IP address.
 
 9) You're done! Load the site in a browser, and if all is well, it should 
 work. 
