@@ -1,0 +1,264 @@
+<!--
+
+a:link 
+{
+	text-decoration:none; 
+	color:#000000;
+}
+
+a:visited 
+{
+	text-decoration:none; 
+	color:#000000;
+}
+
+a:hover 
+{
+	background-color: #efefef; 
+	text-decoration:none;
+}
+
+a.plain:link 
+{
+	text-decoration:none; 
+	color:#000000;
+}
+
+a.plain:visited 
+{
+	text-decoration:none; 
+	color:#000000;
+}
+
+a.plain:hover 
+{
+	background-color: #ccddff; 
+	text-decoration:none;
+}
+
+.BOD 
+{
+	background-color:#ffffff;
+}
+
+.PT
+{
+	background-image:url(../img/bg_blue.gif); 
+	text-align:center; 
+	font:bold 16pt Arial; 
+	color:#000000;
+}
+
+.mirrors
+{
+	background-image:url(../img/bg_blue.gif);
+	text-align: center;
+	text-size: .8em;
+	color: #000000;
+}
+
+.THN 
+{
+	background-image:url(../img/bg_blue.gif); 
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.HRN 
+{
+	background-image:url(../img/bg_blue.gif); 
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.HRS 
+{
+	background-image:url(../img/bg_blue.gif);
+	text-align:left; 
+	text-decoration:none;
+	font:bold 9pt Arial;
+	font-style:italic; 
+	color:#000000; 
+	white-space:nowrap;
+}
+  
+.HRFNO
+{
+	background-image:url(../img/bg_red.gif); 
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.HRFNOS 
+{
+	background-image:url(../img/bg_red.gif); 
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	font-style:italic; 
+	color:#000000; 
+	white-space:nowrap;
+}
+        
+.HRFYES
+{
+	background-image:url(../img/bg_green.gif); 
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.HRFYESS 
+{
+	background-image:url(../img/bg_green.gif); 
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	font-style:italic; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.TRR 
+{
+	background-image:url(../img/bg_green.gif);
+	text-align:left; 
+	text-decoration:none; 
+	font:bold 9pt Arial; 
+	color:#000000;
+}
+
+.TRS 
+{
+	background-color:#ffffff; 
+	text-align:left; 
+	font:normal 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.TRSCN
+{
+	background-color:#ffffff; 
+	text-align:center; 
+	font:normal 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.TRSC
+{
+	background-color:#ffffff; 
+	text-align:center; 
+	font:normal 11pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.TRSB 
+{
+	background-color:#ffffff; 
+	text-align:left; 
+	font:normal 9pt Arial; 
+	color:#000000;
+}
+
+.TRSM 
+{
+	font:normal 7pt Arial; 
+	white-space:nowrap;
+}
+
+.F1
+{
+	background-image: url(../img/bg_yes.png); 
+	background-repeat: no-repeat; 
+	background-position: center center; 
+	width: 40px;
+}
+
+.F0 
+{
+	background-image: url(../img/bg_no.png); 
+	background-repeat: no-repeat; 
+	background-position: center center; 
+	width: 40px;
+}
+
+.TRAR 
+{
+	background-color:#ffffff; 
+	text-align:right; 
+	font:normal 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+.TRC 
+{
+	text-align:center; 
+	font:normal 9pt Arial; 
+	color:#000000;
+}
+
+.TDBLACK 
+{
+	background-color:#000000;
+}
+
+.TDS 
+{
+	text-align:left; 
+	font:normal 9pt Arial; 
+	color:#000000; 
+	white-space:nowrap;
+}
+
+tr.r 
+{
+	background-color:#ffffff;
+}
+
+tr.r:hover 
+{
+	background-color:#ccddff;
+}
+
+tr.nr 
+{
+	background-color:#ffffff;
+}
+
+.BOX
+{
+	background-color:#ccddff;
+}
+
+.BOXCOLSEL
+{
+	background-color:#ccddff;
+   	width: 200px;
+}
+
+.BTNCOLSEL
+{
+   	width: 200px;
+}
+
+.BTNUPDOWN
+{
+   	width: 80px;
+}
+
+-->

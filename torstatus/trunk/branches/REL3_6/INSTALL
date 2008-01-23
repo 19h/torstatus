@@ -1,0 +1,52 @@
+Copyright (c) 2007 Kasimir Gabert
+See LICENSE for licensing information
+
+TorStatus - Tor Network Status
+
+You may download the most current version at:
+http://project.torstatus.kgprog.com/
+
+To setup TorStatus:
+
+a) Database
+	1) Create a MySQL database
+	2) Add the table structures from 'sql/TorNetworkStatus_DB_CREATE.sql'
+	3) You may modify the database name according in the file, however
+	   be sure to reflect the changes into the 'web/config.php' file.
+b) Web Server
+	1) You need a web server set up (Apache recommended), which must
+	   support GD and PHP.
+	2) Set the folder 'web' as the document root for your virtual host
+	   or web server.
+c) Local Tor Server
+	1) Make sure you have a local Tor server running
+**** YOUR TOR SERVER NEEDS TO BE VERSION 0.2.0.6-alpha OR HIGHER ****
+	2) You need to add 'ControlPort PORTNUMBER' to your Tor config file.
+	3) You need to add 'DownloadExtraInfo 1' to your Tor config file.
+	4) Set the cgi-bin directory of your webserver to TorStatus'
+	   cgi-bin directory. (For WHOIS)
+d) Configure TorStatus
+	1) You may find the full list of configuration options in README.
+	2) You must copy 'web/config_template.php' to 'web/config.php'
+	3) You must set:
+		$LocalTorServerIP
+		$LocalTorServerControlPort
+		$SQL_Server
+		$SQL_User
+		$SQL_Pass
+		$SQL_Catalog (means SQL database)
+		$TNS_Path (leaving trailing slash)
+		$myMirrorName
+	4) Test your setup by running 'php_update.php'.  You should see
+	   no output.
+e) Configure the daemon
+	1) There are two ways to do this.
+	2) The first is to modify 'agent' so it fits your computer, and run
+	   'agent' as a standard Debian daemon.
+	3) The second method is to run php_agent.php.  (To run it in the
+	   background, run 'php_agent.php &')
+
+TorStatus should now be set up!  You can test this by going to your TorStatus
+mirror website!
+
+Finally, edit http://project.torstatus.kgprog.com/ to declare your mirror!
