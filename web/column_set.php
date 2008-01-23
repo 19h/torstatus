@@ -142,8 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		$CR_ACTIVE != 'Stable'			&&
 		$CR_ACTIVE != 'Running'			&&
 		$CR_ACTIVE != 'Valid'			&&
-		$CR_ACTIVE != 'V2Dir'			&&
-		$CR_ACTIVE != 'HSDir')
+		$CR_ACTIVE != 'V2Dir')
 	{
 		$CR_ACTIVE = null;
 	}
@@ -172,8 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		$CR_INACTIVE != 'Stable'			&&
 		$CR_INACTIVE != 'Running'			&&
 		$CR_INACTIVE != 'Valid'			&&
-		$CR_INACTIVE != 'V2Dir'			&&
-		$CR_INACTIVE != 'HSDir')
+		$CR_INACTIVE != 'V2Dir')
 	{
 		$CR_INACTIVE = null;
 	}
@@ -236,18 +234,38 @@ else
 	$_SESSION['ColumnList_INACTIVE'] = $ColumnList_INACTIVE;
 }
 
-$pageTitle = "Column Display Preferences";
-include("header.php");
+?><!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-?>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<title>Tor Network Status -- Column Display Preferences</title>
+<link rel='stylesheet' type='text/css' href='css/main.css' />
+</head>
 
-<table width='100%' cellspacing='2' cellpadding='2'>
+<body class='BOD'>
+
+<br/><br/>
+
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+
 <tr>
-<td>
+<td class='PT'><br/><a href='index.php'>Tor Network Status</a> -- Column Display Preferences<br/><br/></td>
+</tr>
 
-<table class='displayTable' width='100%' cellspacing='0' cellpadding='0' align='center'>
+</table>
+
+<br/><br/>
+
+<table width='50%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='HRN'>Column Display Preferences Detail</td>
+<td class='TDBLACK'>
+	
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Column Display Preferences Detail</td>
 </tr>
 <tr>
 <td class='TRSCN'>
@@ -307,14 +325,16 @@ include("header.php");
 	echo "</form>\n";
 ?>
 
-<a class='tab' href='index.php'><b>Done / Return to Main Page</b></a>
+<a class='plain' href='index.php'><b>Done / Return to Main Page</b></a>
 <br/><br/>
 
 </td>
 </tr>
 </table>
 
-</td></tr></table>
+</td>
+</tr>
+</table>
 
 <br/>
 

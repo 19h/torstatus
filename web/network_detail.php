@@ -92,8 +92,6 @@ while ($record = mysql_fetch_assoc($result))
 	$count++;
 }
 
-// The label array
-
 // Register CountryCode variables in session
 if (!isset($_SESSION['CCGraph_DATA_ARRAY_SERIALIZED'])) 
 {
@@ -514,91 +512,67 @@ else
 	$_SESSION['SummaryGraph_Legend'] = $Summary_Legend;
 }
 
-$pageTitle = "Network Detail";
-include("header.php");
+?><!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-?>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<title>Tor Network Status -- Network Detail</title>
+<link rel='stylesheet' type='text/css' href='css/main.css' />
+</head>
 
+<body class='BOD'>
 
-<table width='100%' cellspacing='2' cellpadding='2'>
-<tr>
-<td>
+<br/><br/>
 
-<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+
 <tr>
-<td class='HRN' colspan='2'>Number of Routers by Country Code</td>
+<td class='PT'><br/><a href='index.php'>Tor Network Status</a> -- Network Detail<br/><br/></td>
 </tr>
+
+</table>
+
+<br/><br/>
+
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='TRSBcenter' colspan='2' align='center'>
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=cc" alt="Number of Routers by Country Code" />
-<?php } else { ?>
-<img src="/cc_graph.php" alt="Number of Routers by Country Code" />
-<?php } ?>
-</td>
-</tr>
+<td class='TDBLACK'>
+
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+
 <tr>
-<td class='HRN' colspan='2'>Number of Exit Routers by Country Code</td>
-</tr>
-<tr>
-<td class='TRSBcenter' colspan='2' align='center'>
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=cce" alt="Number of Exit Routers by Country Code" />
-<?php } else { ?>
-<img src="/cc_exit_graph.php" alt="Number of Exit Routers by Country Code" />
-<?php } ?>
-</td>
-</tr>
-<tr>
-<td class='HRN' colspan='2'>Number of Routers by Uptime</td>
-</tr>
-<tr>
-<td class='TRSBcenter' colspan='2' align='center'>
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=up" alt="Number of Routers by Uptime" />
-<?php } else { ?>
-<img src="/uptime_graph.php" alt="Number of Routeres by Uptime" />
-<?php } ?>
-</td>
-</tr>
-<tr>
-<td class='HRN'>Number of Routers by Observed Bandwidth</td>
-<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Number of Routers by Platform</td>
-</tr>
-<tr>
-<td class='TRSBcenter' colspan='1' align='center'>
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=bw" alt="Number of Routers by Bandwidth" />
-<?php } else { ?>
-<img src="/bandwidth_graph.php" alt="Number of Routers by Bandwidth" />
-<?php } ?>
-</td>
-<td class='TRSBcenter' colspan='1' align='center' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px;'>
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=os" alt="Number of Routers by Platform" />
-<?php } else { ?>
-<img src="/platform_graph.php" alt="Number of Routers by Platform" />
-<?php } ?>
-</td>
-</tr>
-<tr>
-<td class='HRN' colspan='2'>Number of Routers Mathcing Specified Criteria</td>
+<td class='THN' colspan='2'>Aggregate Network Statistic Graphs / Details</td>
 </tr>
 
 <tr>
-<td class='TRSBcenter' colspan='2' align='center'>
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=sum" alt="Summary Graph" />
-<?php } else { ?>
-<img src="/summary_graph.php" alt="Summary Graph" />
-<?php } ?>
+<td class='TRSB' colspan='2' align='center'><iframe src='cc_graph.php' width='1160' height='418' scrolling='no'></iframe></td>
+</tr>
 
+<tr>
+<td class='TRSB' colspan='2' align='center'><iframe src='cc_exit_graph.php' width='1160' height='418' scrolling='no'></iframe></td>
+</tr>
+
+<tr>
+<td class='TRSB' colspan='2' align='center'><iframe src='uptime_graph.php' width='1160' height='418' scrolling='no'></iframe></td>
+</tr>
+
+<tr>
+<td class='TRSB' colspan='1' align='center'><iframe src='bandwidth_graph.php' width='580' height='318' scrolling='no'></iframe></td>
+<td class='TRSB' colspan='1' align='center'><iframe src='platform_graph.php' width='580' height='318' scrolling='no'></iframe></td>
+</tr>
+
+<tr>
+<td class='TRSB' colspan='2' align='center'><iframe src='summary_graph.php' width='1160' height='418' scrolling='no'></iframe></td>
+</tr>
+
+</table>
 
 </td>
 </tr>
 </table>
-
-</td></tr></table>
 
 <br/>
 

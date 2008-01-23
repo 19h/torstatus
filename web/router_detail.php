@@ -104,7 +104,6 @@ $FValid = $record['FValid'];
 $FV2Dir = $record['FV2Dir'];
 
 // Register necessary variables in session
-
 if (!isset($_SESSION['WriteHistory_DATA_ARRAY_SERIALIZED'])) 
 {
 	$_SESSION['WriteHistory_DATA_ARRAY_SERIALIZED'] = $record['WriteHistorySERDATA'];
@@ -114,7 +113,6 @@ else
 	unset($_SESSION['WriteHistory_DATA_ARRAY_SERIALIZED']);
 	$_SESSION['WriteHistory_DATA_ARRAY_SERIALIZED'] = $record['WriteHistorySERDATA'];
 }
-
 if (!isset($_SESSION['WriteHistory_INC'])) 
 {
 	$_SESSION['WriteHistory_INC'] = $record['WriteHistoryINC'];
@@ -134,7 +132,6 @@ else
 	$_SESSION['WriteHistory_LAST'] = $record['WriteHistoryLAST'];
 }
 
-// Do the same for the read history
 if (!isset($_SESSION['ReadHistory_DATA_ARRAY_SERIALIZED'])) 
 {
 	$_SESSION['ReadHistory_DATA_ARRAY_SERIALIZED'] = $record['ReadHistorySERDATA'];
@@ -166,11 +163,25 @@ else
 // Handle no descriptor available situation
 if ($Name == null)
 {
-	$pageTitle = "Router Detail";
-	include("header.php");
+	echo "\n";
+	echo "<!-- Begin Page Render -->\n";
+	echo "\n";
+	echo "<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>\n";
+	echo "\n";
+	echo "<html>\n";
+	echo "<head>\n";
+	echo "<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />\n";
+	echo "<title>Tor Network Status -- Router Detail</title>\n";
+	echo "<link rel='stylesheet' type='text/css' href='css/main.css' />\n";
+	echo "</head>\n";
+	echo "<body class='BOD'>\n";
+	echo "<br/><br/>\n";
 	echo "<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>\n";
 	echo "<tr>\n";
-	echo "<td class='TRSC'><br/><b>ERROR -- No Descriptor Available</b><br/><br/></td>\n";
+	echo "<td class='PT'><br/><a href='index.php'>Tor Network Status</a> -- Router Detail<br/><br/></td>\n";
+	echo "</tr>\n";
+	echo "<tr>\n";
+	echo "<td class='TRSC'><br/><br/><br/><b>ERROR -- No Descriptor Available</b><br/><br/></td>\n";
 	echo "</tr>\n";
 	echo "</table>\n";
 	echo "</body>\n";
@@ -182,22 +193,40 @@ if ($Name == null)
 	exit;
 }
 
-$pageTitle = "Router Detail";
-include("header.php");
+?><!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-?>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<title>Tor Network Status -- Router Detail</title>
+<link rel='stylesheet' type='text/css' href='css/main.css' />
+</head>
 
-<table width='100%' cellspacing='2' cellpadding='2'>
+<body class='BOD'>
+
+<br/><br/>
+
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+
 <tr>
-<td>
-
-<table class="displayTable" cellspacing="0" cellpadding="0" width='100%' align='center'>
-<tr>
-<td class='HRN' colspan='2'>General Information</td>
-<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Exit Policy Information</td>
+<td class='PT'><br/><a href='index.php'>Tor Network Status</a> -- Router Detail<br/><br/></td>
 </tr>
-<td class="TRS" colspan='2' style="vertical-align: top;">
-<table>
+
+</table>
+
+<br/><br/>
+
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+	
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+<tr>
+<td class='THN' colspan='2'>General Information</td>
+</tr>
+
 <?php
 
 	// Display router name
@@ -309,45 +338,65 @@ include("header.php");
 </table>
 
 </td>
+</tr>
+</table>
 
-<td class='TRS' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px; vertical-align: top;'><b>
+<br/>
+
+
+<table width='70%' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+
+<table cellspacing='2' cellpadding='2' border='0' align='center' width='100%'>
+<tr>
+<td class='THN' colspan='2'>Bandwidth</td>
+</tr>
+<tr>
+<td class='TRSB'><iframe src='bandwidth_history_graph.php?MODE=WriteHistory' width='498' height='318' scrolling='no'></iframe></td>
+<td class='TRSB'><iframe src='bandwidth_history_graph.php?MODE=ReadHistory' width='498' height='318' scrolling='no'></iframe></td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+<table width='80%' cellpadding='10' cellspacing='10' border='0' align='center'>
+<tr>
+
+<td>
+<table width='*' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+<table cellspacing='2' cellpadding='6' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Router Keys</td>
+</tr>
+<tr>
+<td class='TRSB'>
 <?php
 	
-
-	for ($i=0 ; $i<count($ExitPolicy_DATA_ARRAY) ; $i++)
-	{
-		echo "$ExitPolicy_DATA_ARRAY[$i]<br/>\n";
-	}
-
 	echo "<br/>\n";
+	echo "<b>Onion Key:</b><pre>" . $OnionKey . "</pre>\n";
+	echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre><br/>\n";
 ?>
-</b>
 </td>
-
-
 </tr>
-<tr>
-<td class='HRN' colspan='2'>Bandwidth</td>
-<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Router Flags</td>
-</tr>
-<tr>
-<td class='TRS' style="text-align: center;">
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=rtw" alt="Write History" /><br/>
-<?php } else { ?>
-<img src='bandwidth_history_graph.php?MODE=WriteHistory' />
-<?php } ?>
+</table>
 </td>
-<td class='TRSB' style="text-align: center;">
-<?php if ($usePerlGraphs == 1) { ?>
-<img src="/cgi-bin/perlgraph/plot.pl?plottype=rtr" alt="Read History" /><br/>
-<?php } else { ?>
-<img src='bandwidth_history_graph.php?MODE=ReadHistory' />
-<?php } ?>
+</tr>
+</table>
 </td>
 
-<td class='TRS' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px; vertical-align: top;'>
-<table cellspacing='0' cellpadding='0'>
+<td>
+<table width='*' cellspacing='2' cellpadding='2' border='0' align='center'>
+<tr>
+<td class='TDBLACK'>
+<table cellspacing='2' cellpadding='6' border='0' align='center' width='100%'>
+<tr>
+<td class='THN' colspan='2'>Router Flags</td>
+</tr>
 <?php
 
 	echo "<tr class='nr'>\n";
@@ -419,6 +468,10 @@ include("header.php");
 	echo "<tr class='nr'>\n";
 	echo "<td class='TRAR'><b>V2Dir:</b></td>\n";
 	echo "<td class='F$FV2Dir'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "</table>\n";	
 
 	echo "</td>\n";
 	echo "</tr>\n";
@@ -426,27 +479,39 @@ include("header.php");
 ?>
 </table>
 </td>
-</tr>
 
+<td>
+<table width='*' cellspacing='2' cellpadding='2' border='0' align='center'>
 <tr>
-<td class='HRN' colspan='3'>Router Keys</td>
+<td class='TDBLACK'>
+<table cellspacing='2' cellpadding='6' border='0' align='center' width='100%'>
+<tr>
+<td class='THN'>Exit Policy Information</td>
 </tr>
 <tr>
-<td class='TRS' colspan='3'>
+<td class='TRS'><b>
 <?php
 	
 	echo "<br/>\n";
-	echo "<b>Onion Key:</b><pre>" . $OnionKey . "</pre>\n";
-	echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre><br/>\n";
+
+	for ($i=0 ; $i<count($ExitPolicy_DATA_ARRAY) ; $i++)
+	{
+		echo "$ExitPolicy_DATA_ARRAY[$i]<br/>\n";
+	}
+
+	echo "<br/>\n";
 ?>
+</b>
 </td>
 </tr>
 </table>
-
 </td>
 </tr>
 </table>
+</td>
 
+</tr>
+</table>
 
 <br/>
 
