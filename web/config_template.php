@@ -8,7 +8,7 @@
 // This config file utilizes folds.  For VIM, you may activate this using
 // :set foldmethod=marker
 
-$TorNetworkStatus_Version = "3.6trunk";
+$TorNetworkStatus_Version = "4.0trunk";
 
 // ++++++++++ Tor Connection ++++++++++ {{{
 
