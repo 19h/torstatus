@@ -249,7 +249,7 @@ while (<$torSocket>)
 	{
 		$currentRouter{'BandwidthMAX'} = $1;
 		$currentRouter{'BandwidthBURST'} = $2;
-		$currentRouter{'BandwidthOBSERVED'} = $3;
+		#$currentRouter{'BandwidthOBSERVED'} = $3;  # Bandwidth calculated now
 	}
 
 	# Format for the platform line
@@ -380,6 +380,11 @@ while (<$torSocket>)
 		# Serialize the last part of the data
 		@readhistory = split(/,/,$4);
 		$currentRouter{'ReadHistorySERDATA'} = serialize(\@readhistory);
+		# Add to the observed bandwidth counter
+		foreach my $num (@readhistory)
+		{
+			$currentRouter{'bandwidthcounter'} += $num;
+		}
 
 	}
 
@@ -410,6 +415,11 @@ while (<$torSocket>)
 		# Serialize the last part of the data
 		@writehistory = split(/,/,$4);
 		$currentRouter{'WriteHistorySERDATA'} = serialize(\@writehistory);
+		# Add to the observed bandwidth counter
+		foreach my $num (@writehistory)
+		{
+			$currentRouter{'bandwidthcounter'} += $num;
+		}
 	}
 
 	# Format for the router-signature line
@@ -498,6 +508,11 @@ while (<$torSocket>)
 				# Serialize the last part of the data
 				@readhistory = split(/,/,$4);
 				$currentRouter{'ReadHistorySERDATA'} = serialize(\@readhistory);
+				# Add to the observed bandwidth counter
+				foreach my $num (@readhistory)
+				{
+					$currentRouter{'bandwidthcounter'} += $num;
+				}
 			}
 		
 			# Format for the write-history line
@@ -527,11 +542,19 @@ while (<$torSocket>)
 				# Serialize the last part of the data
 				@writehistory = split(/,/,$4);
 				$currentRouter{'WriteHistorySERDATA'} = serialize(\@writehistory);
+				# Add to the observed bandwidth counter
+				foreach my $num (@writehistory)
+				{
+					$currentRouter{'bandwidthcounter'} += $num;
+				}
 			}
 		}
 		# Close the new Tor connection
 		close ($digestSocket);
 		}
+
+		# Calculate the bandwidth
+		$currentRouter{'BandwidthOBSERVED'} = $currentRouter{'bandwidthcounter'}/172800;
 		
 		# Save the data to the MySQL database
 		$dbresponse->execute( $currentRouter{'nickname'},
