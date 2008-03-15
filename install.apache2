@@ -11,3 +11,23 @@
 		SetHandler cgi-script
 	</Directory>
 </VirtualHost>
+
+{{OPTIONAL: FOR SSL ENABLED SITES}}
+<VirtualHost {SSL_IPADDRESS}:{SSL_PORT}>
+	ServerName {URL}
+	ServerAdmin {ADMIN}
+	SSLEngine on
+	SSLCertificateFile {SSL_CERT}
+	SSLCertificateKeyFile {SSL_KEY}
+	SetEnvIf User-Agent ".*MSIE.*" nokeepalive ssl-unclean-shutdown
+	DocumentRoot {TorStatus DIRECTORY}/web
+	<Directory {TorStatus DIRECTORY}/web/>
+		SetOutputFilter DEFLATE
+		AddOutputFilterByType DEFLATE text/html text/plain text/xml
+	</Directory>
+	ScriptAlias /cgi-bin/ {TorStatus ROOT}/cgi-bin/
+	<Directory {TorStatus ROOT}/cgi-bin/>
+		Options +ExecCGI
+		SetHandler cgi-script
+	</Directory>
+</VirtualHost>

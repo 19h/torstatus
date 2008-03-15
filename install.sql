@@ -1,13 +1,13 @@
---
--- SQL to install database structures for TorStatus
--- See LICENSE and README for more information
+-- phpMyAdmin SQL Dump
+-- version 2.9.1.1-Debian-6
+-- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Jan 19, 2008 at 08:30 PM
+-- Generation Time: Mar 14, 2008 at 10:03 PM
 -- Server version: 5.0.32
--- PHP Version: 5.2.0-8+etch9
+-- PHP Version: 5.2.0-8+etch10
 -- 
--- Database: `TorNetworkStatus`
+-- Database: `TorStatus`
 -- 
 
 -- --------------------------------------------------------
@@ -16,14 +16,18 @@
 -- Table structure for table `DNSEL`
 -- 
 
-DROP TABLE IF EXISTS `DNSEL`;
 CREATE TABLE `DNSEL` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `IP` varchar(256) default NULL,
   `ExitPolicy` varchar(8192) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`ID`),
   KEY `Index_IP` (`IP`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2579 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2383 ;
+
+-- 
+-- Dumping data for table `DNSEL`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -31,14 +35,18 @@ CREATE TABLE `DNSEL` (
 -- Table structure for table `DNSEL_INACT`
 -- 
 
-DROP TABLE IF EXISTS `DNSEL_INACT`;
 CREATE TABLE `DNSEL_INACT` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `IP` varchar(256) default NULL,
   `ExitPolicy` varchar(8192) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`ID`),
   KEY `Index_IP` (`IP`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2551 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- 
+-- Dumping data for table `DNSEL_INACT`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -46,7 +54,6 @@ CREATE TABLE `DNSEL_INACT` (
 -- Table structure for table `DNSEL_LOG`
 -- 
 
-DROP TABLE IF EXISTS `DNSEL_LOG`;
 CREATE TABLE `DNSEL_LOG` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `Timestamp` datetime default NULL,
@@ -58,13 +65,17 @@ CREATE TABLE `DNSEL_LOG` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
+-- 
+-- Dumping data for table `DNSEL_LOG`
+-- 
+
+
 -- --------------------------------------------------------
 
 -- 
 -- Table structure for table `Descriptor1`
 -- 
 
-DROP TABLE IF EXISTS `Descriptor1`;
 CREATE TABLE `Descriptor1` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `Fingerprint` varchar(256) default NULL,
@@ -97,7 +108,12 @@ CREATE TABLE `Descriptor1` (
   KEY `Index_Uptime` (`Uptime`),
   KEY `Index_Platform` (`Platform`),
   KEY `Index_Contact` (`Contact`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2579 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- 
+-- Dumping data for table `Descriptor1`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -105,7 +121,6 @@ CREATE TABLE `Descriptor1` (
 -- Table structure for table `Descriptor2`
 -- 
 
-DROP TABLE IF EXISTS `Descriptor2`;
 CREATE TABLE `Descriptor2` (
   `ID` int(10) unsigned NOT NULL auto_increment,
   `Fingerprint` varchar(256) default NULL,
@@ -138,7 +153,12 @@ CREATE TABLE `Descriptor2` (
   KEY `Index_Uptime` (`Uptime`),
   KEY `Index_Platform` (`Platform`),
   KEY `Index_Contact` (`Contact`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2551 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- 
+-- Dumping data for table `Descriptor2`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -146,12 +166,16 @@ CREATE TABLE `Descriptor2` (
 -- Table structure for table `Mirrors`
 -- 
 
-DROP TABLE IF EXISTS `Mirrors`;
 CREATE TABLE `Mirrors` (
   `id` int(11) NOT NULL auto_increment,
   `mirrors` text NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- 
+-- Dumping data for table `Mirrors`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -159,40 +183,25 @@ CREATE TABLE `Mirrors` (
 -- Table structure for table `NetworkStatus1`
 -- 
 
-DROP TABLE IF EXISTS `NetworkStatus1`;
 CREATE TABLE `NetworkStatus1` (
   `ID` int(10) unsigned NOT NULL auto_increment,
-  `Fingerprint` varchar(256) default NULL,
-  `Name` varchar(256) default NULL,
-  `LastDescriptorPublished` datetime default NULL,
-  `DescriptorHash` varchar(256) default NULL,
-  `IP` varchar(256) default NULL,
-  `Hostname` varchar(256) default NULL,
-  `ORPort` int(10) unsigned default NULL,
-  `DirPort` int(10) unsigned default NULL,
-  `CountryCode` varchar(4) default NULL,
-  `FAuthority` tinyint(1) unsigned default NULL,
-  `FBadDirectory` tinyint(1) unsigned default NULL,
-  `FBadExit` tinyint(1) unsigned default NULL,
-  `FExit` tinyint(1) unsigned default NULL,
-  `FFast` tinyint(1) unsigned default NULL,
-  `FGuard` tinyint(1) unsigned default NULL,
-  `FNamed` tinyint(1) unsigned default NULL,
-  `FStable` tinyint(1) unsigned default NULL,
-  `FRunning` tinyint(1) unsigned default NULL,
-  `FValid` tinyint(1) unsigned default NULL,
-  `FV2Dir` tinyint(1) unsigned default NULL,
-  `HSDir` tinyint(1) unsigned default NULL,
-  PRIMARY KEY  (`ID`),
-  KEY `Index_Fingerprint` (`Fingerprint`),
-  KEY `Index_Name` (`Name`),
-  KEY `Index_CountryCode` (`CountryCode`),
-  KEY `Index_LastDescriptorPublished` (`LastDescriptorPublished`),
-  KEY `Index_IP` (`IP`),
-  KEY `Index_Hostname` (`Hostname`),
-  KEY `Index_ORPort` (`ORPort`),
-  KEY `Index_DirPort` (`DirPort`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2546 ;
+  `Fingerprint` varchar(256) NOT NULL,
+  `Name` varchar(256) NOT NULL,
+  `LastDescriptorPublished` datetime NOT NULL,
+  `DescriptorHash` varchar(256) NOT NULL,
+  `IP` varchar(256) NOT NULL,
+  `Hostname` varchar(256) NOT NULL,
+  `ORPort` int(10) NOT NULL,
+  `DirPort` int(10) NOT NULL,
+  `CountryCode` varchar(4) NOT NULL,
+  `Flags` smallint(6) unsigned NOT NULL,
+  PRIMARY KEY  (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- 
+-- Dumping data for table `NetworkStatus1`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -200,40 +209,25 @@ CREATE TABLE `NetworkStatus1` (
 -- Table structure for table `NetworkStatus2`
 -- 
 
-DROP TABLE IF EXISTS `NetworkStatus2`;
 CREATE TABLE `NetworkStatus2` (
   `ID` int(10) unsigned NOT NULL auto_increment,
-  `Fingerprint` varchar(256) default NULL,
-  `Name` varchar(256) default NULL,
-  `LastDescriptorPublished` datetime default NULL,
-  `DescriptorHash` varchar(256) default NULL,
-  `IP` varchar(256) default NULL,
-  `Hostname` varchar(256) default NULL,
-  `ORPort` int(10) unsigned default NULL,
-  `DirPort` int(10) unsigned default NULL,
-  `CountryCode` varchar(4) default NULL,
-  `FAuthority` tinyint(1) unsigned default NULL,
-  `FBadDirectory` tinyint(1) unsigned default NULL,
-  `FBadExit` tinyint(1) unsigned default NULL,
-  `FExit` tinyint(1) unsigned default NULL,
-  `FFast` tinyint(1) unsigned default NULL,
-  `FGuard` tinyint(1) unsigned default NULL,
-  `FNamed` tinyint(1) unsigned default NULL,
-  `FStable` tinyint(1) unsigned default NULL,
-  `FRunning` tinyint(1) unsigned default NULL,
-  `FValid` tinyint(1) unsigned default NULL,
-  `FV2Dir` tinyint(1) unsigned default NULL,
-  `HSDir` tinyint(1) unsigned default NULL,
-  PRIMARY KEY  (`ID`),
-  KEY `Index_Fingerprint` (`Fingerprint`),
-  KEY `Index_Name` (`Name`),
-  KEY `Index_CountryCode` (`CountryCode`),
-  KEY `Index_LastDescriptorPublished` (`LastDescriptorPublished`),
-  KEY `Index_IP` (`IP`),
-  KEY `Index_Hostname` (`Hostname`),
-  KEY `Index_ORPort` (`ORPort`),
-  KEY `Index_DirPort` (`DirPort`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2551 ;
+  `Fingerprint` varchar(256) NOT NULL,
+  `Name` varchar(256) NOT NULL,
+  `LastDescriptorPublished` datetime NOT NULL,
+  `DescriptorHash` varchar(256) NOT NULL,
+  `IP` varchar(256) NOT NULL,
+  `Hostname` varchar(256) NOT NULL,
+  `ORPort` int(10) NOT NULL,
+  `DirPort` int(10) NOT NULL,
+  `CountryCode` varchar(4) NOT NULL,
+  `Flags` smallint(6) unsigned NOT NULL,
+  PRIMARY KEY  (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- 
+-- Dumping data for table `NetworkStatus2`
+-- 
+
 
 -- --------------------------------------------------------
 
@@ -241,7 +235,6 @@ CREATE TABLE `NetworkStatus2` (
 -- Table structure for table `NetworkStatusSource`
 -- 
 
-DROP TABLE IF EXISTS `NetworkStatusSource`;
 CREATE TABLE `NetworkStatusSource` (
   `ID` int(10) unsigned NOT NULL default '1',
   `Fingerprint` varchar(256) default NULL,
@@ -271,13 +264,17 @@ CREATE TABLE `NetworkStatusSource` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+-- 
+-- Dumping data for table `NetworkStatusSource`
+-- 
+
+
 -- --------------------------------------------------------
 
 -- 
 -- Table structure for table `Status`
 -- 
 
-DROP TABLE IF EXISTS `Status`;
 CREATE TABLE `Status` (
   `ID` int(10) unsigned NOT NULL default '1',
   `LastUpdate` datetime default NULL,
@@ -288,18 +285,10 @@ CREATE TABLE `Status` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-
 -- 
--- Insert the required rows into the database
---
-ALTER TABLE `NetworkStatusSource` DISABLE KEYS;
-INSERT INTO `NetworkStatusSource` (`ID`,`Fingerprint`,`Name`,`LastDescriptorPublished`,`IP`,`ORPort`,`DirPort`,`Platform`,`Contact`,`Uptime`,`BandwidthMAX`,`BandwidthBURST`,`BandwidthOBSERVED`,`OnionKey`,`SigningKey`,`WriteHistoryLAST`,`WriteHistoryINC`,`WriteHistorySERDATA`,`ReadHistoryLAST`,`ReadHistoryINC`,`ReadHistorySERDATA`,`ExitPolicySERDATA`,`FamilySERDATA`,`Hibernating`,`DescriptorSignature`) VALUES (1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-ALTER TABLE `NetworkStatusSource` ENABLE KEYS;
+-- Dumping data for table `Status`
+-- 
 
-ALTER TABLE `Status` DISABLE KEYS;
-INSERT INTO `Status` (`ID`,`LastUpdate`,`LastUpdateElapsed`,`ActiveNetworkStatusTable`,`ActiveDescriptorTable`,`ActiveDNSELTable`) VALUES (1,'2000-01-01 00:00:00',NULL,NULL,NULL,NULL);
-ALTER TABLE `Status` ENABLE KEYS;
+INSERT INTO `Status` (`ID`, `LastUpdate`, `LastUpdateElapsed`, `ActiveNetworkStatusTable`, `ActiveDescriptorTable`, `ActiveDNSELTable`) VALUES 
+(1, NULL, NULL, NULL, NULL, NULL);
 
-ALTER TABLE `Mirrors` DISABLE KEYS;
-INSERT INTO `Mirrors` (`id`,`mirrors`) VALUES (1,'');
-ALERT TABLE `Mirrors` ENABLE KEYS;

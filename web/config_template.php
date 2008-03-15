@@ -118,11 +118,7 @@ $OffsetFromGMT = 0;
 $DNSEL_Domain = null;
 $Hidden_Service_URL = null;
 
-// See if WHOIS wants the footer
-if ($argv[1] == 'printthefooter')
-{
-	echo $footerText;
-}
+$FlagOrder = "Authority,BadDirectory,BadExit,Exit,Fast,Fast,Named,Stable,Stable,Running,Valid,V2Dir,HSDir";
 
 // }}}
 
