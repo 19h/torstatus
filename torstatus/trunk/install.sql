@@ -13,21 +13,6 @@
 -- --------------------------------------------------------
 
 -- 
--- Table structure for table `Bandwidth`
--- 
-
-DROP TABLE IF EXISTS `Bandwidth`;
-CREATE TABLE `Bandwidth` (
-  `id` int(11) NOT NULL auto_increment,
-  `fingerprint` tinytext NOT NULL,
-  `write` blob NOT NULL,
-  `read` blob NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
--- 
 -- Table structure for table `DNSEL`
 -- 
 
