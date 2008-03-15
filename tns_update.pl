@@ -33,6 +33,8 @@
 # Included Perl packages
 #  * serialize.pm
 #
+# Optional Perl packages
+#  * RRDs
 
 # Include the required packages
 use DBI;
@@ -42,6 +44,10 @@ use Geo::IP;
 use MIME::Base64;
 use LWP::Simple;
 use Date::Parse;
+use RRDs;
+
+# Temporary Debugging
+$| = 1;
 
 # Set the constant to break out of getting the hostnames
 use constant TIMEOUT => 1;
@@ -80,6 +86,12 @@ while (<$config_handle>)
 	}
 }
 close ($config_handle);
+
+# Determine whether bandwidth history is enabled
+if ($config{'BandwidthHistory'} eq "true")
+{
+	use RRDs;
+}
 
 # Loop through until killed
 while (1 == 1)
@@ -372,7 +384,7 @@ while (<$torSocket>)
 			push @readhistory, "$numtime:$num";
 			$offset -= $increment;
 		}
-		$currentRouter{'read'} = join(';',@readhistory);
+		$currentRouter{'read'} = join(' ',@readhistory);
 
 		# TEMPORARY FOR BACKWARDS COMPATIBILITY
 		$currentRouter{'ReadHistoryLAST'} = "$1 $2";
@@ -407,7 +419,7 @@ while (<$torSocket>)
 			push @writehistory, "$numtime:$num";
 			$offset -= $increment;
 		}
-		$currentRouter{'write'} = join(';',@writehistory);
+		$currentRouter{'write'} = join(' ',@writehistory);
 		
 		# TEMPORARY FOR BACKWARDS COMPATIBILITY
 		$currentRouter{'WriteHistoryLAST'} = "$1 $2";
@@ -500,7 +512,7 @@ while (<$torSocket>)
 					push @readhistory, "$numtime:$num";
 					$offset -= $increment;
 				}
-				$currentRouter{'read'} = join(';',@readhistory);
+				$currentRouter{'read'} = join(' ',@readhistory);
 			
 				# TEMPORARY FOR BACKWARDS COMPATIBILITY
 				$currentRouter{'ReadHistoryLAST'} = "$1 $2";
@@ -534,7 +546,7 @@ while (<$torSocket>)
 					push @writehistory, "$numtime:$num";
 					$offset -= $increment;
 				}
-				$currentRouter{'write'} = join(';',@writehistory);
+				$currentRouter{'write'} = join(' ',@writehistory);
 				
 				# TEMPORARY FOR BACKWARDS COMPATIBILITY
 				$currentRouter{'WriteHistoryLAST'} = "$1 $2";
@@ -584,10 +596,15 @@ while (<$torSocket>)
 		);
 
 		# Update the read and write bandwidth history
+		if ($config{'BandwidthHistory'} eq "true")
+		{
 		updateBandwidth( $currentRouter{'Fingerprint'},
 			$currentRouter{'write'},
 			$currentRouter{'read'},
-			$dbh);
+			$currentRouter{'WriteHistoryINC'},
+			$currentRouter{'nickname'}
+		);
+		}
 
 		# Save to the DNSEL table as well
 		$dbresponse2->execute($currentRouter{'address'},$exitpolicystring);
@@ -763,10 +780,72 @@ END
     return $CACHE{$ip} || $ip;
 }
 
-# This updates the bandwidth table for a given router
+# This updates the bandwidth history database for a given router
 sub updateBandwidth {
-	my ($fingerprint, $write, $read, $dbh) = @_;
-	my $dbresponse3 = $dbh->prepare("SELECT `read`, `write` FROM `Bandwidth` WHERE `fingerprint` LIKE '$fingerprint'\;");
-	$dbresponse3->execute();
-	my @results = $dbresponse3->fetchrow();
+	my ($fingerprint, $write, $read, $inc, $name) = @_;
+
+	# Determine whether a bandwidth history file for this router exists
+	my $bwfile = $config{'TNS_Path'} . "bandwidthhistory/$fingerprint.rrd";
+	my $graphfile = $config{'TNS_Path'} . "web/bandwidthgraph/$fingerprint.png";
+	unless (-e $bwfile)
+	{
+		# Create the bandwidth history file
+		# There will be two datasources, read and write
+		#open (my $create_file, ">", $bwfile);
+		#close ($create_file);
+		RRDs::create(
+			$bwfile,
+			"--start", "1167634800", # start on Jan 1, 2007
+			"--step", "100", #$inc,
+			# Add read, write history values
+			"DS:rh:COUNTER:" . $inc . ":U:U",
+			"DS:wh:COUNTER:" . $inc . ":U:U", 
+			# Add RRAs
+			"RRA:AVERAGE:0.5:10:3600",
+			"RRA:AVERAGE:0.5:90:1200",
+			"RRA:AVERAGE:0.5:360:1200",
+			"RRA:AVERAGE:0.5:8640:600"
+		);
+	}
+	# Add the known bandwidth data into the RRD database
+	# Put the bandwidth into a hash to match the rh and wh
+	my %bandwidth = ();
+	my @readarray = split(" ",$read);
+	my @writearray = split(" ",$write);
+	foreach my $rhitem (@readarray)
+	{
+		my @rh = split(":",$rhitem);
+		$bandwidth{$rh[0]} = $rh[1] . ":U"; # By default assume 
+						    # no write history
+	}
+	foreach my $whitem (@writearray)
+	{
+		my @wh = split(":",$whitem);
+		unless ($bandwidth{$wh[0]})
+		{
+			$bandwidth{$wh[0]} = "U:U";
+		}
+		$bandwidth{$wh[0]} =~ s/\:U/\:$wh[1]/;
+	}
+	# Update the RRD database
+	foreach my $time (sort (keys %bandwidth))
+	{
+		RRDs::update(
+			$bwfile,
+			$time . ":" . $bandwidth{$time}
+		);
+		my $err = RRDs::error;
+	#	print "RRDs::update error: $err\n" if $err;
+	}
+	# Create a new RRD graph for the router
+	RRDs::graph(
+		$graphfile,
+		"--title=Daily Bandwidth for $name",
+		"--vertical-label=Bandwidth (KBps)",
+		"--start=end-1d", "--end=now",
+		"DEF:rh=$bwfile:rh:AVERAGE",
+		"DEF:wh=$bwfile:wh:AVERAGE",
+		"LINE1:rh#FF0000:Read History",
+		"LINE1:wh#FFFF00:Write History"
+	);
 }
