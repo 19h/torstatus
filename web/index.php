@@ -530,10 +530,10 @@ function GenerateHeaderRow()
 			{
 				$HeaderRowString .= "<td class='HRN'>";
 			}
-			if ($SR == 'FBadDirectory' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Desc'>";}
-			else if ($SR == 'FBadDirectory' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Asc'>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Asc'>";
-			$HeaderRowString .= "Bad Dir</a></td>\n";
+			//if ($SR == 'FBadDirectory' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Desc'>";}
+			//else if ($SR == 'FBadDirectory' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Asc'>";}
+			//else $HeaderRowString .= "<a class='header' href='$Self?SR=FBadDirectory&amp;SO=Asc'>";
+			//$HeaderRowString .= "Bad Dir</a></td>\n";
 			break;
 
 			case "BadExit":
@@ -561,9 +561,9 @@ function GenerateHeaderRow()
 			{
 				$HeaderRowString .= "<td class='HRN'>";
 			}
-			if ($SR == 'FBadExit' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Desc'>";}
-			else if ($SR == 'FBadExit' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Asc'>";}
-			else $HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Asc'>";
+			//if ($SR == 'FBadExit' && $SO == 'Asc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Desc'>";}
+			//else if ($SR == 'FBadExit' && $SO == 'Desc'){$HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Asc'>";}
+			//else $HeaderRowString .= "<a class='header' href='$Self?SR=FBadExit&amp;SO=Asc'>";
 			$HeaderRowString .= "Bad Exit</a></td>\n";
 			break;
 

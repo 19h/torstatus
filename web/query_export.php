@@ -30,6 +30,7 @@ $FStable = null;
 $FRunning = null;
 $FValid = null;
 $FV2Dir = null;
+$FHSDir = null;
 $CSField = null;
 $CSMod = null;
 $CSInput = null;
@@ -138,6 +139,9 @@ function GenerateHeaderRow()
 			case "V2Dir":
 			$HeaderRowString .= ",Flag - V2Dir";
 			break;
+
+			case "HSDir":
+			$HeaderRowString .= ",Flag - HSDir";
 		}
 	}
 
@@ -259,6 +263,10 @@ if (isset($_SESSION["FV2Dir"]))
 {
 	$FV2Dir = $_SESSION["FV2Dir"];
 }
+if (isset($_SESSION["FHSDir"]))
+{
+	$FV2Dir = $_SESSION["FHSDir"];
+}
 if (isset($_SESSION["CSField"]))
 {
 	$CSField = $_SESSION["CSField"];
@@ -297,6 +305,7 @@ if(
 	$SR != "FStable"			&&
 	$SR != "FRunning"			&&
 	$SR != "FValid"			&&
+	$SR != "FHSDir"			&&
 	$SR != "FV2Dir")
 {
 	$SR = "Name";
@@ -372,6 +381,11 @@ if($FValid != '0' && $FValid != '1' && $FValid != 'OFF')
 if($FV2Dir != '0' && $FV2Dir != '1' && $FV2Dir != 'OFF')
 {
 	$FV2Dir = 'OFF';
+}
+
+if($FHSDir != '0' && $FHSDir != '1' && $FHSDir != 'OFF')
+{
+	$FHSDir = 'OFF';
 }
 
 if(
@@ -529,6 +543,11 @@ if (in_array("V2Dir", $ColumnList_ACTIVE))
 	$query .= ", $ActiveNetworkStatusTable.FV2Dir as V2Dir";
 }
 
+if (in_array("HSDir", $ColumnList_ACTIVE))
+{
+	$query .= ", $ActiveNetworkStatusTable.FHSDir as HSDir";
+}
+
 $query .= ", INET_ATON($ActiveNetworkStatusTable.IP) as NIP from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint";
 
 if ($FAuthority != 'OFF')
@@ -672,6 +691,17 @@ if ($FV2Dir != 'OFF')
 	else
 		{
 			$query = $query . " and FV2Dir = $FV2Dir";
+		}
+}
+if ($FHSDir != 'OFF')
+{
+	if (strpos($query, "where") === false)
+		{
+			$query = $query . " where FHSDir = $FHSDir";
+		}
+	else
+		{
+			$query = $query . " and FHSDir = $FHSDir";
 		}
 }
 
