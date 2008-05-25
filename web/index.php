@@ -562,7 +562,15 @@ function DisplayRouterRow()
 				$innerTable = 1;
 				echo "<table class='iT'><tr><td class='iT'>";
 			}
-			echo $record[$value];
+			// Cut off hostnames larger than 50 characters
+			if (strlen($record[$value]) > 50)
+			{
+				echo substr($record[$value],0,25) . "<b>(...)</b>" . substr($record[$value],strlen($record[$value]) - 25,strlen($record[$value]));
+			}
+			else
+			{
+				echo $record[$value];
+			}
 			if (isset($record['IP']))
 			{
 				if (defined("WHOISPath"))
