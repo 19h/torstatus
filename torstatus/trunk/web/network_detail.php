@@ -51,7 +51,7 @@ $Platform_Title = 'Number of Routers by Platform';
 $Platform_Legend = null;
 
 $Summary_DATA_ARRAY = null;
-$Summary_LABEL_ARRAY = array('Total','Authority','BadDirectory','BadExit','Exit','Fast','Guard','Hibernating','Named','Stable','Running','Valid','V2Dir','Dir. Mirror');
+$Summary_LABEL_ARRAY = array('Total','Authority','BadDirectory','BadExit','Exit','Fast','Guard','Hibernating','Named','Stable','Non-running','Valid','V2Dir','Dir. Mirror');
 $Summary_Title = 'Aggregate Summary -- Number of Routers Matching Specified Criteria';
 $Summary_Legend = null;
 
@@ -69,14 +69,14 @@ $ActiveNetworkStatusTable = $record['ActiveNetworkStatusTable'];
 $ActiveDescriptorTable = $record['ActiveDescriptorTable'];
 
 // Get total number of routers from database
-$query = "select count(*) as Count from $ActiveNetworkStatusTable";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable WHERE FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 
 $RouterCount = $record['Count'];
 
 // Perform CountryCode aggregate query
-$query = "select CountryCode, count(CountryCode) as Count from $ActiveNetworkStatusTable group by CountryCode";
+$query = "select CountryCode, count(CountryCode) as Count, FRunning from $ActiveNetworkStatusTable group by CountryCode HAVING FRunning = 1";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 while ($record = mysql_fetch_assoc($result)) 
@@ -139,7 +139,7 @@ else
 $count = 0;
 
 // Perform CountryCodeExit aggregate query
-$query = "select CountryCode, count(CountryCode) as Count from $ActiveNetworkStatusTable where FExit = '1' group by CountryCode";
+$query = "select CountryCode, count(CountryCode) as Count, FRunning from $ActiveNetworkStatusTable where FExit = '1' AND FRunning = '1' group by CountryCode";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 while ($record = mysql_fetch_assoc($result)) 
@@ -200,7 +200,7 @@ else
 $count = 0;
 
 // Perform Uptime aggregate query
-$query = "select floor((CAST(((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP($ActiveDescriptorTable.LastDescriptorPublished) + $OffsetFromGMT)) + $ActiveDescriptorTable.Uptime) AS SIGNED) / 86400) / 7) as WeeksRunning, count(floor((CAST(((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP($ActiveDescriptorTable.LastDescriptorPublished) + $OffsetFromGMT)) + $ActiveDescriptorTable.Uptime) AS SIGNED) / 86400) / 7)) as Count from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveDescriptorTable.Fingerprint = $ActiveNetworkStatusTable.Fingerprint group by WeeksRunning";
+$query = "select FRunning, floor((CAST(((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP($ActiveDescriptorTable.LastDescriptorPublished) + $OffsetFromGMT)) + $ActiveDescriptorTable.Uptime) AS SIGNED) / 86400) / 7) as WeeksRunning, count(floor((CAST(((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP($ActiveDescriptorTable.LastDescriptorPublished) + $OffsetFromGMT)) + $ActiveDescriptorTable.Uptime) AS SIGNED) / 86400) / 7)) as Count from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveDescriptorTable.Fingerprint = $ActiveNetworkStatusTable.Fingerprint WHERE FRunning = '1' group by WeeksRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 while ($record = mysql_fetch_assoc($result)) 
@@ -259,7 +259,7 @@ else
 $count = 0;
 
 // Perform Bandwidth aggregate query
-$query = "select floor($ActiveDescriptorTable.BandwidthOBSERVED / 1024) as Bandwidth, count(floor($ActiveDescriptorTable.BandwidthOBSERVED / 1024)) as Number from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveDescriptorTable.Fingerprint = $ActiveNetworkStatusTable.Fingerprint group by Bandwidth";
+$query = "select FRunning, floor($ActiveDescriptorTable.BandwidthOBSERVED / 1024) as Bandwidth, count(floor($ActiveDescriptorTable.BandwidthOBSERVED / 1024)) as Number from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveDescriptorTable.Fingerprint = $ActiveNetworkStatusTable.Fingerprint WHERE FRunning = '1' group by Bandwidth";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 while ($record = mysql_fetch_assoc($result)) 
@@ -350,43 +350,43 @@ else
 }
 
 // Perform Platform aggregate query
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%freebsd%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%freebsd%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[1] = $record['Count'];
 $count += $Platform_DATA_ARRAY[1];
 
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%linux%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%linux%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[2] = $record['Count'];
 $count += $Platform_DATA_ARRAY[2];
 
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%macintosh%' or Platform like '%darwin%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%macintosh%' or Platform like '%darwin%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[3] = $record['Count'];
 $count += $Platform_DATA_ARRAY[3];
 
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%netbsd%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%netbsd%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[4] = $record['Count'];
 $count += $Platform_DATA_ARRAY[4];
 
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%openbsd%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%openbsd%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[5] = $record['Count'];
 $count += $Platform_DATA_ARRAY[5];
 
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%sunos%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%sunos%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[6] = $record['Count'];
 $count += $Platform_DATA_ARRAY[6];
 
-$query = "select count(*) as Count from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%windows%'";
+$query = "select count(*) as Count, FRunning from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Platform like '%windows%' AND FRunning = '1' GROUP BY FRunning";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
 $Platform_DATA_ARRAY[7] = $record['Count'];
@@ -441,19 +441,19 @@ $count = 0;
 // Perform Summary aggregate query
 $query = "select
 	(select count(*) from $ActiveNetworkStatusTable) as 'Total',
-	(select count(*) from $ActiveNetworkStatusTable where FAuthority = '1') as 'Authority',
-	(select count(*) from $ActiveNetworkStatusTable where FBadDirectory = '1') as 'BadDirectory',
-	(select count(*) from $ActiveNetworkStatusTable where FBadExit = '1') as 'BadExit',
-	(select count(*) from $ActiveNetworkStatusTable where FExit = '1') as 'Exit',
-	(select count(*) from $ActiveNetworkStatusTable where FFast = '1') as 'Fast',
-	(select count(*) from $ActiveNetworkStatusTable where FGuard = '1') as 'Guard',
-	(select count(*) from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Hibernating = '1') as 'Hibernating',
-	(select count(*) from $ActiveNetworkStatusTable where FNamed = '1') as 'Named',
-	(select count(*) from $ActiveNetworkStatusTable where FStable = '1') as 'Stable',
-	(select count(*) from $ActiveNetworkStatusTable where FRunning = '1') as 'Running',
-	(select count(*) from $ActiveNetworkStatusTable where FValid = '1') as 'Valid',
-	(select count(*) from $ActiveNetworkStatusTable where FV2Dir = '1') as 'V2Dir',
-	(select count(*) from $ActiveNetworkStatusTable where DirPort > 0) as 'DirMirror'";
+	(select count(*) from $ActiveNetworkStatusTable where FAuthority = '1' AND FRunning = '1') as 'Authority',
+	(select count(*) from $ActiveNetworkStatusTable where FBadDirectory = '1' AND FRunning = '1') as 'BadDirectory',
+	(select count(*) from $ActiveNetworkStatusTable where FBadExit = '1' AND FRunning = '1') as 'BadExit',
+	(select count(*) from $ActiveNetworkStatusTable where FExit = '1' AND FRunning = '1') as 'Exit',
+	(select count(*) from $ActiveNetworkStatusTable where FFast = '1' AND FRunning = '1') as 'Fast',
+	(select count(*) from $ActiveNetworkStatusTable where FGuard = '1' AND FRunning = '1') as 'Guard',
+	(select count(*) from $ActiveDescriptorTable inner join $ActiveNetworkStatusTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where Hibernating = '1' AND FRunning = '1') as 'Hibernating',
+	(select count(*) from $ActiveNetworkStatusTable where FNamed = '1' AND FRunning = '1') as 'Named',
+	(select count(*) from $ActiveNetworkStatusTable where FStable = '1' AND FRunning = '1') as 'Stable',
+	(select count(*) from $ActiveNetworkStatusTable where FRunning = '0') as 'Running',
+	(select count(*) from $ActiveNetworkStatusTable where FValid = '1' AND FRunning = '1') as 'Valid',
+	(select count(*) from $ActiveNetworkStatusTable where FV2Dir = '1' AND FRunning = '1') as 'V2Dir',
+	(select count(*) from $ActiveNetworkStatusTable where DirPort > 0 AND FRunning = '1') as 'DirMirror'";
 
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 $record = mysql_fetch_assoc($result);
