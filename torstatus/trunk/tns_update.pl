@@ -97,6 +97,10 @@ if ($config{'BandwidthHistory'} eq "true")
 while (1 == 1)
 {
 
+# Don't die on errors
+eval
+{
+
 # Find the initial time
 my $start_time = time();
 
@@ -758,8 +762,14 @@ $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DN
 $dbh->disconnect();
 close($torSocket);
 
+};
+if ($@) {
+	print "The TorStatus database was not updated properly.  An error has occured.  I will continue to try to update, however.\n";
+}
+
 # Sleep for the desired time from the configuration file
 sleep($config{'Cache_Expire_Time'});
+
 }
 
 ############ Subroutines #####################################################
@@ -848,4 +858,5 @@ sub updateBandwidth {
 		"LINE1:rh#FF0000:Read History",
 		"LINE1:wh#FFFF00:Write History"
 	);
+
 }
