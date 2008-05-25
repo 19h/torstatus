@@ -158,7 +158,10 @@ if ($updateCounter == 0)
 	if ($changeanything == 1)
 	{
 		# Update the mirror list in the database
-		$query = "UPDATE `Mirrors` SET `mirrors` = '$mirrorList' WHERE id=1;";
+		$query = "TRUNCATE `Mirrors`;";
+		$dbresponse = $dbh->prepare($query);
+		$dbresponse->execute();
+		$query = "INSERT INTO `Mirrors` (`id`,`mirrors`) VALUES (1,'$mirrorList');";
 		$dbresponse = $dbh->prepare($query);
 		$dbresponse->execute();
 	}
