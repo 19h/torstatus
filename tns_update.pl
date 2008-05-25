@@ -632,7 +632,7 @@ my $response = <$torSocket>;
 unless ($response =~ /250+/) { die "There was an error retrieving the network status."; }
 
 # Prepare the query so that data entry is faster
-$query = "INSERT INTO NetworkStatus${descriptorTable} (Name,Fingerprint,DescriptorHash,LastDescriptorPublished,IP,Hostname,ORPort,DirPort,CountryCode,Flags) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ?);";
+$query = "INSERT INTO NetworkStatus${descriptorTable} (Name,Fingerprint,DescriptorHash,LastDescriptorPublished,IP,Hostname,ORPort,DirPort,FAuthority,FBadDirectory,FBadExit,FExit,FFast,FGuard,FNamed,FStable,FRunning,FValid,FV2Dir,FHSDir,CountryCode) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?);";
 $dhresponse = $dbh->prepare($query);
 
 while (<$torSocket>)
@@ -655,13 +655,13 @@ while (<$torSocket>)
 		if ($currentRouter{'Nickname'})
 		{
 			# Form the Flags list
-			$currentRouter{'flags'} = "0b";
-			my @flagorder = split(',',$config{'FlagOrder'});
-			foreach my $flag (@flagorder)
-			{
-				$currentRouter{'flags'} .= ($currentRouter{$flag}?1:0);
-			}
-			$currentRouter{'flags'} = oct($currentRouter{'flags'});
+#			$currentRouter{'flags'} = "0b";
+#			my @flagorder = split(',',$config{'FlagOrder'});
+#			foreach my $flag (@flagorder)
+#			{
+#				$currentRouter{'flags'} .= ($currentRouter{$flag}?1:0);
+#			}
+#			$currentRouter{'flags'} = oct($currentRouter{'flags'});
 			unless ($currentRouter{'Country'})
 			{
 				$currentRouter{'Country'} = "NA";
@@ -675,8 +675,19 @@ while (<$torSocket>)
 			 $currentRouter{'Hostname'},
 			 $currentRouter{'ORPort'},
 			 $currentRouter{'DirPort'},
-			 $currentRouter{'Country'},
-			 $currentRouter{'flags'}
+			 ($currentRouter{'Authority'}?1:0),
+			 ($currentRouter{'BadDirectory'}?1:0),
+			 ($currentRouter{'BadExit'}?1:0),
+			 ($currentRouter{'Exit'}?1:0),
+			 ($currentRouter{'Fast'}?1:0),
+			 ($currentRouter{'Guard'}?1:0),
+			 ($currentRouter{'Named'}?1:0),
+			 ($currentRouter{'Stable'}?1:0),
+			 ($currentRouter{'Running'}?1:0),
+			 ($currentRouter{'Valid'}?1:0),
+			 ($currentRouter{'V2Dir'}?1:0),
+			 ($currentRouter{'HSDir'}?1:0),
+			 $currentRouter{'Country'}
 			);
 		
 			# Clear the old data
