@@ -1,6 +1,5 @@
 <?php 
 
-// Copyright (c) 2006-2007, Joseph B. Kowalski
 // See LICENSE for licensing information 
 
 // Start new session
@@ -51,7 +50,7 @@ $Platform_Title = 'Number of Routers by Platform';
 $Platform_Legend = null;
 
 $Summary_DATA_ARRAY = null;
-$Summary_LABEL_ARRAY = array('Total','Authority','BadDirectory','BadExit','Exit','Fast','Guard','Hibernating','Named','Stable','Non-running','Valid','V2Dir','Dir. Mirror');
+$Summary_LABEL_ARRAY = array('Total','Authority','BadDirectory','BadExit','Exit','Fast','Guard','Hibernating','Named','Stable','Non-running','Valid','V2Dir','Dir. Mirror', 'HSDir');
 $Summary_Title = 'Aggregate Summary -- Number of Routers Matching Specified Criteria';
 $Summary_Legend = null;
 
@@ -453,6 +452,7 @@ $query = "select
 	(select count(*) from $ActiveNetworkStatusTable where FRunning = '0') as 'Running',
 	(select count(*) from $ActiveNetworkStatusTable where FValid = '1' AND FRunning = '1') as 'Valid',
 	(select count(*) from $ActiveNetworkStatusTable where FV2Dir = '1' AND FRunning = '1') as 'V2Dir',
+	(select count(*) from $ActiveNetworkStatusTable where FHSDir = '1' AND FRunning = '1') as 'HSDir',
 	(select count(*) from $ActiveNetworkStatusTable where DirPort > 0 AND FRunning = '1') as 'DirMirror'";
 
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
@@ -472,6 +472,7 @@ $Summary_DATA_ARRAY[10] = $record['Running'];
 $Summary_DATA_ARRAY[11] = $record['Valid'];
 $Summary_DATA_ARRAY[12] = $record['V2Dir'];
 $Summary_DATA_ARRAY[13] = $record['DirMirror'];
+$Summary_DATA_ARRAY[14] = $record['HSDir'];
 
 // Register Summary variables in session
 if (!isset($_SESSION['SummaryGraph_DATA_ARRAY_SERIALIZED'])) 
