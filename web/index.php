@@ -2229,6 +2229,26 @@ It is advisable to use another mirror until this problem is corrected.
 	<?php
 }
 
+// Determine whether the user has a banner or not
+if ($BannerHTML)
+{
+	?>
+<div class="dropcontainer" style="width: <?php echo $BannerWidth; ?>; height: <?php echo $BannerHeight; ?>;">
+<div class="dropshadow2" style="width: <?php echo $BannerWidth; ?>;">
+<div class="innerbox">
+
+<table class="torcheck" cellpadding="0" cellspacing="0" style="width: <?php echo $BannerWidth; ?>; height: <?php echo $BannerHeight; ?>;">
+<tr><td>
+<div style="padding: 3px; text-align: center;">
+<?php echo $BannerHTML; ?>
+</div>
+</td></tr>
+</table>
+
+</div></div></div>
+	<?php
+}
+
 ?>
 
 <table cellspacing="2" cellpadding="2" class="body">

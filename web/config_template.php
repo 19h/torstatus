@@ -109,6 +109,11 @@ $ColumnList_INACTIVE_DEFAULT = array
 	'Contact'
 );
 
+// If you wish to include a web banner, uncomment the following lines
+//$BannerHTML = "Your banner here.";
+//$BannerHeight = "50px";
+//$BannerWidth = "400px";
+
 // }}}
 
 // ++++++++++ Other ++++++++++ {{{
