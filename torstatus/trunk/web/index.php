@@ -2205,6 +2205,31 @@ if($Hidden_Service_URL != null)
 
 </div></div></div>
 
+<?php
+
+// Determine whether the server is updating properly
+if ((time() - strtotime($LastUpdate)) >= 18000)
+{
+	?>
+<br/>
+<div class="dropcontainer">
+<div class="dropshadow2">
+<div class="innerbox">
+
+<table class="torcheck" cellpadding="0" cellspacing="0">
+<tr><td>
+<div style="padding: 3px;">
+It appears that the tns_update script has stopped running.<br/>
+It is advisable to use another mirror until this problem is corrected.
+</div>
+</td></tr>
+</table>
+
+</div></div></div>
+	<?php
+}
+
+?>
 
 <table cellspacing="2" cellpadding="2" class="body">
 
