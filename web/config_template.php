@@ -28,6 +28,9 @@ $UsingSSL = 0;
 $SSLUsingSquid = 0;
 $AllowSSL = 0;
 $SSLLink = "https://ssl.enabled.site.url/";
+// Uncomment the following if you are behind a NAT, but not 
+// necessarily running Squid
+//$RealServerIP = "1.2.3.4";
 
 // }}}
 

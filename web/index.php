@@ -66,6 +66,10 @@ else
 	$ServerIP = $_SERVER['SERVER_ADDR'];
 	$RemoteIP = $_SERVER['REMOTE_ADDR'];
 }
+if ($RealServerIP)
+{
+	$ServerIP = $RealServerIP;
+}
 $ServerPort = $_SERVER['SERVER_PORT'];
 $RemoteIPDBCount = null;
 $PositiveMatch_IP = 0;
