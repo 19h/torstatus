@@ -194,7 +194,18 @@ CREATE TABLE `NetworkStatus1` (
   `ORPort` int(10) NOT NULL,
   `DirPort` int(10) NOT NULL,
   `CountryCode` varchar(4) NOT NULL,
-  `Flags` smallint(6) unsigned NOT NULL,
+  `FAuthority` tinyint(1) unsigned default NULL,
+  `FBadDirectory` tinyint(1) unsigned default NULL,
+  `FBadExit` tinyint(1) unsigned default NULL,
+  `FExit` tinyint(1) unsigned default NULL,
+  `FFast` tinyint(1) unsigned default NULL,
+  `FGuard` tinyint(1) unsigned default NULL,
+  `FNamed` tinyint(1) unsigned default NULL,
+  `FStable` tinyint(1) unsigned default NULL,
+  `FRunning` tinyint(1) unsigned default NULL,
+  `FValid` tinyint(1) unsigned default NULL,
+  `FV2Dir` tinyint(1) unsigned default NULL,
+  `FHSDir` tinyint(1) unsigned default NULL,
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -220,7 +231,18 @@ CREATE TABLE `NetworkStatus2` (
   `ORPort` int(10) NOT NULL,
   `DirPort` int(10) NOT NULL,
   `CountryCode` varchar(4) NOT NULL,
-  `Flags` smallint(6) unsigned NOT NULL,
+  `FAuthority` tinyint(1) unsigned default NULL,
+  `FBadDirectory` tinyint(1) unsigned default NULL,
+  `FBadExit` tinyint(1) unsigned default NULL,
+  `FExit` tinyint(1) unsigned default NULL,
+  `FFast` tinyint(1) unsigned default NULL,
+  `FGuard` tinyint(1) unsigned default NULL,
+  `FNamed` tinyint(1) unsigned default NULL,
+  `FStable` tinyint(1) unsigned default NULL,
+  `FRunning` tinyint(1) unsigned default NULL,
+  `FValid` tinyint(1) unsigned default NULL,
+  `FV2Dir` tinyint(1) unsigned default NULL,
+  `FHSDir` tinyint(1) unsigned default NULL,
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 

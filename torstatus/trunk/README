@@ -167,6 +167,10 @@ Valid options for the "$ColumnList_ACTIVE_DEFAULT" and
 'Valid'
 'V2Dir'
 
+-- $BannerHTML: The HTML that, if defined, will be placed in a banner on the top of the TorStatus page.  It may include any HTML desired.
+
+-- $BannerWidth, $BannerHeight: These are the widths and heights, respectively, of the banner that will be created given a defined $BannerHTML.
+
 -- $LocalTimeZone: This is simply a string where you can specify your time 
 zone, so that the "Cache Last Updated" field at the bottom of the page makes 
 sense to users in other time zones, since that field is in local time. 
