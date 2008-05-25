@@ -97,16 +97,16 @@ $ColumnList_ACTIVE_DEFAULT = array
 	'V2Dir',
 	'HSDir',
 	'Platform',
-	'Hibernating'
+	'Hibernating',
+	'BadDir',
+	'BadExit'
 );
 
 $ColumnList_INACTIVE_DEFAULT = array
 (
 	'Fingerprint',
 	'LastDescriptorPublished',
-	'Contact',
-	'BadDir',
-	'BadExit'
+	'Contact'
 );
 
 // }}}
