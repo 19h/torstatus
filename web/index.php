@@ -1390,6 +1390,20 @@ $record = mysql_fetch_assoc($result);
 $Hostname = $record['Hostname'];
 $CountryCode = $record['CountryCode'];
 
+// Either use TorDNSEL or an internal search
+if ($UseTorDNSEL == 1)
+{
+	$QueryRemoteIP = implode(".",array_reverse(explode(".",$RemoteIP)));
+	$QueryServerIP = implode(".",array_reverse(explode(".",$ServerIP)));
+	$tordnsel = gethostbyname($QueryRemoteIP . "." . $ServerPort . "." . $QueryServerIP . ".ip-port.exitlist.torproject.org");
+	if ($tordnsel == "127.0.0.2")
+	{
+		// A positive match was given
+		$PositiveMatch_IP = 1;
+	}
+}
+else
+{
 // Determine if client IP exists in database as a Tor server
 $query = "select count(*) as Count from $ActiveNetworkStatusTable where IP = '$RemoteIP'";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
@@ -1400,6 +1414,7 @@ $RemoteIPDBCount = $record['Count'];
 if ($RemoteIPDBCount > 0)
 {
 	$PositiveMatch_IP = 1;	
+}
 }
 
 // Get name, fingerprint, and exit policy of Tor node(s) if match was found, look for match in ExitPolicy
