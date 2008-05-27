@@ -49,6 +49,9 @@ $GEOIP_Path = "geoip/";
 $GEOIP_Database_Path = "geoip/";
 $PHP_Path = "/usr/bin/";
 $TNS_Path = "/home/torstatus-kgprog-com/project/trunk/";
+
+$UseTorDNSEL = 1;
+
 // Comment the following line if you do not provide a WHOIS service
 define("WHOISPath","/whois.php?ip=");
 // If you want to provide a bandwidth history, uncomment the following line
