@@ -12,7 +12,6 @@ a:visited
 
 a:hover 
 {
-/*	background-color: #8EFF80; */
 	text-decoration:none;
 }
 
@@ -24,7 +23,6 @@ a.who:link,a.who:active,a.who:visited
 a.who:hover
 {
 	text-decoration: underline;
-	background-color: #BFFFDC;
 }
 
 a.plain,a.collapseinfobar,a.plainbox

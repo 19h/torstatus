@@ -131,7 +131,7 @@ $OffsetFromGMT = 0;
 $DNSEL_Domain = null;
 $Hidden_Service_URL = null;
 
-$FlagOrder = "Authority,BadDirectory,BadExit,Exit,Fast,Fast,Named,Stable,Stable,Running,Valid,V2Dir,HSDir";
+$Fast = 1;
 
 // }}}
 
