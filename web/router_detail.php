@@ -221,7 +221,16 @@ include("header.php");
 	// Display router IP
 	echo "<tr>\n";
 	echo "<td class='TRAR'><b>IP Address:</b></td>\n";
-	echo "<td class='TRSB'>$IP</td>\n";
+	echo "<td class='TRSB'>";
+	if (defined("WHOISPath"))
+	{
+		echo "<a class='who' href='".WHOISPath.$IP."'>".$IP."</a>";
+	}
+	else
+	{
+		echo $IP;
+	}
+	echo "</td>\n";
 	echo "</tr>\n";
 
 	// Display router Hostname

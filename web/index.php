@@ -2309,6 +2309,11 @@ while ($record = mysql_fetch_assoc($result))
 	}
 	else
 	{
+		if ($Fast == 1)
+		{
+			echo "data truncated";
+			break;
+		}
 		// Display header row
 		echo $HeaderRowString;
 	
