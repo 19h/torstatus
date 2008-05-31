@@ -47,6 +47,8 @@ $SQL_Catalog = "TorNetworkStatus";
 $JPGraph_Path = "jpgraph/";
 $GEOIP_Path = "geoip/";
 $GEOIP_Database_Path = "geoip/";
+$AutomaticallyUpdateGeoIPDatbase = "yes"; // Change to stop auto updating
+
 $PHP_Path = "/usr/bin/";
 $TNS_Path = "/home/torstatus-kgprog-com/project/trunk/";
 
