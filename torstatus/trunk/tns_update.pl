@@ -119,6 +119,11 @@ my $record;
 # Determine if the GeoIP database should be automatically updated
 if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 {
+	# Handle any potential error so as not to stall the
+	# network updating
+	eval
+	{
+
 	# Query the last set date from the database
 	$query = "SElECT geoip FROM Status LIMIT 1;";
 	$dbresponse = $dbh->prepare($query);
@@ -159,6 +164,12 @@ if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 			$dbresponse = $dbh->prepare($query);
 			$dbresponse->execute();
 		}
+	}
+
+	};
+	if ($@)
+	{
+		print "The GeoIP database could not be updated.  An error is occuring.\n";
 	}
 }
 
