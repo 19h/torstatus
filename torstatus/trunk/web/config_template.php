@@ -131,7 +131,7 @@ $OffsetFromGMT = 0;
 $DNSEL_Domain = null;
 $Hidden_Service_URL = null;
 
-$Fast = 1;
+$Fast = 0;
 
 // }}}
 
