@@ -304,6 +304,7 @@ CREATE TABLE `Status` (
   `ActiveNetworkStatusTable` varchar(256) default NULL,
   `ActiveDescriptorTable` varchar(256) default NULL,
   `ActiveDNSELTable` varchar(256) default NULL,
+  `geoip` date NOT NULL default '2008-05-30',
   PRIMARY KEY  (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
