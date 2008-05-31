@@ -57,7 +57,6 @@ $SIG{ALRM} = sub {die "timeout"};
 
 # Caching constansts for increased speed
 my %CACHE;
-my %geoIPCache;
 
 # Counter for updating mirror list
 my $updateCounter = 0;
@@ -94,6 +93,9 @@ if ($config{'BandwidthHistory'} eq "true")
 {
 	use RRDs;
 }
+
+# Geo::IP needs to be loaded - include a built-in cache
+my $gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE);
 
 # Loop through until killed
 while (1 == 1)
@@ -681,9 +683,6 @@ while (<$torSocket>)
 
 ############ Updating network status #########################################
 
-# Geo::IP needs to be loaded
-my $gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_STANDARD);
-
 # Delete all of the records from the network status table that is going to be
 # modified
 $dbh->do("TRUNCATE TABLE NetworkStatus${descriptorTable};");
@@ -769,15 +768,7 @@ while (<$torSocket>)
 		$currentRouter{'DirPort'} = $8;
 
 		# We need to find the country of the IP
-		if ($geoIPCache{$6})
-		{
-			$currentRouter{'Country'} = $geoIPCache{$6};
-		}
-		else
-		{
-			$currentRouter{'Country'} = $gi->country_code_by_addr($6);
-			$geoIPCache{$6} = $currentRouter{'Country'};
-		}
+		$currentRouter{'Country'} = $gi->country_code_by_addr($6);
 
 		# And the host by addr
 		$currentRouter{'Hostname'} = lookup($6);
