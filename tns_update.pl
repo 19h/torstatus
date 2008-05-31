@@ -29,6 +29,7 @@
 #  * Date::Parse from CPAN
 #  * Geo::IP   ** Geo::IP::PurePerl should be used for those without
 #                 access to the C version of GeoIP.
+#  * Compress::Zlib from CPAN required to decompress GeoIP files after updating
 #
 # Included Perl packages
 #  * serialize.pm
@@ -45,6 +46,7 @@ use MIME::Base64;
 use LWP::Simple;
 use Date::Parse;
 use RRDs;
+use Compress::Zlib;
 
 # Temporary Debugging
 $| = 1;
@@ -113,6 +115,52 @@ my $dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$co
 my $query;
 my $dbresponse;
 my $record;
+
+# Determine if the GeoIP database should be automatically updated
+if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
+{
+	# Query the last set date from the database
+	$query = "SElECT geoip FROM Status LIMIT 1;";
+	$dbresponse = $dbh->prepare($query);
+	$dbresponse->execute();
+	$record = $dbresponse->fetchrow();
+	
+	# Extract the month from the record
+	my @time = localtime(time());
+	my $month = $time[4]+1;
+	my $day = $time[3];
+	my $oldmonth;
+	if ($record =~ m/.*?\-(.*?)\-/)
+	{
+		$oldmonth = $1;
+	}
+	if ($oldmonth != $month && $day > 2) # Give extra time
+	{
+		# The GeoIP database should be updated
+		my $getresponse = getstore('http://www.maxmind.com/download/geoip/database/GeoIP.dat.gz','/tmp/GeoIP.dat.gz');
+		unless (is_success($getresponse))
+		{
+			print "Error retrieving GeoIP file.  Please contact Kasimir <kasimir\@kgprog.com>. \n(not dying)\n";
+		}
+		else
+		{
+			# Convert and save the new GeoIP file
+			my $gz = gzopen ("/tmp/GeoIP.dat.gz","rb");
+			open (my $output, ">" . $config{'GEOIP_Database_Path'} . "GeoIP.dat");
+			my $buffer;
+			while ($gz->gzread($buffer))
+			{
+				print $output $buffer;	
+			}
+			$gz->gzclose;
+			close ($output);
+			# The update has completed - save
+			$query = "UPDATE Status SET geoip=NOW();";
+			$dbresponse = $dbh->prepare($query);
+			$dbresponse->execute();
+		}
+	}
+}
 
 # Determine whether or not the mirror list needs to be updated
 if ($updateCounter % 20 == 0)
