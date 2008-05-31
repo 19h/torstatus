@@ -95,7 +95,7 @@ if ($config{'BandwidthHistory'} eq "true")
 }
 
 # Geo::IP needs to be loaded - include a built-in cache
-my $gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE);
+my $gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE);
 
 # Loop through until killed
 while (1 == 1)
@@ -161,10 +161,13 @@ if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 			}
 			$gz->gzclose;
 			close ($output);
-			# The update has completed - save
+			# The update has completed - save the new time
 			$query = "UPDATE Status SET geoip=NOW();";
 			$dbresponse = $dbh->prepare($query);
 			$dbresponse->execute();
+			# Reload the GeoIP database
+			undef $gi;
+			$gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE);
 		}
 	}
 
