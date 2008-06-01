@@ -5,11 +5,11 @@ licenses to use those files.
 
 The Tor(TM) trademark and Tor Onion Logo are trademarks of The Tor Project. 
 More information about the Tor project can be found at the Tor website,
-http://www.torproject.org/
+https://www.torproject.org/
 
 ==============================================================================
-The 'TorStatus' Web Application and DNSEL Server are distributed
-under this license unless otherwise stated within the individual file:
+TorStatus is distributed under the following license unless otherwise
+stated within the individual TorStatus file:
 
 Redistribution and use in source and binary forms, with or without 
 modification, are permitted provided that the following conditions are met:
