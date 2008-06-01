@@ -57,6 +57,8 @@ $SIG{ALRM} = sub {die "timeout"};
 
 # Caching constansts for increased speed
 my %CACHE;
+my %geoIPCache;
+my %hostnameCache;
 
 # Counter for updating mirror list
 my $updateCounter = 0;
@@ -93,9 +95,6 @@ if ($config{'BandwidthHistory'} eq "true")
 {
 	use RRDs;
 }
-
-# Geo::IP needs to be loaded - include a built-in cache
-my $gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE);
 
 # Loop through until killed
 while (1 == 1)
@@ -165,9 +164,6 @@ if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 			$query = "UPDATE Status SET geoip=NOW();";
 			$dbresponse = $dbh->prepare($query);
 			$dbresponse->execute();
-			# Reload the GeoIP database
-			undef $gi;
-			$gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE);
 		}
 	}
 
@@ -686,6 +682,9 @@ while (<$torSocket>)
 
 ############ Updating network status #########################################
 
+# Geo::IP needs to be loaded - include a built-in cache
+my $gi = Geo::IP->open($config{'GEOIP_Database_Path'} . "GeoIP.dat",GEOIP_MEMORY_CACHE);
+
 # Delete all of the records from the network status table that is going to be
 # modified
 $dbh->do("TRUNCATE TABLE NetworkStatus${descriptorTable};");
@@ -770,15 +769,31 @@ while (<$torSocket>)
 		$currentRouter{'ORPort'} = $7;
 		$currentRouter{'DirPort'} = $8;
 
-		# We need to find the country of the IP
-		$currentRouter{'Country'} = $gi->country_code_by_addr($6);
-
-		# And the host by addr
-		$currentRouter{'Hostname'} = lookup($6);
-		# If the hostname was not found, it should be an IP
-		unless ($currentRouter{'Hostname'})
+		# We need to find the country of the IP (using caching)
+		if ($geoIPCache{$6})
 		{
-			$currentRouter{'Hostname'} = $6;
+			$currentRouter{'Country'} = $geoIPCache{$6};
+		}
+		else
+		{
+			$currentRouter{'Country'} = $gi->country_code_by_addr($6);
+			$geoIPCache{$6} = $currentRouter{'Country'};
+		}
+
+		# And the host by addr (using caching)
+		if ($hostnameCache{$6})
+		{
+			$currentRouter{'Hostname'} = $hostnameCache{$6};
+		}
+		else
+		{
+			$currentRouter{'Hostname'} = lookup($6);
+			# If the hostname was not found, it should be an IP
+			unless ($currentRouter{'Hostname'})
+			{
+				$currentRouter{'Hostname'} = $6;
+			}
+			$hostnameCache{$6} = $currentRouter{'Hostname'};
 		}
 		}
 	}
