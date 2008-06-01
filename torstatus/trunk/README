@@ -6,11 +6,11 @@ versions 4.0 and onwards, please see the INSTALL file.
 
 PLEASE NOTE:  You must agree to the terms and conditions for GeoLite and for JPGraph to use this software to its fullest extent.  If you do not agree to the appropriate terms and licenses that are provided with this release, then you may not use those pieces of software.  Basically, this means that "as-is" this software cannot be used commercially.
 
-TorStatus - Tor Network Status
+TorStatus
 
 You may download the most current version at:
 http://project.torstatus.kgprog.com/
-To setup the 'TorStatus' Web Application, follow these instructions:
+To setup TorStatus' follow these instructions:
 
 1) Create the MySQL database that the application will use. In the default 
 install directory, there is a MySQL script file that can be used to create 
