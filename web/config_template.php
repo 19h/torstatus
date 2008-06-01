@@ -83,7 +83,13 @@ $Cache_Expire_Time = 300;
 // Set this to 0 if you wish to use JPGraph's libraries
 $usePerlGraphs = 1;
 
-$footerText = "<b><a class='plainbox' href='/CHANGES' target='_new'>View Complete Change History</a><br/>Source code is available under <a class='plainbox' href='/LICENSE' target='_new'>BSD license</a> at <a class='plainbox' href='http://project.torstatus.kgprog.com/' target='_new'>project.torstatus.kgprog.com</a></b>";
+$footerText = "<b>
+<a class='plainbox' href='/CHANGES' target='_new'>View Complete Change History</a>
+<br/>
+Source code is available under <a class='plainbox' href='/LICENSE' target='_new'>BSD license</a> at <a class='plainbox' href='http://project.torstatus.kgprog.com/' target='_new'>project.torstatus.kgprog.com</a>
+<br/>
+The Tor<small><sup>TM</sup></small> trademark and Tor Onion Logo are trademarks of <a class='plainbox' href='http://www.torproject.org/'>The Tor Project</a>.
+</b>";
 $ColumnHeaderInterval = 20;
 $ColumnList_ACTIVE_DEFAULT = array
 (
