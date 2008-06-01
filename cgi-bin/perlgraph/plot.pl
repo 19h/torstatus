@@ -16,6 +16,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+# The Tor(TM) trademark and Tor Onion Logo are trademarks of The Tor Project. 
 #
 # Required Perl packages:
 #  * CGI from CPAN to communicate easily with requests from the web server
