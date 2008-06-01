@@ -9,6 +9,12 @@ session_start();
 // Include configuration settings
 include("config.php");
 
+// Ensure that the WHOIS service is available, otherwise die
+if (!defined("WHOISPath"))
+{
+	exit;
+}
+
 $ip = $_GET['ip'];
 if (!preg_match("/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/",$ip))
 {
