@@ -5,6 +5,9 @@
 # A Perl script designed to update the database of TorStatus for the
 # most current information from a local Tor server.
 #
+# See http://project.torstatus.kgprog.com/ for more information on TorStatus
+# and https://www.torproject.org/ for more information about the Tor software.
+#
 #    This program is part of TorStatus
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -20,6 +23,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+# The Tor(TM) trademark and Tor Onion Logo are trademarks of The Tor Project. 
 #
 # Required Perl packages:
 #  * DBI from CPAN to access the MySQL database
