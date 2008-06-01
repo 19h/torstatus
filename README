@@ -183,13 +183,6 @@ Pacific Standard Time (PST) zone which is GMT -8:00, for example, you would
 enter -28800 (8 hours in seconds) in this field. This variable is used for 
 various time calculations during the execution of the application.
 
--- $DNSEL_Domain: If you are running the DNSEL server component (See
-"README_DNSEL" for details) and wish to advertise it on the web site, set
-this variable to the full domain name for which the DNSEL server is
-authoritative for. This value should match what you set in the
-"DNSELServer.properties" file for "config_DNSEL_Domain". If you leave this set
-to 'null', no DNSEL server link will be displayed on the site.
-
 -- $Hidden_Service_URL: If you are also making the TorNetworkStatus site
 available as a Tor Hidden Service and wish to advertise this on the site,
 enter the URL of the Hidden Service here. If you leave this set to 'null', no
