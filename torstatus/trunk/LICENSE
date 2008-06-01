@@ -3,6 +3,9 @@ The data files for GeoLite and JPGraph are packaged with this distribution.
 These files come with their own licenses, and you must agree to those
 licenses to use those files.
 
+The Tor(TM) trademark and Tor Onion Logo are trademarks of The Tor Project. 
+More information about the Tor project can be found at the Tor website,
+http://www.torproject.org/
 
 ==============================================================================
 The 'TorStatus' Web Application and DNSEL Server are distributed
