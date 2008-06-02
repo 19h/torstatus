@@ -75,7 +75,7 @@ $record = mysql_fetch_assoc($result);
 $RouterCount = $record['Count'];
 
 // Perform CountryCode aggregate query
-$query = "select CountryCode, count(CountryCode) as Count, FRunning from $ActiveNetworkStatusTable group by CountryCode HAVING FRunning = 1";
+$query = "select CountryCode, count(CountryCode) as Count, FRunning from $ActiveNetworkStatusTable WHERE FRunning='1' group by CountryCode";
 $result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 while ($record = mysql_fetch_assoc($result)) 
