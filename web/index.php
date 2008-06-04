@@ -548,7 +548,7 @@ function DisplayRouterRow()
 	}
 	$countrycode = strtolower($record['CountryCode']);
 	if ($countrycode == "") { $countrycode = "nna"; $record['CountryCode'] = "NNA"; }
-	echo "<img src='img/flags/".$countrycode.".gif' class='flag' width='18px' alt='".$record['CountryCode']."' title='".$country_codes[strtolower($record['CountryCode'])]."'/>&nbsp;<a href='router_detail.php?FP=" . $record['Fingerprint'] . "'>" . $record['Name'] . "</a></td>";
+	echo "<img src='img/flags/".$countrycode.".gif' class='flag' width='17px' alt='".$record['CountryCode']."' title='".$country_codes[strtolower($record['CountryCode'])]."'/>&nbsp;<a href='router_detail.php?FP=" . $record['Fingerprint'] . "'>" . $record['Name'] . "</a></td>";
 	foreach($ColumnList_ACTIVE as $value)
 	{
 		switch (TRUE) 
