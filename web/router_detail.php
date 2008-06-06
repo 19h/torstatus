@@ -81,6 +81,12 @@ $Hostname = $record['Hostname'];
 $ORPort = $record['ORPort'];
 $DirPort = $record['DirPort'];
 $Platform = $record['Platform'];
+// Break the platform after 55 characters
+if (strlen($Platform) > 55)
+{
+	$Platform = substr($Platform,0,55) . "<br/>" . substr($Platform,-(strlen($Platform)-55));
+}
+
 $Contact = $record['Contact'];
 $Uptime = $record['Uptime'];
 $Bandwidth_MAX = $record['BandwidthMAX'];
