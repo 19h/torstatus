@@ -1816,23 +1816,25 @@ if ($CSInput != null)
 
 	$CSInput_SAFE = mysql_real_escape_string($CSInput);
 
+	// Strip all whitespace and capitalize all for fingerprint matching
+	$CSInputFingerprint = preg_replace('/\s+/', '', strtoupper($CSInput_SAFE));
 	if ($CSField == 'Fingerprint')
 	{
 		if($CSMod == 'Equals')
 		{
-			$query .= "$ActiveNetworkStatusTable.Fingerprint = '$CSInput_SAFE'";
+			$query .= "$ActiveNetworkStatusTable.Fingerprint = '$CSInputFingerprint'";
 		}
 		else if($CSMod == 'Contains')
 		{
-			$query .= "$ActiveNetworkStatusTable.Fingerprint like '%$CSInput_SAFE%'";
+			$query .= "$ActiveNetworkStatusTable.Fingerprint like '%$CSInputFingerprint%'";
 		}
 		else if($CSMod == 'LessThan')
 		{
-			$query .= "$ActiveNetworkStatusTable.Fingerprint < '$CSInput_SAFE'";
+			$query .= "$ActiveNetworkStatusTable.Fingerprint < '$CSInputFingerprint'";
 		}
 		else if($CSMod == 'GreaterThan')
 		{
-			$query .= "$ActiveNetworkStatusTable.Fingerprint > '$CSInput_SAFE'";
+			$query .= "$ActiveNetworkStatusTable.Fingerprint > '$CSInputFingerprint'";
 		}
 	}
 	else if ($CSField == 'Name')
@@ -1844,6 +1846,9 @@ if ($CSInput != null)
 		else if($CSMod == 'Contains')
 		{
 			$query .= "$ActiveNetworkStatusTable.Name like '%$CSInput_SAFE%'";
+			// Determine whether the string (w/o whitespace) is 40
+			// characters, to test for the fingerprint
+			$query .= " OR $ActiveNetworkStatusTable.Fingerprint LIKE '$CSInputFingerprint'";
 		}
 		else if($CSMod == 'LessThan')
 		{
@@ -2114,13 +2119,13 @@ $mirrorList = $mirrorListRow[0];
 <form action="<?php echo $Self; ?>" method="post" name="search">
 <input type="hidden" name="CSMod" value="Contains" />
 <input type="hidden" name="CSField" value="Name" />
-<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search for a router') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Router Search"/></noscript>
+<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
 </form>
 </td></tr></table>
 <?php if (!$CSInput) { ?>
 <script type="text/javascript">
 	document.getElementById('searchbox').style.color = 'gray';
-	document.getElementById('searchbox').value = 'search for a router';
+	document.getElementById('searchbox').value = 'search by name or fingerprint';
 </script>
 <?php } ?>
 <script type="text/javascript">
