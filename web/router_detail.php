@@ -314,9 +314,48 @@ include("header.php");
 	if ($Family_DATA_ARRAY == null) {echo "No Info Given";}
 	else
 	{
-		for ($i=0 ; $i < count($Family_DATA_ARRAY) ; $i++)
+		foreach ($Family_DATA_ARRAY as $FamilyMember)
 		{
-			echo "$Family_DATA_ARRAY[$i]<br/>";
+			// Link to the routers in the family, as well as
+			// provide names for fingerprints
+			if (substr($FamilyMember,0,1) == "$" && strlen($FamilyMember) == 41)
+			{
+				// It can be assumed to be a fingerprint
+				// The name and countrycode should be found
+				$fplink = strtolower(substr($FamilyMember,1));
+				$query = "SELECT `CountryCode`, `Name` from `$ActiveNetworkStatusTable` WHERE `Fingerprint` LIKE '$fplink'";
+				$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+				$record = mysql_fetch_assoc($result);
+				// Display in the form
+				//  [linked][countrycode]Fingerprint (Name)
+				echo "<img src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a href=\"router_detail.php?FP=$fplink\">$FamilyMember (".$record['Name'].")</a><br/>";
+			}
+			else
+			{
+				// It can be assumed to be a name
+				// The countrycode and fingerprint are needed
+				// - Test to make sure that there is only one
+				//   router with the same name
+				$query = "SELECT `CountryCode`, `Fingerprint` from `$ActiveNetworkStatusTable` WHERE `Name` LIKE '$FamilyMember'";
+				$result = mysql_query($query) or die('Query failed: ' . mysql_error());
+				if (mysql_num_rows($result) == 1)
+				{
+					$record = mysql_fetch_assoc($result);
+					$fplink = strtolower(substr($record['Fingerprint'],1));
+					// Display in the form
+					//  [linked][countrycode] Name
+					echo "<img src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a href=\"router_detail.php?FP=$fplink\">$FamilyMember</a><br/>";
+				}
+				else
+				{
+					// Unfortunately, the name is 
+					// meaningless
+					// Display in the form
+					//  Name
+					echo "$FamilyMember<br/>";
+				}
+
+			}
 		}
 	}
 	echo "</td>\n";
