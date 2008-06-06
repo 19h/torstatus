@@ -55,14 +55,18 @@ $mirrorList = $mirrorListRow[0];
 <form action="/index.php" method="post" name="search">
 <input type="hidden" name="CSMod" value="Contains" />
 <input type="hidden" name="CSField" value="Name" />
-<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"search for a router";?>" onfocus="javascript:if(this.value=='search for a router') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox"><img class="searchbox" alt="Search" src="/img/blank.gif" /></a><noscript><input type="submit" value="Search"/></noscript>
+<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
 </form>
 </td></tr></table>
 <?php if (!$CSInput) { ?>
 <script type="text/javascript">
 	document.getElementById('searchbox').style.color = 'gray';
+	document.getElementById('searchbox').value = 'search by name or fingerprint';
 </script>
 <?php } ?>
+<script type="text/javascript">
+	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="/img/blank.gif" />';
+</script>
 </div>
 <div class="separator"></div>
 <div class="mirrorbar">
