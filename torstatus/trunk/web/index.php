@@ -775,7 +775,15 @@ function DisplayRouterRow()
 			}
 			else
 			{
-				echo "<td class='TDc'><img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>N/A</td>";
+				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
+				{
+					echo "<td class='TDc'><img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>N/A</td>";
+				}
+				else
+				{
+					echo "<td class='TDc'><img src='/img/blank.gif' alt=' ' width='12px' />N/A</td>";
+					
+				}
 			}
 			break;
 
