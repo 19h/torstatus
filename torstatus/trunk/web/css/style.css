@@ -169,3 +169,8 @@ a.searchbox:hover img.searchbox
 {
 	background-image: url(/img/searchhover.png);
 }
+
+td.TRSB a:hover
+{
+	text-decoration: underline;
+}
