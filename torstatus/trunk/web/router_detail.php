@@ -398,6 +398,24 @@ include("header.php");
 </tr>
 <tr>
 <td class='TRS' style="text-align: center;">
+<div style="text-align: left;">
+<?php
+if ($_GET['showbandwidth'] == "true")
+{
+	// Print the bandwidth
+	echo "Write history bandwidth (in bytes per second):<br/>";
+	foreach (unserialize($record['WriteHistorySERDATA']) as $bwvalue)
+	{
+		echo "$bwvalue<br/>";
+	}
+	echo "Ending at " . $record['WriteHistoryLAST'] . " with " . $record['WriteHistoryINC'] . " second intervals.";
+}
+else
+{
+	?><a href="?FP=<?php echo $Fingerprint; ?>&showbandwidth=true">(show bandwidth values)</a><?php
+}
+?>
+</div>
 <?php if ($usePerlGraphs == 1) { ?>
 <img src="/cgi-bin/perlgraph/plot.pl?plottype=rtw" alt="Write History" /><br/>
 <?php } else { ?>
@@ -405,6 +423,24 @@ include("header.php");
 <?php } ?>
 </td>
 <td class='TRSB' style="text-align: center;">
+<div style="text-align: left;">
+<?php
+if ($_GET['showbandwidth'] == "true")
+{
+	// Print the bandwidth
+	echo "Read history bandwidth (in bytes per second):<br/>";
+	foreach (unserialize($record['ReadHistorySERDATA']) as $bwvalue)
+	{
+		echo "$bwvalue<br/>";
+	}
+	echo "Ending at " . $record['ReadHistoryLAST'] . " with " . $record['ReadHistoryINC'] . " second intervals.";
+}
+else
+{
+	?>&nbsp;<?php
+}
+?>
+</div>
 <?php if ($usePerlGraphs == 1) { ?>
 <img src="/cgi-bin/perlgraph/plot.pl?plottype=rtr" alt="Read History" /><br/>
 <?php } else { ?>
