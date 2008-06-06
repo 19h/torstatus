@@ -325,10 +325,20 @@ include("header.php");
 				$fplink = strtolower(substr($FamilyMember,1));
 				$query = "SELECT `CountryCode`, `Name` from `$ActiveNetworkStatusTable` WHERE `Fingerprint` LIKE '$fplink'";
 				$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-				$record = mysql_fetch_assoc($result);
-				// Display in the form
-				//  [linked][countrycode]Fingerprint (Name)
-				echo "<img src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a href=\"router_detail.php?FP=$fplink\">$FamilyMember (".$record['Name'].")</a><br/>";
+				if (mysql_num_rows($result) == 1)
+				{
+					$record = mysql_fetch_assoc($result);
+					// Display in the form
+					//  [linked][countrycode] Name
+					echo "<img src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a href=\"router_detail.php?FP=$fplink\">".$record['Name']."</a><br/>";
+				}
+				else
+				{
+					// The router was not found
+					// Display in the form
+					//  Fingerprint
+					echo "$FamilyMember<br/>";
+				}
 			}
 			else
 			{
