@@ -130,13 +130,28 @@ $ColumnList_INACTIVE_DEFAULT = array
 
 // }}}
 
+// ++++++++++ Hidden service options ++++++++++ {{{
+
+// Detect whether or not TorStatus is running as a hidden service
+$DetectHiddenService = 1;
+
+// Manually set whether this is a hidden service
+// (overrides auto detection)
+$IsAHiddenService = 0;
+
+// Change to 1 to truncate the output by default
+// (recommended for hidden services)
+$Fast = 0;
+
+// This should be set if you provide a hidden service and do not
+// mind breaking the anonymity of your server
+$Hidden_Service_URL = null;
+
+// }}}
+
 // ++++++++++ Other ++++++++++ {{{
 $LocalTimeZone = "GMT";
 $OffsetFromGMT = 0;
-
-$Hidden_Service_URL = null;
-
-$Fast = 0;
 
 // }}}
 
