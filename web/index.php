@@ -70,6 +70,19 @@ if ($RealServerIP)
 {
 	$ServerIP = $RealServerIP;
 }
+
+// Determine if the host indicated this to be a hidden service
+$DetectedHiddenService = 0;
+if ($IsAHiddenService == 1)
+{
+	$DetectedHiddenService = 1;
+}
+if(substr($Host,-6) == ".onion" && $DetectHiddenService == 1)
+{
+	$DetectedHiddenService = 1;
+}
+
+
 $ServerPort = $_SERVER['SERVER_PORT'];
 $RemoteIPDBCount = null;
 $PositiveMatch_IP = 0;
@@ -2125,7 +2138,6 @@ $mirrorList = $mirrorListRow[0];
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<title>TorStatus - Tor Network Status</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css" />
-	<link rel="stylesheet" type="text/css" href="css/style.css" />
 	<!--[if lt IE 7.]>
 	<script defer type="text/javascript" src="/js/pngfix.js"></script>
 	<![endif]-->
@@ -2180,8 +2192,10 @@ Good job, you do not have JavaScript enabled!
 </div>
 <div class="infobar" id="infobar">
 <a class="plain" href="tor_exit_query.php">Tor Exit Node Query</a> |
+<?php if ($DetectedHiddenService == 0) { ?>
 <a class='plain' href='#AppServer' onclick='javascript:asdToggle = 0;toggleASD();'>TorStatus Server Details</a> |
 <a class='plain' href='#TorServer' onclick='javascript:nsosToggle = 0;toggleNSOS();'>Opinion Source</a> |
+<?php } ?>
 <a class='plain' href='#CustomQuery' onclick='javascript:caqoToggle = 0;toggleCAQO();'>Advanced Query Options</a> |
 <a class='plain' href='column_set.php'>Advanced Display Options</a> |
 <a class='plain' href='#Stats' onclick='javascript:anssToggle = 0;toggleANSS();'>Network Statistic Summary</a> |
@@ -2224,9 +2238,11 @@ Good job, you do not have JavaScript enabled!
 
 <?php
 
-if(!(false === strpos($Hidden_Service_URL, $Host)))
+if($DetectedHiddenService == 1)
 {
-	echo "<font class='usingTor'>-You appear to be accessing this server through the Tor network as a hidden service-</span><br/><br/>";
+	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
+	echo "<span class='usingTor'>You appear to be accessing this hidden onion network service through the Tor network.</span><br/>";
+	echo '</td></tr>';
 }
 else if ($PositiveMatch_IP == 1)
 {
@@ -2254,20 +2270,35 @@ else
 	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: $RemoteIP";
 	echo "</td></tr>";
 }
-
-if($Hidden_Service_URL != null)
-{
-	echo "<tr>\n";
-	echo "<td class='TRC'><b>";
-	echo "<font color='#3344ee'>This site is available as a Tor Hidden Service at:</font><br/><a class='plain' href='$Hidden_Service_URL'>$Hidden_Service_URL</a><br/><br/>";
-	echo "</b></td>\n";
-	echo "</tr>\n";
-}
 ?>
-
 </table>
 
 </div></div></div>
+
+<?php
+
+// Provide a link to the hidden service if defined
+if($Hidden_Service_URL != null && $DetectedHiddenService == 0)
+{
+	?>
+<br/>
+<div class="dropcontainer">
+<div class="dropshadow2">
+<div class="innerbox">
+
+<table class="torcheck" cellpadding="0" cellspacing="0">
+<tr><td>
+<div style="padding: 3px; color: blue; text-align: center;">
+This site is available as a Tor Hidden Service at:
+<br/><a href='http://<?php echo $Hidden_Service_URL; ?>'><?php echo $Hidden_Service_URL; ?></a>
+</div>
+</td></tr>
+</table>
+
+</div></div></div>
+	<?php
+}
+?>
 
 <?php
 
@@ -2550,6 +2581,7 @@ function toggleANSS()
 
 <br/>
 
+<?php if ($DetectedHiddenService == 0) { ?>
 <a name='TorServer'></a>
 
 <a href="javascript:toggleNSOS();" class="LegendLink" id='nsosTableLink'>Network Status Opinion Source</a>
@@ -2603,7 +2635,7 @@ function toggleNSOS()
 </script>
 
 <br/>
-
+<?php } ?>
 <a name='CustomDisplay' href="column_set.php" class="LegendLink">Custom / Advanced Display Options</a>
 
 <br/>
@@ -2854,6 +2886,7 @@ function toggleLGND()
 
 <br/>
 
+<?php if ($DetectedHiddenService == 0) { ?>
 <a name="AppServer"></a>
 
 <a href="javascript:toggleASD();" class="LegendLink" id='asdTableLink'>Application Server Details</a>
@@ -2924,7 +2957,7 @@ function toggleASD()
 }
 // -->
 </script>
-
+<?php } ?>
 </td></tr>
 </table>
 
