@@ -467,6 +467,7 @@ while (<$torSocket>)
 		{
 			$currentRouter{'bandwidthcounter'} += $num;
 		}
+		$currentRouter{'readnumber'} = scalar(@readhistory);
 
 	}
 
@@ -502,6 +503,7 @@ while (<$torSocket>)
 		{
 			$currentRouter{'bandwidthcounter'} += $num;
 		}
+		$currentRouter{'writenumber'} = scalar(@writehistory);
 	}
 
 	# Format for the router-signature line
@@ -595,6 +597,7 @@ while (<$torSocket>)
 				{
 					$currentRouter{'bandwidthcounter'} += $num;
 				}
+				$currentRouter{'readnumber'} = scalar(@readhistory);
 			}
 		
 			# Format for the write-history line
@@ -629,6 +632,7 @@ while (<$torSocket>)
 				{
 					$currentRouter{'bandwidthcounter'} += $num;
 				}
+				$currentRouter{'writenumber'} = scalar(@writehistory);
 			}
 		}
 		# Close the new Tor connection
@@ -636,7 +640,13 @@ while (<$torSocket>)
 		}
 
 		# Calculate the bandwidth
-		$currentRouter{'BandwidthOBSERVED'} = $currentRouter{'bandwidthcounter'}/172800;
+		my $divisor = 900*($currentRouter{'writenumber'} + $currentRouter{'readnumber'});
+		# Ensure that no division by zero occurs
+		if ($divisor == 0)
+		{
+			$divisor = 172800;
+		}
+		$currentRouter{'BandwidthOBSERVED'} = $currentRouter{'bandwidthcounter'}/$divisor;
 		
 		# Save the data to the MySQL database
 		$dbresponse->execute( $currentRouter{'nickname'},
@@ -785,20 +795,20 @@ while (<$torSocket>)
 		}
 
 		# And the host by addr (using caching)
-		if ($hostnameCache{$6})
-		{
-			$currentRouter{'Hostname'} = $hostnameCache{$6};
-		}
-		else
-		{
+#		if ($hostnameCache{$6})
+#		{
+#			$currentRouter{'Hostname'} = $hostnameCache{$6};
+#		}
+#		else
+#		{
 			$currentRouter{'Hostname'} = lookup($6);
 			# If the hostname was not found, it should be an IP
 			unless ($currentRouter{'Hostname'})
 			{
 				$currentRouter{'Hostname'} = $6;
 			}
-			$hostnameCache{$6} = $currentRouter{'Hostname'};
-		}
+#			$hostnameCache{$6} = $currentRouter{'Hostname'};
+#		}
 		}
 	}
 
