@@ -171,6 +171,17 @@ else
 	$_SESSION['ReadHistory_LAST'] = $record['ReadHistoryLAST'];
 }
 
+// Save the bandwidth value
+if (!isset($_SESSION['ObservedBandwidth']))
+{
+	$_SESSION['ObservedBandwidth'] = $Bandwidth_OBSERVED;
+}
+else
+{
+	unset($_SESSION['ObservedBandwidth']);
+	$_SESSION['ObservedBandwidth'] = $Bandwidth_OBSERVED;
+}
+
 // Handle no descriptor available situation
 if ($Name == null)
 {

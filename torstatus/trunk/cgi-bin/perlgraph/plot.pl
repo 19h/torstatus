@@ -128,6 +128,7 @@ elsif ($plot_type eq "rtw" || $plot_type eq "rtr")
 	$x_label = "Time";
 	$y_label = "Bytes/Sec";
 	$x_labels_vertical = 1;
+	$bandwidth_line = $session->get('ObservedBandwidth');
 	if ($plot_type eq "rtw")
 	{
 		$data_session = "WriteHistory_DATA_ARRAY_SERIALIZED";
@@ -145,7 +146,7 @@ elsif ($plot_type eq "rtw" || $plot_type eq "rtr")
 	$width = '480';
 	$height = '400';
 	$show_values = 0;
-	$type = ["area"];
+	$type = ["area", "lines"];
 }
 
 # Retrieve and format the variables from the PHP session
@@ -160,6 +161,7 @@ foreach my $v (@sorted)
 	push @data, $data_h{$v};
 }
 my @label;
+my @bwlines;
 if ($plot_type ne "rtw" && $plot_type ne "rtr")
 {
 	my %label_h = %{unserialize($label_s)};
@@ -184,9 +186,14 @@ else
 	for (my $i = 0; $i < scalar(@data); $i++)
 	{
 		$data[$i] = $data[$i]/$inc;
+		push @bwlines, $bandwidth_line;
 	}
 }
 my @plot = [[@label],[@data]];
+if ($plot_type eq "rtw" || $plot_type eq "rtr")
+{
+	@plot = [[@label],[@data],[@bwlines]];
+}
 
 my $graph = GD::Graph::mixed->new($width, $height);
 
@@ -215,6 +222,11 @@ $graph->set(
     y_long_ticks	=> $y_long_ticks,
     types	=> $type,
 ) or warn $graph->error;
+if ($plot_type eq "rtw" || $plot_type eq "rtr")
+{
+	$graph->set( dclrs	=> ['blue','black']);
+}
+
 my $image = $graph->plot(@plot) or warn $graph->error;
 
 print "Content-type: image/png\n\n";
