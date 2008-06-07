@@ -562,10 +562,10 @@ function DisplayRouterRow()
 				$innerTable = 1;
 				echo "<table class='iT'><tr><td class='iT'>";
 			}
-			// Cut off hostnames larger than 50 characters
-			if (strlen($record[$value]) > 50)
+			// Cut off hostnames larger than 46 characters
+			if (strlen($record[$value]) > 46)
 			{
-				echo substr($record[$value],0,25) . "<b>(...)</b>" . substr($record[$value],strlen($record[$value]) - 25,strlen($record[$value]));
+				echo substr($record[$value],0,23) . "<b>(...)</b>" . substr($record[$value],strlen($record[$value]) - 23,strlen($record[$value]));
 			}
 			else
 			{
@@ -897,6 +897,15 @@ if(
 
 // Read CustomSearch Field (CSField), CustomSearch Modifier (CSMod), CustomSearch Input (CSInput), and FLAGS variables -- These come from POST or SESSION
 
+// Handle the Fast changing from outside of the session
+if (isset($_REQUEST["Fast"]))
+{
+	$Fast = $_REQUEST["Fast"];
+	// Also save the setting to the current session
+	$_SESSION["Fast"] = $Fast;
+}
+
+
 // POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
@@ -969,6 +978,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 // SESSION
 else
 {
+	if (isset($_SESSION["Fast"]))
+	{
+		$Fast = $_SESSION["Fast"];
+	}
 	if (isset($_SESSION["FAuthority"]))
 	{
 		$FAuthority = $_SESSION["FAuthority"];
@@ -2127,7 +2140,7 @@ $mirrorList = $mirrorListRow[0];
 <form action="<?php echo $Self; ?>" method="post" name="search">
 <input type="hidden" name="CSMod" value="Contains" />
 <input type="hidden" name="CSField" value="Name" />
-<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
+<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:submitSearch();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
 </form>
 </td></tr></table>
 <?php if (!$CSInput) { ?>
@@ -2138,6 +2151,14 @@ $mirrorList = $mirrorListRow[0];
 <?php } ?>
 <script type="text/javascript">
 	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="/img/blank.gif" />';
+	function submitSearch()
+	{
+		if (document.getElementById('searchbox').value == "search by name or fingerprint")
+		{
+			document.getElementById('searchbox').value = "";
+		}
+		document.search.submit();
+	}
 </script>
 </div>
 <div class="separator"></div>
@@ -2301,6 +2322,10 @@ if ($BannerHTML)
 
 <a href="#Legend" onclick="lgndToggle = 0;javascript:toggleLGND();" class="LegendLink">View the Legend</a>
 
+&nbsp;
+
+<small><a style="font-size: .9em;" href="?Fast=<?php if ($Fast == 0) { echo "1"; } else { echo "0"; }?>" class="LegendLink">(toggle truncated view)</a></small>
+
 <table width='100%' cellspacing='0' cellpadding='0' border='0' align='center' class='displayTable'>
 
 <?php
@@ -2327,7 +2352,7 @@ while ($record = mysql_fetch_assoc($result))
 	{
 		if ($Fast == 1)
 		{
-			echo "data truncated";
+			echo "<td class=\"truncated\" colspan=\"6\"><a href=\"?Fast=0\">The listing is truncated for low bandwidth connections.  See the full listing by clicking here.</a></td>";
 			break;
 		}
 		// Display header row

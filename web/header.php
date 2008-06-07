@@ -55,7 +55,7 @@ $mirrorList = $mirrorListRow[0];
 <form action="/index.php" method="post" name="search">
 <input type="hidden" name="CSMod" value="Contains" />
 <input type="hidden" name="CSField" value="Name" />
-<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:document.search.submit();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
+<input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:submitSearch();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
 </form>
 </td></tr></table>
 <?php if (!$CSInput) { ?>
@@ -66,6 +66,14 @@ $mirrorList = $mirrorListRow[0];
 <?php } ?>
 <script type="text/javascript">
 	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="/img/blank.gif" />';
+	function submitSearch()
+	{
+		if (document.getElementById('searchbox').value == "search by name or fingerprint")
+		{
+			document.getElementById('searchbox').value = "";
+		}
+		document.search.submit();
+	}
 </script>
 </div>
 <div class="separator"></div>
