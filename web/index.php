@@ -2241,7 +2241,7 @@ Good job, you do not have JavaScript enabled!
 if($DetectedHiddenService == 1)
 {
 	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
-	echo "<span class='usingTor'>You appear to be accessing this hidden onion network service through the Tor network.</span><br/>";
+	echo "<span class='usingTor'>You appear to be accessing this hidden service through the Tor network.</span><br/>";
 	echo '</td></tr>';
 }
 else if ($PositiveMatch_IP == 1)
