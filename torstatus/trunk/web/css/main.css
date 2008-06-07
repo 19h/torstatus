@@ -511,3 +511,14 @@ img.sorting
 	border-style: none;
 	margin-left: 2px;
 }
+
+td.truncated
+{
+	padding: 10px;
+	text-align: center;
+	background-color: white;
+}
+td.truncated a:hover
+{
+	text-decoration: underline;
+}
