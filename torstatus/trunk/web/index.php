@@ -2289,8 +2289,9 @@ if($Hidden_Service_URL != null && $DetectedHiddenService == 0)
 <table class="torcheck" cellpadding="0" cellspacing="0">
 <tr><td>
 <div style="padding: 3px; color: blue; text-align: center;">
-This site is available as a Tor Hidden Service at:
-<br/><a href='http://<?php echo $Hidden_Service_URL; ?>'><?php echo $Hidden_Service_URL; ?></a>
+This site is available as a Tor Hidden Service
+<br/>
+<a href='http://<?php echo $Hidden_Service_URL; ?>'><?php echo $Hidden_Service_URL; ?></a>
 </div>
 </td></tr>
 </table>

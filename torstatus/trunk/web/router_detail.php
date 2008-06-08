@@ -212,7 +212,7 @@ include("header.php");
 
 <table class="displayTable" cellspacing="0" cellpadding="0" width='100%' align='center'>
 <tr>
-<td class='HRN' colspan='2'>General Information</td>
+<td class='HRN' colspan='2'>Router Information</td>
 <td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Exit Policy Information</td>
 </tr>
 <td class="TRS" colspan='2' style="vertical-align: top;">
