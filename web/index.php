@@ -759,8 +759,14 @@ function DisplayRouterRow()
 
   			case
 			($value == "Uptime"):
+
+			// Uptime is now in seconds, days and hours should
+			// be extracted
+
+			$printTimeHours = floor($record[$value]/86400) . "d " . floor(($record[$value] % 86400)/(60*60)) . "h";
+			$printTimeDays = floor($record[$value]/86400) . "d";
 			
-			if ($record[$value] > -1 && $record[$value] < 5)
+			if ($record[$value] > -1 && $record[$value] < 5*86400)
 			{
 				echo "<td class='TDc'>";
 				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
@@ -771,7 +777,7 @@ function DisplayRouterRow()
 				{
 					echo "<img src='/img/blank.gif' alt=' ' width='12px' />";
 				}
-				echo $record[$value] . " d</td>";
+				echo $printTimeHours . "</td>";
 			}
 			else if ($record[$value] >= 5)
 			{
@@ -784,7 +790,7 @@ function DisplayRouterRow()
 				{
 					echo "<img src='/img/blank.gif' alt=' ' width='12px' />";
 				}
-				echo $record[$value] . " d</td>";
+				echo $printTimeDays . "</td>";
 			}
 			else
 			{
@@ -1571,7 +1577,7 @@ if (in_array("Bandwidth", $ColumnList_ACTIVE))
 
 if (in_array("Uptime", $ColumnList_ACTIVE))
 {
-	$query .= ", floor(CAST(((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP($ActiveDescriptorTable.LastDescriptorPublished) + $OffsetFromGMT)) + $ActiveDescriptorTable.Uptime) AS SIGNED) / 86400) as Uptime";
+	$query .= ", floor(CAST(((UNIX_TIMESTAMP() - (UNIX_TIMESTAMP($ActiveDescriptorTable.LastDescriptorPublished) + $OffsetFromGMT)) + $ActiveDescriptorTable.Uptime) AS SIGNED)) as Uptime";
 }
 
 if (in_array("LastDescriptorPublished", $ColumnList_ACTIVE))
