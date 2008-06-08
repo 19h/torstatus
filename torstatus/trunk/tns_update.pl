@@ -168,6 +168,9 @@ if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 			$query = "UPDATE Status SET geoip=NOW();";
 			$dbresponse = $dbh->prepare($query);
 			$dbresponse->execute();
+			# Clear the cache to ensure incorrect entries are
+			# fixed
+			%geoIPCache = ();
 		}
 	}
 
