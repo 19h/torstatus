@@ -36,6 +36,13 @@ $DescriptorCount = 0;
 $CurrentResultSet = 0;
 $RowCounter = 0;
 
+// Clear the session if requested
+if ($_REQUEST['clear'])
+{
+	session_destroy();
+	session_start();
+}
+
 // Determine whether or not SSL is being used
 if ($DetermineUsingSSL == 1)
 {
@@ -2161,7 +2168,7 @@ $mirrorList = $mirrorListRow[0];
 <body>
 <div class="topbar" id="topbar"><br/>
 <table width="100%"><tr><td style="vertical-align: bottom;">
-<a href="/?CSInput=" class="logoimage"><img src="img/logo.png" alt="TorStatus" class="topbarlogo"/></a>
+<a href="/?clear=clear" class="logoimage"><img src="img/logo.png" alt="TorStatus" class="topbarlogo"/></a>
 <span class="logotext"><?php echo $TorNetworkStatus_Version; ?><?php if ($UsingSSL == 1) { ?> - Encrypted connection<?php } elseif ($AllowSSL) { ?> - <a href="<?php echo $SSLLink  ?>" class="plain">Use an encrypted connection <b>(recommended)</b></a><?php } ?></span>
 </td><td style="vertical-align: bottom; text-align: right;">
 <form action="<?php echo $Self; ?>" method="post" name="search">
