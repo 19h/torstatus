@@ -852,7 +852,7 @@ $dbh->do("UPDATE NetworkStatusSource SET ID=1;");
 my $end_time = time();
 
 # Set the status to use the new data
-$dbh->do("UPDATE Status SET LastUpdate = now(), LastUpdateElapsed = ($end_time-$start_time), ActiveNetworkStatusTable = 'NetworkStatus${descriptorTable}', ActiveDescriptorTable = 'Descriptor${descriptorTable}' WHERE ID = 1;");
+$dbh->do("UPDATE Status SET LastUpdate = UTC_TIMESTAMP(), LastUpdateElapsed = ($end_time-$start_time), ActiveNetworkStatusTable = 'NetworkStatus${descriptorTable}', ActiveDescriptorTable = 'Descriptor${descriptorTable}' WHERE ID = 1;");
 
 # Rename the DNSEL table so it is used
 $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DNSEL_INACT;");
