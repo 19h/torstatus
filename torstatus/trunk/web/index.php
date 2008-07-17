@@ -760,10 +760,19 @@ function DisplayRouterRow()
   			case
 			($value == "Uptime"):
 
-			// Uptime is now in seconds, days and hours should
+			// Uptime is now in days and hours -- should
 			// be extracted
 
-			$printTimeHours = floor($record[$value]/86400) . "d " . floor(($record[$value] % 86400)/(60*60)) . "h";
+			if ($record[$value] < 3600) // Detect for less than
+			                            // an hour cases
+			{
+				$printTimeHours = floor($record[$value]/60) . "m";
+			}
+			else
+			{
+				$printTimeHours = floor($record[$value]/86400) . "d " . floor(($record[$value] % 86400)/3600) . "h";
+				$printTimeHours = preg_replace("/^0d/","",$printTimeHours);
+			}
 			$printTimeDays = floor($record[$value]/86400) . "d";
 			
 			if ($record[$value] > -1 && $record[$value] < 5*86400)
