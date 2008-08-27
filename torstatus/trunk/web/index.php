@@ -2273,7 +2273,15 @@ if($DetectedHiddenService == 1)
 else if ($PositiveMatch_IP == 1)
 {
 	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
-	echo "<span class='usingTor'>It appears that you are using the Tor network</span><br/>Your OR is: $RemoteIP<br/>";
+	echo "<span class='usingTor'>It appears that you are using the Tor network</span><br/>Your OR is: ";
+	if (defined("WHOISPath"))
+	{
+		echo "<a class='who' href='".WHOISPath.$RemoteIP."'>".$RemoteIP."</a><br/>";
+	}
+	else
+	{
+		echo $RemoteIP . "<br/>";
+	}
 	for($i=1 ; $i < ($Count + 1) ; $i++)
 	{
 		echo "Server name: <a class='tab' href='router_detail.php?FP=$TorNodeFP[$i]'>$TorNodeName[$i]</a><br/>";
@@ -2293,7 +2301,15 @@ else
 	echo "<tr><td class='tab'>";
 	echo "<img alt='You are not using Tor' src='/img/notusingtor.png'/>";
 	echo "</td><td class='content'>";
-	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: $RemoteIP";
+	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: ";
+	if (defined("WHOISPath"))
+	{
+		echo "<a class='who' href='".WHOISPath.$RemoteIP."'>".$RemoteIP."</a>";
+	}
+	else
+	{
+		echo $RemoteIP;
+	}
 	echo "</td></tr>";
 }
 ?>
