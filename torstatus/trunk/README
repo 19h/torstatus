@@ -20,8 +20,8 @@ it's reflected correctly in the config file. For development, MySQL 5 on Linux
 was used.
 
 2) Create a database user that has access to the database created in step 1 
-above. The user will need select, update, insert, and delete rights on the 
-database. 
+above. The user will need select, insert and update rights for the data as well
+as create, alter and drop rights for the structure of the database.
 
 3) Place files in appropriate directory to be served by a PHP enabled web 
 server. IMPORTANT NOTE: You'll want the "web" subdirectory created when you 
