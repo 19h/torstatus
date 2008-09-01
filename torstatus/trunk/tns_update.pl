@@ -646,24 +646,24 @@ while (<$torSocket>)
 		close ($digestSocket);
 		}
 
-		# Calculate the bandwidth using a linear weight moving average
-		#my $divisor = 900*($currentRouter{'writenumber'} + $currentRouter{'readnumber'});
+		# Calculate the bandwidth using a linear weighted average
 		my $n = ($currentRouter{'writenumber'} + $currentRouter{'readnumber'})/2;
 		my $divisor = (($n*($n+1))/2);
+		
 		# Ensure that no division by zero occurs
 		if ($divisor == 0)
 		{
 			$divisor = 96*97/2;
 		}
+
 		# Add up all of the values, weighting them
 		my $i = $n;
 		my @writehistory = reverse(@{$currentRouter{'wh'}});
 		my @readhistory = reverse(@{$currentRouter{'rh'}});
-		#print $currentRouter{'Fingerprint'} . "\n";
 		my $sum = 0;
 		foreach my $num (@writehistory)
 		{
-			$sum += ($num + $readhistory[$n - $i])/1800*$i;
+			$sum += ($num + $readhistory[$n - $i])/(2*$currentRouter{'ReadHistoryINC'})*$i;
 			$i--;
 		}
 		$currentRouter{'BandwidthOBSERVED'} = $sum/$divisor;
