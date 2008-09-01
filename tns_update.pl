@@ -105,8 +105,8 @@ while (1 == 1)
 {
 
 # Don't die on errors
-eval
-{
+#eval
+#{
 
 # Find the initial time
 my $start_time = time();
@@ -470,6 +470,7 @@ while (<$torSocket>)
 		{
 			$currentRouter{'bandwidthcounter'} += $num;
 		}
+		$currentRouter{'rh'} = \@readhistory;
 		$currentRouter{'readnumber'} = scalar(@readhistory);
 
 	}
@@ -506,6 +507,7 @@ while (<$torSocket>)
 		{
 			$currentRouter{'bandwidthcounter'} += $num;
 		}
+		$currentRouter{'wh'} = \@writehistory;
 		$currentRouter{'writenumber'} = scalar(@writehistory);
 	}
 
@@ -600,6 +602,7 @@ while (<$torSocket>)
 				{
 					$currentRouter{'bandwidthcounter'} += $num;
 				}
+				$currentRouter{'rh'} = \@readhistory;
 				$currentRouter{'readnumber'} = scalar(@readhistory);
 			}
 		
@@ -635,6 +638,7 @@ while (<$torSocket>)
 				{
 					$currentRouter{'bandwidthcounter'} += $num;
 				}
+				$currentRouter{'wh'} = \@writehistory;
 				$currentRouter{'writenumber'} = scalar(@writehistory);
 			}
 		}
@@ -642,14 +646,27 @@ while (<$torSocket>)
 		close ($digestSocket);
 		}
 
-		# Calculate the bandwidth
-		my $divisor = 900*($currentRouter{'writenumber'} + $currentRouter{'readnumber'});
+		# Calculate the bandwidth using a linear weight moving average
+		#my $divisor = 900*($currentRouter{'writenumber'} + $currentRouter{'readnumber'});
+		my $n = ($currentRouter{'writenumber'} + $currentRouter{'readnumber'})/2;
+		my $divisor = (($n*($n+1))/2);
 		# Ensure that no division by zero occurs
 		if ($divisor == 0)
 		{
-			$divisor = 172800;
+			$divisor = 96*97/2;
 		}
-		$currentRouter{'BandwidthOBSERVED'} = $currentRouter{'bandwidthcounter'}/$divisor;
+		# Add up all of the values, weighting them
+		my $i = $n;
+		my @writehistory = reverse(@{$currentRouter{'wh'}});
+		my @readhistory = reverse(@{$currentRouter{'rh'}});
+		#print $currentRouter{'Fingerprint'} . "\n";
+		my $sum = 0;
+		foreach my $num (@writehistory)
+		{
+			$sum += ($num + $readhistory[$n - $i])/1800*$i;
+			$i--;
+		}
+		$currentRouter{'BandwidthOBSERVED'} = $sum/$divisor;
 		
 		# Save the data to the MySQL database
 		$dbresponse->execute( $currentRouter{'nickname'},
@@ -861,7 +878,7 @@ $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DN
 $dbh->disconnect();
 close($torSocket);
 
-};
+#};
 if ($@) {
 	print "The TorStatus database was not updated properly.  An error has occured.  I will continue to try to update, however.\n";
 }
