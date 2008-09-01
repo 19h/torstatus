@@ -341,14 +341,14 @@ include("header.php");
 					$record = mysql_fetch_assoc($result);
 					// Display in the form
 					//  [linked][countrycode] Name
-					echo "<img src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a href=\"router_detail.php?FP=$fplink\">".$record['Name']."</a><br/>";
+					echo "<img title=\"FP: $fplink\" src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a title=\"FP: $fplink\" href=\"router_detail.php?FP=$fplink\">".$record['Name']."</a><br/>";
 				}
 				else
 				{
 					// The router was not found
 					// Display in the form
 					//  Fingerprint
-					echo "$FamilyMember<br/>";
+					echo "<img title=\"Unknown router\" src=\"/img/routerdown.png\" alt=\"Unknown Router\"/> $FamilyMember<br/>";
 				}
 			}
 			else
@@ -365,7 +365,7 @@ include("header.php");
 					$fplink = strtolower(substr($record['Fingerprint'],1));
 					// Display in the form
 					//  [linked][countrycode] Name
-					echo "<img src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a href=\"router_detail.php?FP=$fplink\">$FamilyMember</a><br/>";
+					echo "<img title=\"FP: $fplink\" src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a title=\"FP: $fplink\" href=\"router_detail.php?FP=$fplink\">$FamilyMember</a><br/>";
 				}
 				else
 				{
@@ -373,7 +373,7 @@ include("header.php");
 					// meaningless
 					// Display in the form
 					//  Name
-					echo "$FamilyMember<br/>";
+					echo "<img title=\"Unknown router\" src=\"/img/routerdown.png\" alt=\"Unknown Router\"/> $FamilyMember<br/>";
 				}
 
 			}
