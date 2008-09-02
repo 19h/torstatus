@@ -77,6 +77,7 @@ if ($RealServerIP)
 {
 	$ServerIP = $RealServerIP;
 }
+$RemoteIP = str_replace("::ffff:","",$RemoteIP); // Remove IPv6 depricated notation
 
 // Determine if the host indicated this to be a hidden service
 $DetectedHiddenService = 0;
@@ -97,6 +98,7 @@ $PositiveMatch_ExitPolicy = null;
 $TorNodeName = null;
 $TorNodeFP = null;
 $TorNodeExitPolicy = null;
+$TorNodeCC = null;
 
 $Count = 0;
 
@@ -1480,7 +1482,7 @@ if ($RemoteIPDBCount > 0)
 // Get name, fingerprint, and exit policy of Tor node(s) if match was found, look for match in ExitPolicy
 if ($PositiveMatch_IP == 1)
 {
-	$query = "select $ActiveNetworkStatusTable.Name, $ActiveNetworkStatusTable.Fingerprint, $ActiveDescriptorTable.ExitPolicySERDATA from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where $ActiveNetworkStatusTable.IP = '$RemoteIP'";
+	$query = "select $ActiveNetworkStatusTable.Name, $ActiveNetworkStatusTable.Fingerprint, $ActiveDescriptorTable.ExitPolicySERDATA, $ActiveNetworkStatusTable.CountryCode from $ActiveNetworkStatusTable inner join $ActiveDescriptorTable on $ActiveNetworkStatusTable.Fingerprint = $ActiveDescriptorTable.Fingerprint where $ActiveNetworkStatusTable.IP = '$RemoteIP'";
 	$result = mysql_query($query) or die('Query failed: ' . mysql_error());
 
 	while ($record = mysql_fetch_assoc($result))
@@ -1490,6 +1492,7 @@ if ($PositiveMatch_IP == 1)
 		$TorNodeName[$Count] = $record['Name'];
 		$TorNodeFP[$Count] = $record['Fingerprint'];
 		$TorNodeExitPolicy = unserialize($record['ExitPolicySERDATA']);
+		$TorNodeCC = $record['CountryCode'];
 
 		foreach($TorNodeExitPolicy as $ExitPolicyLine)
 		{
@@ -2274,6 +2277,7 @@ else if ($PositiveMatch_IP == 1)
 {
 	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
 	echo "<span class='usingTor'>It appears that you are using the Tor network</span><br/>Your OR is: ";
+	echo "<img src=\"img/flags/".strtolower($TorNodeCC).".gif\" class=\"flag\" title=\"".$country_codes[strtolower($TorNodeCC)]."\" />";
 	if (defined("WHOISPath"))
 	{
 		echo "<a class='who' href='".WHOISPath.$RemoteIP."'>".$RemoteIP."</a><br/>";
@@ -2302,6 +2306,12 @@ else
 	echo "<img alt='You are not using Tor' src='/img/notusingtor.png'/>";
 	echo "</td><td class='content'>";
 	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: ";
+	// Find the country code associated with this IP
+	include("../geoip/geoip.inc");
+	$gi = geoip_open("../geoip/GeoIP.dat",GEOIP_STANDARD);
+	$cc = geoip_country_code_by_addr($gi, $RemoteIP);
+	echo "<img src=\"img/flags/".strtolower($cc).".gif\" class=\"flag\" title=\"".$country_codes[strtolower($cc)]."\" />";
+	
 	if (defined("WHOISPath"))
 	{
 		echo "<a class='who' href='".WHOISPath.$RemoteIP."'>".$RemoteIP."</a>";
