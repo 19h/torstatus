@@ -261,6 +261,22 @@ a.header:hover
 	width: 40px;
 }
 
+.bad0 
+{
+	background-image: url(../img/routerdown.png); 
+	background-repeat: no-repeat; 
+	background-position: center center; 
+	width: 40px;
+}
+
+.bad1
+{
+	background-image: url(../img/bgbad.png); 
+	background-repeat: no-repeat; 
+	background-position: center center; 
+	width: 40px;
+}
+
 .TRAR 
 {
 	background-color:#ffffff; 
@@ -376,10 +392,12 @@ tr.nr
 span.usingTor
 {
 	color: #00dd00;
+	font-size: 1.2em;
 }
 span.notUsingTor
 {
 	color: #ff0000;
+	font-size: 1.2em;
 }
 table.notUsingTor
 {
@@ -668,6 +686,7 @@ a.tab:hover
 td.content
 {
 	padding: 10px;
+	font-size: .9em;
 }
 
 /* Search box */

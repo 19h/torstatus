@@ -55,7 +55,7 @@ $TNS_Path = "/home/torstatus-kgprog-com/project/trunk/";
 $UseTorDNSEL = 1;
 
 // Comment the following line if you do not provide a WHOIS service
-define("WHOISPath","/whois.php?ip=");
+define("WHOISPath","whois.php?ip=");
 // If you want to provide a bandwidth history, uncomment the following line
 //$BandwidthHistory = "true";
 
@@ -84,9 +84,9 @@ $Cache_Expire_Time = 300;
 $usePerlGraphs = 1;
 
 $footerText = "<b>
-<a class='plainbox' href='/CHANGES' target='_new'>View Complete Change History</a>
+<a class='plainbox' href='CHANGES' target='_new'>View Complete Change History</a>
 <br/>
-Source code is available under <a class='plainbox' href='/LICENSE' target='_new'>BSD license</a> at <a class='plainbox' href='http://project.torstatus.kgprog.com/' target='_new'>project.torstatus.kgprog.com</a>
+Source code is available under <a class='plainbox' href='LICENSE' target='_new'>BSD license</a> at <a class='plainbox' href='http://project.torstatus.kgprog.com/' target='_new'>project.torstatus.kgprog.com</a>
 <br/>
 The Tor<small><sup>TM</sup></small> trademark and Tor Onion Logo are trademarks of <a class='plainbox' href='https://www.torproject.org/'>The Tor Project</a>.
 </b>";
