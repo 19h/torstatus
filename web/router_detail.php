@@ -213,7 +213,7 @@ include("header.php");
 <table class="displayTable" cellspacing="0" cellpadding="0" width='100%' align='center'>
 <tr>
 <td class='HRN' colspan='2'>Router Information</td>
-<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Exit Policy Information</td>
+<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Router Flags</td>
 </tr>
 <td class="TRS" colspan='2' style="vertical-align: top;">
 <table>
@@ -315,7 +315,7 @@ include("header.php");
 	// Display Bandwidth stats
 	echo "<tr>\n";
 	echo "<td class='TRAR'><b>Bandwidth (Max/Burst/Observed - In Bps):</b></td>\n";
-	echo "<td class='TRSB'>$Bandwidth_MAX&nbsp;/&nbsp;$Bandwidth_BURST&nbsp;/&nbsp;$Bandwidth_OBSERVED</td>\n";
+	echo "<td class='TRSB'>$Bandwidth_MAX&nbsp;/&nbsp;$Bandwidth_BURST&nbsp;/&nbsp;$Bandwidth_OBSERVED (In Kbps: ".round($Bandwidth_MAX/1024,2)." / ".round($Bandwidth_BURST/1024,2)." / ".round($Bandwidth_OBSERVED/1024,2).")</td>\n";
 	echo "</tr>\n";
 
 	// Display Family info
@@ -387,25 +387,98 @@ include("header.php");
 
 </td>
 
-<td class='TRS' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px; vertical-align: top;'><b>
+<td class='TRS' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px; vertical-align: top;'>
+<table cellspacing='0' cellpadding='0'>
 <?php
-	
 
-	for ($i=0 ; $i<count($ExitPolicy_DATA_ARRAY) ; $i++)
-	{
-		echo "$ExitPolicy_DATA_ARRAY[$i]<br/>\n";
-	}
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Running:</b></td>\n";
+	echo "<td class='F$FRunning'>";
+	echo "</td>\n";
+	echo "</tr>\n";
 
-	echo "<br/>\n";
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Valid:</b></td>\n";
+	echo "<td class='F$FValid'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Fast:</b></td>\n";
+	echo "<td class='F$FFast'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Exit:</b></td>\n";
+	echo "<td class='F$FExit'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Named:</b></td>\n";
+	echo "<td class='F$FNamed'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Stable:</b></td>\n";
+	echo "<td class='F$FStable'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Guard:</b></td>\n";
+	echo "<td class='F$FGuard'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Hibernating:</b></td>\n";
+	echo "<td class='F$FHibernating'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Bad Exit:</b></td>\n";
+	echo "<td class='bad$FBadExit'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'><td colspan='2' style='background-color: #59990E; height: 1px;'></td></tr>";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Directory (v2):</b></td>\n";
+	echo "<td class='F$FV2Dir'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>HSDir:</b></td>\n";
+	echo "<td class='F$FHSDir'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Authority:</b></td>\n";
+	echo "<td class='F$FAuthority'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
+	echo "<tr class='nr'>\n";
+	echo "<td class='TRAR'><b>Bad Directory:</b></td>\n";
+	echo "<td class='bad$FBadDirectory'>";
+	echo "</td>\n";
+	echo "</tr>\n";
+
 ?>
-</b>
+</table>
 </td>
-
 
 </tr>
 <tr>
 <td class='HRN' colspan='2'>Bandwidth</td>
-<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Router Flags</td>
+<td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Exit Policy Information</td>
 </tr>
 <tr>
 <td class='TRS' style="text-align: center;">
@@ -459,90 +532,21 @@ else
 <?php } ?>
 </td>
 
-<td class='TRS' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px; vertical-align: top;'>
-<table cellspacing='0' cellpadding='0'>
+<td class='TRS' style='padding: 10px; border-left-color: #59990e; border-left-style: solid; border-left-width: 1px; vertical-align: top;'><b>
 <?php
+	
 
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Authority:</b></td>\n";
-	echo "<td class='F$FAuthority'>";
-	echo "</td>\n";
-	echo "</tr>\n";
+	for ($i=0 ; $i<count($ExitPolicy_DATA_ARRAY) ; $i++)
+	{
+		echo "$ExitPolicy_DATA_ARRAY[$i]<br/>\n";
+	}
 
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Bad Directory:</b></td>\n";
-	echo "<td class='F$FBadDirectory'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Bad Exit:</b></td>\n";
-	echo "<td class='F$FBadExit'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Exit:</b></td>\n";
-	echo "<td class='F$FExit'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Fast:</b></td>\n";
-	echo "<td class='F$FFast'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Guard:</b></td>\n";
-	echo "<td class='F$FGuard'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Hibernating:</b></td>\n";
-	echo "<td class='F$FHibernating'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Named:</b></td>\n";
-	echo "<td class='F$FNamed'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Stable:</b></td>\n";
-	echo "<td class='F$FStable'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Running:</b></td>\n";
-	echo "<td class='F$FRunning'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>Valid:</b></td>\n";
-	echo "<td class='F$FValid'>";
-	echo "</td>\n";
-	echo "</tr>\n";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>V2Dir:</b></td>\n";
-	echo "<td class='F$FV2Dir'>";
-
-	echo "<tr class='nr'>\n";
-	echo "<td class='TRAR'><b>HSDir:</b></td>\n";
-	echo "<td class='F$FHSDir'>";
-
-	echo "</td>\n";
-	echo "</tr>\n";
-
+	echo "<br/>\n";
 ?>
-</table>
+</b>
 </td>
+
+
 </tr>
 
 <tr>
