@@ -793,11 +793,11 @@ function DisplayRouterRow()
 				echo "<td class='TDc'>";
 				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
 				{
-					echo "<img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>";
+					echo "<img src='img/routerdown.png' alt=' router is down' title='Router is currently down'/>";
 				}
 				else
 				{
-					echo "<img src='/img/blank.gif' alt=' ' width='12px' />";
+					echo "<img src='img/blank.gif' alt=' ' width='12px' />";
 				}
 				echo $printTimeHours . "</td>";
 			}
@@ -806,11 +806,11 @@ function DisplayRouterRow()
 				echo "<td class='TDcb'>";
 				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
 				{
-					echo "<img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>";
+					echo "<img src='img/routerdown.png' alt=' router is down' title='Router is currently down'/>";
 				}
 				else
 				{
-					echo "<img src='/img/blank.gif' alt=' ' width='12px' />";
+					echo "<img src='img/blank.gif' alt=' ' width='12px' />";
 				}
 				echo $printTimeDays . "</td>";
 			}
@@ -818,11 +818,11 @@ function DisplayRouterRow()
 			{
 				if ($record['Running'] == 0 && $record['Hibernating'] == 0)
 				{
-					echo "<td class='TDc'><img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>N/A</td>";
+					echo "<td class='TDc'><img src='img/routerdown.png' alt=' router is down' title='Router is currently down'/>N/A</td>";
 				}
 				else
 				{
-					echo "<td class='TDc'><img src='/img/blank.gif' alt=' ' width='12px' />N/A</td>";
+					echo "<td class='TDc'><img src='img/blank.gif' alt=' ' width='12px' />N/A</td>";
 					
 				}
 			}
@@ -2165,6 +2165,7 @@ $mirrorList = $mirrorListRow[0];
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<link rel="shortcut icon" href="img/favicon.ico"/>
 	<title>TorStatus - Tor Network Status</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css" />
 	<!--[if lt IE 7.]>
@@ -2191,7 +2192,7 @@ $mirrorList = $mirrorListRow[0];
 </script>
 <?php } ?>
 <script type="text/javascript">
-	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="/img/blank.gif" />';
+	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="img/blank.gif" />';
 	function submitSearch()
 	{
 		if (document.getElementById('searchbox').value == "search by name or fingerprint")
@@ -2210,7 +2211,7 @@ Known mirrors: <b><?php echo $myMirrorName; ?></b> | <?php echo $mirrorList; ?>
 <div style="width: 100%; text-align: right;" id="expandcollapse">
 <script type="text/javascript">
 <!--
-document.write('<a href="javascript:;" onclick="javascript:expand_infobar();"><img src="/img/infobarexpand.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:expand_infobar();" class="plain">Show Advanced Options</a>');
+document.write('<a href="javascript:;" onclick="javascript:expand_infobar();"><img src="img/infobarexpand.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:expand_infobar();" class="plain">Show Advanced Options</a>');
 // -->
 </script>
 <noscript>
@@ -2236,8 +2237,8 @@ Good job, you do not have JavaScript enabled!
 <script type="text/javascript">
 	<!--
 	var closetextstart = '<div class="infobar" style="display: none;" id="expandcollapse">';
-	var closetexthide = '<a href="javascript:;" onclick="javascript:collapse_infobar();"><img src="/img/infobarcollapse.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:collapse_infobar();" class="plain">Hide Advanced Options</a>';
-	var closetextshow = '<a href="javascript:;" onclick="javascript:expand_infobar();"><img src="/img/infobarexpand.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:expand_infobar();" class="plain">Show Advanced Options</a>';
+	var closetexthide = '<a href="javascript:;" onclick="javascript:collapse_infobar();"><img src="img/infobarcollapse.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:collapse_infobar();" class="plain">Hide Advanced Options</a>';
+	var closetextshow = '<a href="javascript:;" onclick="javascript:expand_infobar();"><img src="img/infobarexpand.png" class="infobarbutton"/></a> <a href="javascript:;" onclick="javascript:expand_infobar();" class="plain">Show Advanced Options</a>';
 	var closetextend = '</div>';
 	document.write(closetextstart + closetextshow + closetextend);
 	function expand_infobar()
@@ -2269,13 +2270,13 @@ Good job, you do not have JavaScript enabled!
 
 if($DetectedHiddenService == 1)
 {
-	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
+	echo '<tr><td class="tab"><img src="img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
 	echo "<span class='usingTor'>You appear to be accessing this hidden service through the Tor network.</span><br/>";
 	echo '</td></tr>';
 }
 else if ($PositiveMatch_IP == 1)
 {
-	echo '<tr><td class="tab"><img src="/img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
+	echo '<tr><td class="tab"><img src="img/usingtor.png" alt="You are using Tor" /></td><td class="content">';
 	echo "<span class='usingTor'>It appears that you are using the Tor network</span><br/>Your OR is: ";
 	echo "<img src=\"img/flags/".strtolower($TorNodeCC).".gif\" class=\"flag\" title=\"".$country_codes[strtolower($TorNodeCC)]."\" />";
 	if (defined("WHOISPath"))
@@ -2303,7 +2304,7 @@ else if ($PositiveMatch_IP == 1)
 else
 {
 	echo "<tr><td class='tab'>";
-	echo "<img alt='You are not using Tor' src='/img/notusingtor.png'/>";
+	echo "<img alt='You are not using Tor' src='img/notusingtor.png'/>";
 	echo "</td><td class='content'>";
 	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: ";
 	// Find the country code associated with this IP
@@ -2911,7 +2912,7 @@ function toggleCAQO()
 <tr><td class='HRN'>Legend:</td></tr>
 <tr class='r'><td style='padding: 1px;'>Router is okay</td></tr>
 <tr class='R'><td style='padding: 1px;'>Router is hibernating</td></tr>
-<tr class='d'><td style='padding: 1px;'><img src='/img/routerdown.png' alt=' router is down' title='Router is currently down'/>Router is currently down</td></tr>
+<tr class='d'><td style='padding: 1px;'><img src='img/routerdown.png' alt=' router is down' title='Router is currently down'/>Router is currently down</td></tr>
 <tr class='B'><td style='padding: 1px;'>Router is a bad exit node</td></tr>
 </table>
 

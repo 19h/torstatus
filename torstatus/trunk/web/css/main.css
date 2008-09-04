@@ -552,7 +552,7 @@ body
 /* Top bar */
 div.topbar
 {
-	background: url(/img/topbargradient.png) top left repeat-x #000072;
+	background: url(../img/topbargradient.png) top left repeat-x #000072;
 	width: 100%;
 	top: 0px;
 	left: 0px;
@@ -629,7 +629,7 @@ span.collapseinfobar
 
 div.content
 {
-	background: url(/img/graygradient.png) top left repeat-x #a4a5a9;
+	background: url(../img/graygradient.png) top left repeat-x #a4a5a9;
 	padding: 0;
 	margin: 0;
 }
@@ -641,8 +641,8 @@ div.content
 	margin-right: auto;
 }
 .dropshadow2{
-	background: url(/img/middleboxshadow.png) no-repeat bottom right !important;
-	background: url(/img/shadow.gif) no-repeat bottom right;
+	background: url(../img/middleboxshadow.png) no-repeat bottom right !important;
+	background: url(../img/shadow.gif) no-repeat bottom right;
 	margin: 10px 0 10px 10px !important;
 	margin: 10px 0 10px 5px;
 	width: 400px;
@@ -671,7 +671,7 @@ table.torcheck
 td.tab
 {
 	height: 100%;
-	background: url(/img/middleboxgreengradient.png) top left repeat-x #59990e;
+	background: url(../img/middleboxgreengradient.png) top left repeat-x #59990e;
 	text-align: center;
 	vertical-align: middle;
 	width: 65px;
@@ -706,11 +706,11 @@ a.searchbox img.searchbox
 	margin: 0;
 	margin-bottom: -9px;
 	background: top left no-repeat;
-	background-image: url(/img/search.png);
+	background-image: url(../img/search.png);
 }
 a.searchbox:hover img.searchbox
 {
-	background-image: url(/img/searchhover.png);
+	background-image: url(../img/searchhover.png);
 }
 
 td.TRSB a:hover
