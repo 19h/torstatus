@@ -1,4 +1,4 @@
-Copyright (c) 2007 Kasimir Gabert
+Copyright (c) 2007-2008 Kasimir Gabert
 See LICENSE for licensing information
 
 TorStatus - Tor Network Status
@@ -18,7 +18,8 @@ b) Web Server (example virtual host configuration file: install.apache2)
 	   support GD and PHP, and for the modern graphs must support
 	   Perl through CGI.
 	2) Set the folder 'web' as the document root for your virtual host
-	   or web server, and the folder 'cgi-bin' as your cgi folder.
+	   or web server, and the folder 'cgi-bin' as your cgi folder if
+	   you have CGI/Perl support.
 	3) Enable compression for the web directory in Apache
 c) Local Tor Server
 	1) Make sure you have a local Tor server running
@@ -26,20 +27,25 @@ c) Local Tor Server
 	2) You need to add 'ControlPort PORTNUMBER' to your Tor config file.
 	3) You need to add 'DownloadExtraInfo 1' to your Tor config file for
 	   banwidth graphs to work correctly.
-	4) Set the cgi-bin directory of your webserver to TorStatus'
-	   cgi-bin directory. (For Perl-based graphs)
 d) Configure TorStatus
 	1) You may find the full list of configuration options in README.
 	2) You must copy 'web/config_template.php' to 'web/config.php'
 	3) You must set:
 		$LocalTorServerIP
 		$LocalTorServerControlPort
+		$LocalTorServerControlPassword
+			- Only if it applies to your Tor configuration
 		$SQL_Server
 		$SQL_User
 		$SQL_Pass
 		$SQL_Catalog (means SQL database)
-		$TNS_Path (leaving trailing slash)
+		$TNS_Path
+			- This is the path to the directory that you
+			installed TorStatus to.  Be sure to leave a trailing 
+			slash!
 		$myMirrorName
+			- This should be all lower case and without spaces, to
+			work well in the mirror updating program
 	4) Test your setup by running './tns_update.pl' or 
 	   'perl tns_update.pl'.  If no errors occur after several minutes,
 	   then things should be setup correctly.  Also browse to your website
