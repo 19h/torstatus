@@ -105,8 +105,8 @@ while (1 == 1)
 {
 
 # Don't die on errors
-#eval
-#{
+eval
+{
 
 # Find the initial time
 my $start_time = time();
@@ -444,7 +444,7 @@ while (<$torSocket>)
 	{
 		# Format for storing the data:
 		# "time:NUM"
-		my $time = str2time("$1 $2");
+		my $time = str2time("$1 $2","GMT");
 		my $increment = $3;
 		# Find and split the numbers
 		my @nums = reverse(split(/,/,$4));
@@ -455,7 +455,7 @@ while (<$torSocket>)
 		{
 			my $numtime = $time - $offset;
 			push @readhistory, "$numtime:$num";
-			$offset -= $increment;
+			$offset += $increment;
 		}
 		$currentRouter{'read'} = join(' ',@readhistory);
 
@@ -481,7 +481,7 @@ while (<$torSocket>)
 	{
 		# Format for storing the data:
 		# "time:NUM"
-		my $time = str2time("$1 $2");
+		my $time = str2time("$1 $2","GMT");
 		my $increment = $3;
 		# Find and split the numbers
 		my @nums = reverse(split(/,/,$4));
@@ -492,7 +492,7 @@ while (<$torSocket>)
 		{
 			my $numtime = $time - $offset;
 			push @writehistory, "$numtime:$num";
-			$offset -= $increment;
+			$offset += $increment;
 		}
 		$currentRouter{'write'} = join(' ',@writehistory);
 		
@@ -576,7 +576,7 @@ while (<$torSocket>)
 			{
 				# Format for storing the data:
 				# "time:NUM"
-				my $time = str2time("$1 $2");
+				my $time = str2time("$1 $2","GMT");
 				my $increment = $3;
 				# Find and split the numbers
 				my @nums = reverse(split(/,/,$4));
@@ -587,7 +587,7 @@ while (<$torSocket>)
 				{
 					my $numtime = $time - $offset;
 					push @readhistory, "$numtime:$num";
-					$offset -= $increment;
+					$offset += $increment;
 				}
 				$currentRouter{'read'} = join(' ',@readhistory);
 			
@@ -612,7 +612,7 @@ while (<$torSocket>)
 			{
 				# Format for storing the data:
 				# "time:NUM"
-				my $time = str2time("$1 $2");
+				my $time = str2time("$1 $2","GMT");
 				my $increment = $3;
 				# Find and split the numbers
 				my @nums = reverse(split(/,/,$4));
@@ -623,7 +623,7 @@ while (<$torSocket>)
 				{
 					my $numtime = $time - $offset;
 					push @writehistory, "$numtime:$num";
-					$offset -= $increment;
+					$offset += $increment;
 				}
 				$currentRouter{'write'} = join(' ',@writehistory);
 				
@@ -878,7 +878,7 @@ $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DN
 $dbh->disconnect();
 close($torSocket);
 
-#};
+};
 if ($@) {
 	print "The TorStatus database was not updated properly.  An error has occured.  I will continue to try to update, however.\n";
 }
@@ -912,26 +912,30 @@ sub updateBandwidth {
 
 	# Determine whether a bandwidth history file for this router exists
 	my $bwfile = $config{'TNS_Path'} . "bandwidthhistory/$fingerprint.rrd";
-	my $graphfile = $config{'TNS_Path'} . "web/bandwidthgraph/$fingerprint.png";
+	my $graphfile = $config{'TNS_Path'} . "web/bandwidthgraph/$fingerprint";
+	
 	unless (-e $bwfile)
 	{
 		# Create the bandwidth history file
 		# There will be two datasources, read and write
 		#open (my $create_file, ">", $bwfile);
 		#close ($create_file);
-		RRDs::create(
+		my $hbtime = $inc * 2;
+		my $err = RRDs::create(
 			$bwfile,
-			"--start", "1167634800", # start on Jan 1, 2007
-			"--step", "100", #$inc,
+			"--start=1167634800", # start on Jan 1, 2007
+			"--step=$inc",
 			# Add read, write history values
-			"DS:rh:COUNTER:" . $inc . ":U:U",
-			"DS:wh:COUNTER:" . $inc . ":U:U", 
+			"DS:read:GAUGE:$hbtime:U:U",
+			"DS:write:GAUGE:$hbtime:U:U", 
 			# Add RRAs
-			"RRA:AVERAGE:0.5:10:3600",
-			"RRA:AVERAGE:0.5:90:1200",
-			"RRA:AVERAGE:0.5:360:1200",
-			"RRA:AVERAGE:0.5:8640:600"
+			"RRA:AVERAGE:0.5:1:96",
+			"RRA:AVERAGE:0.5:16:42",
+			"RRA:AVERAGE:0.5:96:31",
+			"RRA:AVERAGE:0.5:288:31",
+			"RRA:AVERAGE:0.5:1152:31"
 		);
+		print "RRDs::create error: $err\n" if $err and $err != 1;
 	}
 	# Add the known bandwidth data into the RRD database
 	# Put the bandwidth into a hash to match the rh and wh
@@ -941,7 +945,8 @@ sub updateBandwidth {
 	foreach my $rhitem (@readarray)
 	{
 		my @rh = split(":",$rhitem);
-		$bandwidth{$rh[0]} = $rh[1] . ":U"; # By default assume 
+		my $rhb = $rh[1]/$inc/1024;
+		$bandwidth{$rh[0]} = $rhb . ":U"; # By default assume 
 						    # no write history
 	}
 	foreach my $whitem (@writearray)
@@ -951,28 +956,84 @@ sub updateBandwidth {
 		{
 			$bandwidth{$wh[0]} = "U:U";
 		}
-		$bandwidth{$wh[0]} =~ s/\:U/\:$wh[1]/;
+		my $whb = $wh[1]/$inc/1024;
+		$bandwidth{$wh[0]} =~ s/\:U/\:$whb/;
 	}
+	my $lastrow = RRDs::last($bwfile) or 1167634800;
+	
 	# Update the RRD database
-	foreach my $time (sort (keys %bandwidth))
+	foreach my $time (sort { $a <=> $b } (keys %bandwidth))
 	{
-		RRDs::update(
-			$bwfile,
-			$time . ":" . $bandwidth{$time}
-		);
-		my $err = RRDs::error;
-	#	print "RRDs::update error: $err\n" if $err;
+		if ($time > $lastrow)
+		{
+			RRDs::update(
+				$bwfile,
+				$time . ":" . $bandwidth{$time}
+			);
+			my $err = RRDs::error;
+			print "RRDs::update error: $err\n" if $err;
+		}
 	}
 	# Create a new RRD graph for the router
 	RRDs::graph(
-		$graphfile,
-		"--title=Daily Bandwidth for $name",
+		$graphfile . "_y.png",
+		"--title=Past Year's Bandwidth for $name",
 		"--vertical-label=Bandwidth (KBps)",
+		"--height=130",
+		"--lower-limit=0",
+		"--start=end-1y", "--end=now",
+		"DEF:read=$bwfile:read:AVERAGE",
+		"DEF:write=$bwfile:write:AVERAGE",
+		"AREA:read#1111FF:Read History",
+		"LINE2:write#FF8800:Write History"
+	);
+	RRDs::graph(
+		$graphfile . "_3m.png",
+		"--title=Past Three Month's Bandwidth for $name",
+		"--vertical-label=Bandwidth (KBps)",
+		"--height=130",
+		"--lower-limit=0",
+		"--start=end-3m", "--end=now",
+		"DEF:read=$bwfile:read:AVERAGE",
+		"DEF:write=$bwfile:write:AVERAGE",
+		"AREA:read#1111FF:Read History",
+		"LINE2:write#FF8800:Write History"
+	);
+	RRDs::graph(
+		$graphfile . "_m.png",
+		"--title=Past Month's Bandwidth for $name",
+		"--vertical-label=Bandwidth (KBps)",
+		"--height=130",
+		"--lower-limit=0",
+		"--start=end-1m", "--end=now",
+		"DEF:read=$bwfile:read:AVERAGE",
+		"DEF:write=$bwfile:write:AVERAGE",
+		"AREA:read#1111FF:Read History",
+		"LINE2:write#FF8800:Write History"
+	);
+	RRDs::graph(
+		$graphfile . "_w.png",
+		"--title=Past Week's Bandwidth for $name",
+		"--vertical-label=Bandwidth (KBps)",
+		"--height=130",
+		"--lower-limit=0",
+		"--start=end-1w", "--end=now",
+		"DEF:read=$bwfile:read:AVERAGE",
+		"DEF:write=$bwfile:write:AVERAGE",
+		"AREA:read#1111FF:Read History",
+		"LINE2:write#FF8800:Write History"
+	);
+	RRDs::graph(
+		$graphfile . "_d.png",
+		"--title=Past Day's Bandwidth for $name",
+		"--vertical-label=Bandwidth (KBps)",
+		"--height=130",
+		"--lower-limit=0",
 		"--start=end-1d", "--end=now",
-		"DEF:rh=$bwfile:rh:AVERAGE",
-		"DEF:wh=$bwfile:wh:AVERAGE",
-		"LINE1:rh#FF0000:Read History",
-		"LINE1:wh#FFFF00:Write History"
+		"DEF:read=$bwfile:read:AVERAGE",
+		"DEF:write=$bwfile:write:AVERAGE",
+		"AREA:read#1111FF:Read History",
+		"LINE2:write#FF8800:Write History"
 	);
 
 }
