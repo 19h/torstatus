@@ -696,7 +696,9 @@ while (<$torSocket>)
 		);
 
 		# Update the read and write bandwidth history
-		if ($config{'BandwidthHistory'} eq "true")
+		# Only do this once every 900*10 seconds to retain
+		# speed, and more frequent updates are not necessary
+		if ($config{'BandwidthHistory'} eq "true" && $updateCounter % 10 == 0)
 		{
 		updateBandwidth( $currentRouter{'Fingerprint'},
 			$currentRouter{'write'},
