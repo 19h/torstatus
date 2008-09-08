@@ -87,6 +87,57 @@ if (strlen($Platform) > 55)
 	$Platform = substr($Platform,0,55) . "<br/>" . substr($Platform,-(strlen($Platform)-55));
 }
 
+$image = "NotAvailable";
+// Map the platform to something we know
+if (strpos($record['Platform'],'Linux',$record['Platform']) || strpos($record['Platform'],'linux',$record['Platform']))
+{
+	$image = "Linux";
+}
+if (strpos($record['Platform'],'Windows XP'))
+{
+	$image = "WindowsXP";
+}
+else if (strpos($record['Platform'],'Windows') && strpos($record['Platform'],'server'))
+{
+	$image = "WindowsServer";
+}
+else if (strpos($record['Platform'],'Windows'))
+{
+	$image = "WindowsOther";
+}
+if (strpos($record['Platform'],'Darwin'))
+{
+	$image = "Darwin";
+}
+if (strpos($record['Platform'],'DragonFly'))
+{
+	$image = "DragonFly";
+}
+if (strpos($record['Platform'],'FreeBSD'))
+{
+	$image = "FreeBSD";
+}
+if (strpos($record['Platform'],'NetBSD'))
+{
+	$image = "NetBSD";
+}
+if (strpos($record['Platform'],'IRIX'))
+{
+	$image = "IRIX64";
+}
+if (strpos($record['Platform'],'Cygwin'))
+{
+	$image = "Cygwin";
+}
+if (strpos($record['Platform'],'SunOS'))
+{
+	$image = "SunOS";
+}
+if (strpos($record['Platform'],'OpenBSD'))
+{
+	$image = "OpenBSD";
+}
+
 $Contact = $record['Contact'];
 $Uptime = $record['Uptime'];
 $Bandwidth_MAX = $record['BandwidthMAX'];
@@ -280,7 +331,7 @@ include("header.php");
 	// Display Platform
 	echo "<tr>\n";
 	echo "<td class='TRAR'><b>Platform / Version:</b></td>\n";
-	echo "<td class='TRSB'>$Platform</td>\n";
+	echo "<td class='TRSB'>$Platform <img src='img/os-icons/$image.png' alt='$Platform' /></td>\n";
 	echo "</tr>\n";
 
 	// Display LastDescriptorPublished
