@@ -215,6 +215,7 @@ include("header.php");
 <td class='HRN' colspan='2'>Router Information</td>
 <td class='HRN' style='border-left-color: #000072; border-left-style: solid; border-left-width: 1px;'>Router Flags</td>
 </tr>
+<tr>
 <td class="TRS" colspan='2' style="vertical-align: top;">
 <table>
 <?php
@@ -496,7 +497,7 @@ if ($_GET['showbandwidth'] == "true")
 }
 else
 {
-	?><a href="?FP=<?php echo $Fingerprint; ?>&showbandwidth=true">(show bandwidth values)</a><?php
+	?><a href="?FP=<?php echo $Fingerprint; ?>&amp;showbandwidth=true">(show bandwidth values)</a><?php
 }
 ?>
 </div>
@@ -550,15 +551,46 @@ else
 </tr>
 
 <tr>
-<td class='HRN' colspan='3'>Router Keys</td>
+<td class='HRN' colspan='3'><? if ($BandwidthHistory == "true") { echo "Bandwidth History / "; } ?>Router Keys</td>
 </tr>
 <tr>
 <td class='TRS' colspan='3'>
 <?php
 	
 	echo "<br/>\n";
+	if ($BandwidthHistory == "true")
+	?>
+	<table class="bwhistory">
+		<tr>
+			<td>
+			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_d.png"; ?>" alt="Past Day's Bandwidth"/>
+			</td>
+			<td>
+			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_w.png"; ?>" alt="Past Week's Bandwidth"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_m.png"; ?>" alt="Past Month's Bandwidth"/>
+			</td>
+			<td>
+			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_3m.png"; ?>" alt="Past Three Month's Bandwidth"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_y.png"; ?>" alt="Past Year's Bandwidth"/>
+			</td>
+			<td>
+			</td>
+		</tr>
+	</table>
+	<br/>
+	<?php
+	echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre>";
 	echo "<b>Onion Key:</b><pre>" . $OnionKey . "</pre>\n";
-	echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre><br/>\n";
+	echo "<br/>\n";
+
 ?>
 </td>
 </tr>
@@ -576,6 +608,7 @@ else
 <td class='TRC'><?php echo $footerText; ?></td>
 </tr>
 </table>
+</div>
 </body>
 </html>
 

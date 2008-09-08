@@ -947,6 +947,7 @@ if (isset($_REQUEST["Fast"]))
 }
 
 
+
 // POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
@@ -1001,18 +1002,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	if (isset($_POST["FHSDir"]))
 	{
 		$FHSDir = $_POST["FHSDir"];
-	}
-	if (isset($_POST["CSField"]))
-	{
-		$CSField = $_POST["CSField"];
-	}
-	if (isset($_POST["CSMod"]))
-	{
-		$CSMod = $_POST["CSMod"];
-	}
-	if (isset($_POST["CSInput"]))
-	{
-		$CSInput = $_POST["CSInput"];
 	}
 }
 
@@ -1089,15 +1078,28 @@ else
 	}
 }
 
+if (isset($_REQUEST["CSField"]))
+{
+	$CSField = $_REQUEST["CSField"];
+}
+if (isset($_REQUEST["CSMod"]))
+{
+	$CSMod = $_REQUEST["CSMod"];
+}
+if (isset($_REQUEST["CSInput"]))
+{
+	$CSInput = $_REQUEST["CSInput"];
+}
+
 // Read ColumnList_ACTIVE and ColumnList_INACTIVE variables -- These come from SESSION
-	if (isset($_SESSION["ColumnList_ACTIVE"]))
-	{
-		$ColumnList_ACTIVE = $_SESSION["ColumnList_ACTIVE"];
-	}
-	if (isset($_SESSION["ColumnList_INACTIVE"]))
-	{
-		$ColumnList_INACTIVE = $_SESSION["ColumnList_INACTIVE"];
-	}
+if (isset($_SESSION["ColumnList_ACTIVE"]))
+{
+	$ColumnList_ACTIVE = $_SESSION["ColumnList_ACTIVE"];
+}
+if (isset($_SESSION["ColumnList_INACTIVE"]))
+{
+	$ColumnList_INACTIVE = $_SESSION["ColumnList_INACTIVE"];
+}
 
 // VARIABLE SCRUB / DEFAULT VALUES HANDLING
 if (!(isset($_SESSION['ColumnSetVisited'])) && !(isset($_SESSION['IndexVisited'])))
@@ -2179,7 +2181,7 @@ $mirrorList = $mirrorListRow[0];
 <a href="/?clear=clear" class="logoimage"><img src="img/logo.png" alt="TorStatus" class="topbarlogo"/></a>
 <span class="logotext"><?php echo $TorNetworkStatus_Version; ?><?php if ($UsingSSL == 1) { ?> - Encrypted connection<?php } elseif ($AllowSSL) { ?> - <a href="<?php echo $SSLLink  ?>" class="plain">Use an encrypted connection <b>(recommended)</b></a><?php } ?></span>
 </td><td style="vertical-align: bottom; text-align: right;">
-<form action="<?php echo $Self; ?>" method="post" name="search">
+<form action="<?php echo $Self; ?>" method="get" name="search">
 <input type="hidden" name="CSMod" value="Contains" />
 <input type="hidden" name="CSField" value="Name" />
 <input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:submitSearch();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
@@ -2187,11 +2189,14 @@ $mirrorList = $mirrorListRow[0];
 </td></tr></table>
 <?php if (!$CSInput) { ?>
 <script type="text/javascript">
+<!--
 	document.getElementById('searchbox').style.color = 'gray';
 	document.getElementById('searchbox').value = 'search by name or fingerprint';
+// -->
 </script>
 <?php } ?>
 <script type="text/javascript">
+<!--
 	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="img/blank.gif" />';
 	function submitSearch()
 	{
@@ -2201,6 +2206,7 @@ $mirrorList = $mirrorListRow[0];
 		}
 		document.search.submit();
 	}
+// -->
 </script>
 </div>
 <div class="separator"></div>
@@ -2311,7 +2317,7 @@ else
 	include("../geoip/geoip.inc");
 	$gi = geoip_open("../geoip/GeoIP.dat",GEOIP_STANDARD);
 	$cc = geoip_country_code_by_addr($gi, $RemoteIP);
-	echo "<img src=\"img/flags/".strtolower($cc).".gif\" class=\"flag\" title=\"".$country_codes[strtolower($cc)]."\" />";
+	echo "<img src=\"img/flags/".strtolower($cc).".gif\" class=\"flag\" title=\"".$country_codes[strtolower($cc)]."\" alt=\"".$country_codes[strtolower($cc)]."\" />";
 	
 	if (defined("WHOISPath"))
 	{
@@ -2437,7 +2443,7 @@ while ($record = mysql_fetch_assoc($result))
 	{
 		if ($Fast == 1)
 		{
-			echo "<td class=\"truncated\" colspan=\"6\"><a href=\"?Fast=0\">The listing is truncated for low bandwidth connections.  See the full listing by clicking here.</a></td>";
+			echo "<tr><td class=\"truncated\" colspan=\"6\"><a href=\"?Fast=0\">The listing is truncated for low bandwidth connections.  See the full listing by clicking here.</a></td></tr>";
 			break;
 		}
 		// Display header row

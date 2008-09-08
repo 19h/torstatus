@@ -717,3 +717,13 @@ td.TRSB a:hover
 {
 	text-decoration: underline;
 }
+
+table.bwhistory
+{
+	width: 100%;
+}
+table.bwhistory td
+{
+	width: 50%;
+	text-align: center;
+}
