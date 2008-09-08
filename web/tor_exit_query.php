@@ -421,6 +421,7 @@ Policy would permit it to exit to a certain destination IP address and port.</b>
 <td class='TRC'><?php echo $footerText; ?></td>
 </tr>
 </table>
+</div>
 </body>
 </html>
 

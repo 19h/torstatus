@@ -31,6 +31,12 @@ $result_mirrors = mysql_query($query) or die('There was an error getting the mir
 $mirrorListRow = mysql_fetch_row($result_mirrors);
 $mirrorList = $mirrorListRow[0];
 
+// Find out if a search had been carried out, e.g. if the session CSInput holds
+// anything
+if (isset($_SESSION['CSInput']))
+{
+	$CSInput = $_SESSION['CSInput'];
+}
 
 ?><!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -49,10 +55,10 @@ $mirrorList = $mirrorListRow[0];
 <body>
 <div class="topbar" id="topbar"><br/>
 <table width="100%"><tr><td style="vertical-align: bottom;">
-<a href="/?CSInput=" class="logoimage"><img src="img/logo.png" alt="TorStatus" class="topbarlogo"/></a>
+<a href="/?clear=clear" class="logoimage"><img src="img/logo.png" alt="TorStatus" class="topbarlogo"/></a>
 <span class="logotext"><?php echo $TorNetworkStatus_Version; ?><?php if ($UsingSSL == 1) { ?> - Encrypted connection<?php } elseif ($AllowSSL) { ?> - <a href="<?php echo $SSLLink; echo substr($Self,-(strlen($Self)-1)); echo "?"; echo $_SERVER['QUERY_STRING'];  ?>" class="plain">Use an encrypted connection <b>(recommended)</b></a><?php } ?></span>
 </td><td style="vertical-align: bottom; text-align: right;">
-<form action="/index.php" method="post" name="search">
+<form action="/index.php" method="get" name="search">
 <input type="hidden" name="CSMod" value="Contains" />
 <input type="hidden" name="CSField" value="Name" />
 <input type="text" class="searchbox" value="<?php echo ($CSInput)?htmlspecialchars($CSInput, ENT_QUOTES):"";?>" onfocus="javascript:if(this.value=='search by name or fingerprint') { this.style.color = 'black';this.value=''; }" id="searchbox" name="CSInput"/><a href="javascript:submitSearch();" class="searchbox" id="searchbutton"></a><noscript><input type="submit" value="Name/Fingerprint Search"/></noscript>
@@ -60,11 +66,14 @@ $mirrorList = $mirrorListRow[0];
 </td></tr></table>
 <?php if (!$CSInput) { ?>
 <script type="text/javascript">
+<!--
 	document.getElementById('searchbox').style.color = 'gray';
 	document.getElementById('searchbox').value = 'search by name or fingerprint';
+// -->
 </script>
 <?php } ?>
 <script type="text/javascript">
+<!--
 	document.getElementById('searchbutton').innerHTML = '<img class="searchbox" alt="Search" src="/img/blank.gif" />';
 	function submitSearch()
 	{
@@ -74,6 +83,7 @@ $mirrorList = $mirrorListRow[0];
 		}
 		document.search.submit();
 	}
+// -->
 </script>
 </div>
 <div class="separator"></div>

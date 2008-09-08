@@ -608,6 +608,7 @@ include("header.php");
 <td class='TRC'><?php echo $footerText; ?></td>
 </tr>
 </table>
+</div>
 </body>
 </html>
 
