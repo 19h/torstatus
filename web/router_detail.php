@@ -414,7 +414,7 @@ include("header.php");
 				if (mysql_num_rows($result) == 1)
 				{
 					$record = mysql_fetch_assoc($result);
-					$fplink = strtolower(substr($record['Fingerprint'],1));
+					$fplink = strtolower($record['Fingerprint']);
 					// Display in the form
 					//  [linked][countrycode] Name
 					echo "<img title=\"FP: $fplink\" src=\"img/flags/".strtolower($record['CountryCode']).".gif\" class=\"flag\" /> <a title=\"FP: $fplink\" href=\"router_detail.php?FP=$fplink\">$FamilyMember</a><br/>";
