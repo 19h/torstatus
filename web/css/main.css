@@ -197,6 +197,7 @@ a.header:hover
 
 .TRS 
 {
+	vertical-align: top;
 	background-color:#ffffff; 
 	text-align:left; 
 	font:normal 10pt Arial; 
@@ -225,6 +226,7 @@ a.header:hover
 
 .TRSB 
 {
+	vertical-align: top;
 	background-color:#ffffff; 
 	text-align:left; 
 	font:normal 10pt Arial; 
