@@ -610,6 +610,11 @@ else
 	
 	echo "<br/>\n";
 	if ($BandwidthHistory == "true")
+	{
+		if ($UsingSSL == 1)
+		{
+			$BandwidthURL = $SSLBandwidthURL;
+		}
 	?>
 	<table class="bwhistory">
 		<tr>
@@ -638,6 +643,7 @@ else
 	</table>
 	<br/>
 	<?php
+	}
 	echo "<b>Signing Key:</b><pre>" . $SigningKey . "</pre>";
 	echo "<b>Onion Key:</b><pre>" . $OnionKey . "</pre>\n";
 	echo "<br/>\n";
