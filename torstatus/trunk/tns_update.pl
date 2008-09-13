@@ -301,7 +301,7 @@ my $dbresponse2 = $dbh->prepare($query);
 # Now all of the recent descriptors data needs to be retrieved
 my @descAll;
 print $torSocket "GETINFO desc/all-recent\r\n";
-my $response = <$torSocket>;
+$response = <$torSocket>;
 unless ($response =~ /250+/) { die "There was an error retrieving descriptors."; }
 
 # Now iterate through each line of response
@@ -698,7 +698,7 @@ while (<$torSocket>)
 		# Update the read and write bandwidth history
 		# Only do this once every 900*10 seconds to retain
 		# speed, and more frequent updates are not necessary
-		if ($config{'BandwidthHistory'} eq "true" && $updateCounter % 10 == 0)
+		if ($config{'BandwidthHistory'} eq "true" && $updateCounter % 10 == 1)
 		{
 		updateBandwidth( $currentRouter{'Fingerprint'},
 			$currentRouter{'write'},
@@ -727,12 +727,12 @@ $dbh->do("TRUNCATE TABLE NetworkStatus${descriptorTable};");
 
 # Request the network status information
 print $torSocket "GETINFO ns/all \r\n";
-my $response = <$torSocket>;
+$response = <$torSocket>;
 unless ($response =~ /250+/) { die "There was an error retrieving the network status."; }
 
 # Prepare the query so that data entry is faster
 $query = "INSERT INTO NetworkStatus${descriptorTable} (Name,Fingerprint,DescriptorHash,LastDescriptorPublished,IP,Hostname,ORPort,DirPort,FAuthority,FBadDirectory,FBadExit,FExit,FFast,FGuard,FNamed,FStable,FRunning,FValid,FV2Dir,FHSDir,CountryCode) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?);";
-$dhresponse = $dbh->prepare($query);
+my $dhresponse = $dbh->prepare($query);
 
 while (<$torSocket>)
 {
@@ -741,7 +741,7 @@ while (<$torSocket>)
 	# Trim the line so as to remove odd data
 	
 	if ($line =~ /250 OK/) { last; } # Break when done
-
+	
 	# Format for the "r" line
 	# "r" SP nickname SP identity SP digest SP publication SP IP SP ORPort
 	# SP DirPort NL
@@ -932,10 +932,10 @@ sub updateBandwidth {
 			"DS:write:GAUGE:$hbtime:U:U", 
 			# Add RRAs
 			"RRA:AVERAGE:0.5:1:96",
-			"RRA:AVERAGE:0.5:16:42",
-			"RRA:AVERAGE:0.5:96:31",
-			"RRA:AVERAGE:0.5:288:31",
-			"RRA:AVERAGE:0.5:1152:31"
+			"RRA:AVERAGE:0.5:8:82",
+			"RRA:AVERAGE:0.5:48:62",
+			"RRA:AVERAGE:0.5:144:62",
+			"RRA:AVERAGE:0.5:576:62"
 		);
 		print "RRDs::create error: $err\n" if $err and $err != 1;
 	}
@@ -976,66 +976,58 @@ sub updateBandwidth {
 			print "RRDs::update error: $err\n" if $err;
 		}
 	}
+	# Declare the common graph arguments
+	my @graphargs = (
+		"--lower-limit=0",
+		"--end=now",
+		"--height=130",
+		"DEF:read=$bwfile:read:AVERAGE",
+		"DEF:write=$bwfile:write:AVERAGE",
+		"--color=BACK#FFFFFF",
+		"--color=FRAME#FFF368",
+		"--color=SHADEA#FFF368",
+		"--color=SHADEB#FFF368",
+		"--color=FONT#0000BF",
+		"--color=ARROW#000000",
+		"AREA:read#0000BF:Read History",
+		"LINE2:write#FFF368:Write History"
+	);
+
 	# Create a new RRD graph for the router
 	RRDs::graph(
 		$graphfile . "_y.png",
 		"--title=Past Year's Bandwidth for $name",
 		"--vertical-label=Bandwidth (KBps)",
-		"--height=130",
-		"--lower-limit=0",
-		"--start=end-1y", "--end=now",
-		"DEF:read=$bwfile:read:AVERAGE",
-		"DEF:write=$bwfile:write:AVERAGE",
-		"AREA:read#1111FF:Read History",
-		"LINE2:write#FF8800:Write History"
+		"--start=end-1y",
+		@graphargs
 	);
 	RRDs::graph(
 		$graphfile . "_3m.png",
 		"--title=Past Three Month's Bandwidth for $name",
 		"--vertical-label=Bandwidth (KBps)",
-		"--height=130",
-		"--lower-limit=0",
-		"--start=end-3m", "--end=now",
-		"DEF:read=$bwfile:read:AVERAGE",
-		"DEF:write=$bwfile:write:AVERAGE",
-		"AREA:read#1111FF:Read History",
-		"LINE2:write#FF8800:Write History"
+		"--start=end-3m",
+		@graphargs
 	);
 	RRDs::graph(
 		$graphfile . "_m.png",
 		"--title=Past Month's Bandwidth for $name",
 		"--vertical-label=Bandwidth (KBps)",
-		"--height=130",
-		"--lower-limit=0",
-		"--start=end-1m", "--end=now",
-		"DEF:read=$bwfile:read:AVERAGE",
-		"DEF:write=$bwfile:write:AVERAGE",
-		"AREA:read#1111FF:Read History",
-		"LINE2:write#FF8800:Write History"
+		"--start=end-1m",
+		@graphargs
 	);
 	RRDs::graph(
 		$graphfile . "_w.png",
 		"--title=Past Week's Bandwidth for $name",
 		"--vertical-label=Bandwidth (KBps)",
-		"--height=130",
-		"--lower-limit=0",
-		"--start=end-1w", "--end=now",
-		"DEF:read=$bwfile:read:AVERAGE",
-		"DEF:write=$bwfile:write:AVERAGE",
-		"AREA:read#1111FF:Read History",
-		"LINE2:write#FF8800:Write History"
+		"--start=end-1w",
+		@graphargs
 	);
 	RRDs::graph(
 		$graphfile . "_d.png",
 		"--title=Past Day's Bandwidth for $name",
 		"--vertical-label=Bandwidth (KBps)",
-		"--height=130",
-		"--lower-limit=0",
-		"--start=end-1d", "--end=now",
-		"DEF:read=$bwfile:read:AVERAGE",
-		"DEF:write=$bwfile:write:AVERAGE",
-		"AREA:read#1111FF:Read History",
-		"LINE2:write#FF8800:Write History"
+		"--start=end-1d",
+		@graphargs
 	);
 
 }
