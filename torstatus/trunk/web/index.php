@@ -1062,7 +1062,7 @@ else
 	}
 	if (isset($_SESSION["FHSDir"]))
 	{
-		$FV2Dir = $_SESSION["FHSDir"];
+		$FHSDir = $_SESSION["FHSDir"];
 	}
 	if (isset($_SESSION["CSField"]))
 	{
