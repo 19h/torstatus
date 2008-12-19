@@ -147,7 +147,7 @@ if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 	if ($oldmonth != $month && $day > 2) # Give extra time
 	{
 		# The GeoIP database should be updated
-		my $getresponse = getstore('http://www.maxmind.com/download/geoip/database/GeoIP.dat.gz','/tmp/GeoIP.dat.gz');
+		my $getresponse = getstore('http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz','/tmp/GeoIP.dat.gz');
 		unless (is_success($getresponse))
 		{
 			print "Error retrieving GeoIP file.  Please contact Kasimir <kasimir\@kgprog.com>. \n(not dying)\n";

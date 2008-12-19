@@ -72,7 +72,7 @@ $myMirrorName = "MyMirrorName";
 // Change this value to 0 if you do not wish to download the mirror list
 $useMirrorList = 1;
 $mirrorListURI = "http://trunk.torstatus.kgprog.com/currentmirrors.php";
-$manualMirrorList = array('allde' => 'https://torstatus.all.de/','blutmagie' => 'https://torstatus.blutmagie.de/','kradense' => 'https://kradense.whsites.net/tns/', 'cyberphunk' => 'http://torstatus.cyberphunk.org/', 'hermetix' => 'http://tns.hermetix.org/', 'kgprog' => 'https://torstatus.kgprog.com/', 'recoxdotorg' => 'http://tor.recox.org/', 'amorphis' => 'http://torstatus.amorphis.eu/');
+$manualMirrorList = array('blutmagie' => 'https://torstatus.blutmagie.de/','Kradense' => 'https://kradense.whsites.net/tns/', 'cyberphunk' => 'http://torstatus.cyberphunk.org/', 'hermetix' => 'http://tns.hermetix.org/', 'kgprog' => 'https://torstatus.kgprog.com/', 'amorphis' => 'http://torstatus.amorphis.eu/', 'Tylers' => 'http://torstat.kleine-eismaus.de/');
 
 // }}}
 
