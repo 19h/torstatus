@@ -2314,8 +2314,8 @@ else
 	echo "</td><td class='content'>";
 	echo "<span class='notUsingTor'>You do not appear to be using Tor</span><br/>Your IP Address is: ";
 	// Find the country code associated with this IP
-	include("../geoip/geoip.inc");
-	$gi = geoip_open("../geoip/GeoIP.dat",GEOIP_STANDARD);
+	require_once($TNS_Path . $GEOIP_Path . "geoip.inc");
+	$gi = geoip_open($TNS_Path . $GEOIP_Path . "GeoIP.dat",GEOIP_STANDARD);
 	$cc = geoip_country_code_by_addr($gi, $RemoteIP);
 	echo "<img src=\"img/flags/".strtolower($cc).".gif\" class=\"flag\" title=\"".$country_codes[strtolower($cc)]."\" alt=\"".$country_codes[strtolower($cc)]."\" />";
 	
