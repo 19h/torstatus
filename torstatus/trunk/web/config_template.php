@@ -81,6 +81,12 @@ $Cache_Expire_Time = 300;
 
 // }}}
 
+//  +++++++++ Network History +++++++++ {{{
+// Comment the following line if you do not want to save Tor Network History
+$TorHistory = true;
+
+// }}}
+
 // ++++++++++ Interface ++++++++++ {{{
 
 // Set this to 0 if you wish to use JPGraph's libraries

@@ -70,7 +70,7 @@ my $updateCounter = 0;
 # First the configuration file must be read
 # All of the variables will be inputed into a hash for ease of use
 my %config;
-open (my $config_handle, "<", "web/config.php");
+open ($config_handle, "<", "web/config.php");
 while (<$config_handle>)
 {
 	# A regular expression is going to try to pull out the configuration
@@ -112,14 +112,14 @@ eval
 my $start_time = time();
 
 # Initiate a connection to the MySQL server
-my $dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$config{'SQL_Server'},$config{'SQL_User'},$config{'SQL_Pass'}, {
+$dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$config{'SQL_Server'},$config{'SQL_User'},$config{'SQL_Pass'}, {
 	PrintError => 0,
 	RaiseError => 1
 }) or die "Unable to connect to MySQL server";
 
-my $query;
-my $dbresponse;
-my $record;
+$query;
+$dbresponse;
+$record;
 
 # Determine if the GeoIP database should be automatically updated
 if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
@@ -262,7 +262,7 @@ $query = "SELECT ActiveNetworkStatusTable, ActiveDescriptorTable FROM Status WHE
 $dbresponse = $dbh->prepare($query);
 $dbresponse->execute();
 my @record = $dbresponse->fetchrow_array;
-my $descriptorTable = 1;
+$descriptorTable = 1;
 if ($record[0] =~ /1/)
 {
 	$descriptorTable = 2;
@@ -876,6 +876,221 @@ $dbh->do("UPDATE Status SET LastUpdate = UTC_TIMESTAMP(), LastUpdateElapsed = ($
 # Rename the DNSEL table so it is used
 $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DNSEL_INACT;");
 
+################# TOR History #################
+
+if ($config{'TorHistory'} eq "true") {
+
+# check for RRD Files, and create it if not found
+	my $serverflagfile = $config{'TNS_Path'} . "serverflags.rrd";
+	my $servernumberfile = $config{'TNS_Path'} . "servernumbers.rrd";
+	my $graphfile = $config{'TNS_Path'} . "web/history/";
+
+# set global RRD arguments
+        @RRDargs = (
+        	"--lower-limit=0",
+	        "--end=now",
+		"--lazy",
+        	"--height=130",
+	        "--color=BACK#FFFFFF",
+        	"--color=FRAME#FFF368",
+	        "--color=SHADEA#FFF368",
+        	"--color=SHADEB#FFF368",
+	        "--color=FONT#0000BF",
+        	"--color=ARROW#000000"
+        );
+	
+
+	unless (-e $serverflagfile) {
+		my $err = RRDs::create(
+			$serverflagfile,
+			"--start=1199145600", 		# start on Jan 1, 2008
+			"--step=300", 	      		# maybe change to $config{$Cache_Expire_Time}, and heartbeat to 2times|3times expire time ???
+		        "DS:run:GAUGE:900:0:U",		# number of running servers
+			"DS:runExit:GAUGE:900:0:U", 	# number of running exits
+	        	"DS:runGuard:GAUGE:900:0:U",	# number of guard nodes
+		        "DS:runFast:GAUGE:900:0:U",	# number of fast nodes
+			"RRA:AVERAGE:0.5:1:288",	# every 5 minutes, for 1 day
+			"RRA:AVERAGE:0.5:12:168",	# every hour, for 1 week
+			"RRA:AVERAGE:0.5:48:558",	# every 4 hours, for 93 days
+			"RRA:AVERAGE:0.5:144:732",	# every 12 hours, for 1 year
+			"RRA:AVERAGE:0.5:576:549"	# every 48 hours, for 3 years
+			);
+		print "RRDs::create error: $err\n" if $err and $err != 1;
+	}
+
+	unless (-e $servernumberfile) {
+		my $err = RRDs::create(
+			$servernumberfile,
+			"--start=1199145600",          	# start on Jan 1, 2008
+                        "--step=300",                   # maybe change to $config{$Cache_Expire_Time}, and heartbeat to 2times|3times expire time ???
+			"DS:runUS:GAUGE:900:0:U",	# number of servers in: US
+			"DS:runExitUS:GAUGE:900:0:U",	# US - Exit
+                        "DS:runDE:GAUGE:900:0:U",       # DE
+                        "DS:runExitDE:GAUGE:900:0:U",   # DE - Exit
+                        "DS:runCN:GAUGE:900:0:U",       # CN
+                        "DS:runExitCN:GAUGE:900:0:U",   # CN - Exit
+                        "DS:runFR:GAUGE:900:0:U",       # FR
+                        "DS:runExitFR:GAUGE:900:0:U",   # FR - Exit
+                        "DS:runSE:GAUGE:900:0:U",       # SE
+                        "DS:runExitSE:GAUGE:900:0:U",   # SE - Exit
+			"DS:runRU:GAUGE:900:0:U",       # RU
+                        "DS:runExitRU:GAUGE:900:0:U",   # RU - Exit
+                        "DS:runNL:GAUGE:900:0:U",       # NL
+                        "DS:runExitNL:GAUGE:900:0:U",   # NL - Exit
+                        "DS:runCA:GAUGE:900:0:U",       # CA
+                        "DS:runExitCA:GAUGE:900:0:U",   # CA - Exit
+                        "DS:runGB:GAUGE:900:0:U",       # GB
+                        "DS:runExitGB:GAUGE:900:0:U",   # GB - Exit
+                        "DS:runIT:GAUGE:900:0:U",       # IT
+                        "DS:runExitIT:GAUGE:900:0:U",   # IT - Exit
+			"DS:runAT:GAUGE:900:0:U",       # AT
+                        "DS:runExitAT:GAUGE:900:0:U",   # AT - Exit
+			# ADD OTHERS HERE ...
+			"DS:runOther:GAUGE:900:0:U",		# other countries
+			"DS:runExitOther:GAUGE:900:0:U",	# other countries - Exit
+                        "RRA:AVERAGE:0.5:1:288",        # every 5 minutes, for 1 day
+                        "RRA:AVERAGE:0.5:12:168",       # every hour, for 1 week
+                        "RRA:AVERAGE:0.5:48:558",       # every 4 hours, for 93 days
+                        "RRA:AVERAGE:0.5:144:732",      # every 12 hours, for 1 year
+                        "RRA:AVERAGE:0.5:576:549"       # every 48 hours, for 3 years
+                        );
+                print "RRDs::create error: $err\n" if $err and $err != 1;
+
+	}
+
+
+
+# get the values from the database
+# serverflags.rrd
+        $query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1'; ";
+        $dbresponse = $dbh->prepare($query);
+        $dbresponse->execute();
+        my $run = $dbresponse->fetchrow();
+	$dbresponse->finish();
+
+	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FExit = '1' ";
+        $dbresponse = $dbh->prepare($query);
+        $dbresponse->execute();
+        my $runExit = $dbresponse->fetchrow();
+	$dbresponse->finish();
+
+	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FGuard = '1' ";
+        $dbresponse = $dbh->prepare($query);
+        $dbresponse->execute();
+        my $runGuard = $dbresponse->fetchrow();
+	$dbresponse->finish();
+	
+	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FFast = '1' ";
+        $dbresponse = $dbh->prepare($query);
+        $dbresponse->execute();
+        my $runFast = $dbresponse->fetchrow();
+	$dbresponse->finish();
+
+#servernumbers.rrd
+# US
+        my $runUS = &country_query('US');
+        my $runExitUS = &country_exit_query('US');
+
+# DE
+        my $runDE = &country_query('DE');
+        my $runExitDE = &country_exit_query('DE');
+
+# CN
+        my $runCN = &country_query('CN');
+        my $runExitCN = &country_exit_query('CN');
+
+# FR
+        my $runFR = &country_query('FR');
+        my $runExitFR = &country_exit_query('FR');
+
+# SE
+        my $runSE = &country_query('SE');
+        my $runExitSE = &country_exit_query('SE');
+
+# RU
+        my $runRU = &country_query('RU');
+	my $runExitRU = &country_exit_query('RU');
+
+# NL
+        my $runNL = &country_query('NL'); 
+	my $runExitNL = &country_exit_query('NL');
+
+# CA
+        my $runCA = &country_query('CA');
+        my $runExitCA = &country_exit_query('CA');
+
+# GB
+        my $runGB = &country_query('GB');
+        my $runExitGB = &country_exit_query('GB');
+
+# IT
+        my $runIT = &country_query('IT');
+        my $runExitIT = &country_exit_query('IT');
+
+# AT
+	my $runAT = &country_query('AT');
+	my $runExitAT = &country_exit_query('AT');
+
+# Totals:
+	my $runOther = $run-$runUS-$runDE-$runCN-$runFR-$runSE-$runRU-$runNL-$runCA-$runGB-$runIT-$runAT;
+	my $runExitOther = $runExit-$runExitUS-$runExitDE-$runExitCN-$runExitFR-$runExitSE-$runExitRU-$runExitNL-$runExitCA-$runExitGB-$runExitIT-$runExitAT;
+
+
+# put values into RRDs
+	my $err = RRDs::update($serverflagfile, "--template", "run:runExit:runGuard:runFast", "N:".$run.":".$runExit.":".$runGuard.":".$runFast);
+	print "RRDs::update error: $err\n" if $err and $err != 1;
+
+	my $err = RRDs::update($servernumberfile, "--template", "runUS:runExitUS:runDE:runExitDE:runCN:runExitCN:runFR:runExitFR:runSE:runExitSE:runRU:runExitRU:runNL:runExitNL:runCA:runExitCA:runGB:runExitGB:runIT:runExitIT:runAT:runExitAT:runOther:runExitOther", "N:".$runUS.":".$runExitUS.":".$runDE.":".$runExitDE.":".$runCN.":".$runExitCN.":".$runFR.":".$runExitFR.":".$runSE.":".$runExitSE.":".$runRU.":".$runExitRU.":".$runNL.":".$runExitNL.":".$runCA.":".$runExitCA.":".$runGB.":".$runExitGB.":".$runIT.":".$runExitIT.":".$runAT.":".$runExitAT.":".$runOther.":".$runExitOther);
+	print "RRDs::update error: $err\n" if $err and $err != 1;
+
+
+# draw RRD graphs - running server
+	&drawHistory('Running', '6h');
+        &drawHistory('Running', '1d');
+        &drawHistory('Running', '1w');
+        &drawHistory('Running', '1m');
+        &drawHistory('Running', '3m');
+        &drawHistory('Running', '1y');
+
+# draw RRD graphs - running exit server
+        &drawHistory('Exit', '6h');
+        &drawHistory('Exit', '1d');
+        &drawHistory('Exit', '1w');
+        &drawHistory('Exit', '1m');
+        &drawHistory('Exit', '3m');
+        &drawHistory('Exit', '1y');
+
+# draw RRD graphs - running Guard Servers 
+        &drawHistory('Guard', '6h');
+        &drawHistory('Guard', '1d');
+        &drawHistory('Guard', '1w');
+        &drawHistory('Guard', '1m');
+        &drawHistory('Guard', '3m');
+        &drawHistory('Guard', '1y'); 
+
+# draw RRD graphs - running Fast Servers
+        &drawHistory('Fast', '6h');
+        &drawHistory('Fast', '1d');
+        &drawHistory('Fast', '1w');
+        &drawHistory('Fast', '1m');
+        &drawHistory('Fast', '3m');
+        &drawHistory('Fast', '1y');
+
+# draw RRD History graphs - countries
+	&graph_multiplier('US');
+        &graph_multiplier('DE');
+        &graph_multiplier('CN');
+        &graph_multiplier('FR');
+        &graph_multiplier('SE');
+        &graph_multiplier('RU');
+        &graph_multiplier('NL');
+        &graph_multiplier('CA');
+        &graph_multiplier('GB');
+        &graph_multiplier('IT');
+        &graph_multiplier('AT');
+        &graph_multiplier('Other');
+}
+
 # Close both the database connection and the Tor server connection
 $dbh->disconnect();
 close($torSocket);
@@ -907,6 +1122,140 @@ END
     }
     return $CACHE{$ip} || $ip;
 }
+
+
+sub country_query {
+	my ($country) = @_;
+        $query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND CountryCode = '$country' ";
+        $dbresponse = $dbh->prepare($query);
+        $dbresponse->execute();
+        my $temp = $dbresponse->fetchrow();
+        $dbresponse->finish();
+	return $temp;
+}
+
+sub country_exit_query {
+	my ($country) = @_;	
+        $query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FExit = '1' AND CountryCode = '$country' ";
+        $dbresponse = $dbh->prepare($query);
+        $dbresponse->execute();
+        my $temp = $dbresponse->fetchrow();
+        $dbresponse->finish();
+	return $temp;
+}
+
+# Takes care of creatin the right graphs ...
+sub graph_multiplier {
+	my ($country) = @_;
+
+	&drawHistory_run($country, '6h'); 
+	&drawHistory_run($country, '1d'); 
+	&drawHistory_run($country, '1w');
+        &drawHistory_run($country, '1m'); 
+	&drawHistory_run($country, '3m'); 
+	&drawHistory_run($country, '1y');
+
+        &drawHistory_Exit_run($country, '6h');
+        &drawHistory_Exit_run($country, '1d');
+        &drawHistory_Exit_run($country, '1w');
+        &drawHistory_Exit_run($country, '1m');
+        &drawHistory_Exit_run($country, '3m');
+        &drawHistory_Exit_run($country, '1y');
+}
+
+# This draws overall Network History Graphs
+sub drawHistory {
+        my ($type, $time) = @_;
+        my $timeExt = "unknown";
+        if ($time eq '6h') {$timeExt = '6 Hours';};
+        if ($time eq '1d') {$timeExt = '24 Hours';};
+        if ($time eq '1w') {$timeExt = 'Week';};
+        if ($time eq '1m') {$timeExt = 'Month';};
+        if ($time eq '3m') {$timeExt = '3 Months';};
+        if ($time eq '1y') {$timeExt = 'Year';};
+
+	my $serverflagfile = $config{'TNS_Path'} . "serverflags.rrd";
+        my $graphfile = $config{'TNS_Path'} . "web/history/";
+
+	if ($type eq 'Running') {
+		print "DEBUG: creatin $type graph, time = $time\n";
+		RRDs::graph(
+	           $graphfile . "running_" . $time . ".png",
+        	   "--title=Running Servers in the last " . $timeExt,
+	           "--vertical-label=Number of Servers",
+        	   "--start=end-$time",
+	           "DEF:myrun=$serverflagfile:run:AVERAGE",
+        	   "AREA:myrun#0000BF",
+	           @RRDargs
+        	);
+	} 
+	else {
+                print "DEBUG: creatin $type graph, time = $time\n";
+	        RRDs::graph(
+        	    $graphfile . "run$type" . "_" . $time . ".png",
+	            "--title=Running $type Servers in the last " . $timeExt,
+        	    "--vertical-label=Number of $type Servers",
+	            "--start=end-$time",
+        	    "DEF:myrun=$serverflagfile:run$type:AVERAGE",
+	            "AREA:myrun#0000BF",
+        	    @RRDargs
+	        );
+	}
+}
+
+
+# This draws custom RRD graphs for Network History
+sub drawHistory_run {
+	my ($country, $time) = @_;
+	my $timeExt = "unknown";
+	if ($time eq '6h') {$timeExt = "6 Hours";};
+        if ($time eq '1d') {$timeExt = "24 Hours";};
+        if ($time eq '1w') {$timeExt = "Week";};
+        if ($time eq '1m') {$timeExt = "Month";};
+        if ($time eq '3m') {$timeExt = "3 Months";};
+        if ($time eq '1y') {$timeExt = "Year";};
+	
+        my $servernumberfile = $config{'TNS_Path'} . "servernumbers.rrd";
+        my $graphfile = $config{'TNS_Path'} . "web/history/";
+
+        RRDs::graph(
+            $graphfile . "countries/running_" . $country . "_" . $time . ".png",
+            "--title=Running $country Servers in the last " . $timeExt,
+            "--vertical-label=Number of Servers",
+            "--start=end-$time",
+            "DEF:myrun=$servernumberfile:run$country:AVERAGE",
+            "AREA:myrun#0000BF",
+            @RRDargs
+        );
+
+}
+
+# This draws custom Exit RRD graphs for Network History
+sub drawHistory_Exit_run {
+        my ($country, $time) = @_;
+        my $timeExt = "unknown";
+        if ($time eq '6h') {$timeExt = "6 Hours";};
+        if ($time eq '1d') {$timeExt = "24 Hours";};
+        if ($time eq '1w') {$timeExt = "Week";};
+        if ($time eq '1m') {$timeExt = "Month";};
+        if ($time eq '3m') {$timeExt = "3 Months";};
+        if ($time eq '1y') {$timeExt = "Year";};
+
+        my $servernumberfile = $config{'TNS_Path'} . "servernumbers.rrd";
+        my $graphfile = $config{'TNS_Path'} . "web/history/";
+
+        RRDs::graph(
+            $graphfile . "countries/runExit_" . $country . "_" . $time . ".png",
+            "--title=Running $country Exit Servers in the last " . $timeExt,
+            "--vertical-label=Number of Exit Servers",
+            "--start=end-$time",
+            "DEF:myrun=$servernumberfile:runExit$country:AVERAGE",
+            "AREA:myrun#0000BF",
+            @RRDargs
+        );
+
+}
+
 
 # This updates the bandwidth history database for a given router
 sub updateBandwidth {
