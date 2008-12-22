@@ -4,7 +4,11 @@ See LICENSE for licensing information
 WARNING: This file is slightly out of date.  For a more accurate install with
 versions 4.0 and onwards, please see the INSTALL file.
 
-PLEASE NOTE:  You must agree to the terms and conditions for GeoLite and for JPGraph to use this software to its fullest extent.  If you do not agree to the appropriate terms and licenses that are provided with this release, then you may not use those pieces of software.  Basically, this means that "as-is" this software cannot be used commercially.
+PLEASE NOTE:  You must agree to the terms and conditions for GeoLite
+and for JPGraph to use this software to its fullest extent.  If you do
+not agree to the appropriate terms and licenses that are provided with
+this release, then you may not use those pieces of software.  Basically,
+this means that "as-is" this software cannot be used commercially.
 
 TorStatus
 
@@ -191,7 +195,10 @@ Hidden Service link will be displayed on the site.
 -- $TorNetworkStatus_Version: A version string which displays at the bottom 
 of each page.
 
-7) If you want to use TOR History, make sure that the user running tns_update.pl has write access to web/history/, e.g. by executing "chown username web/history". Otherwise the graphs of TOR History used in network_history.php will not get created.
+7) If you want to use Tor History, make sure that the user running
+tns_update.pl has write access to web/history/, e.g. by executing
+"chown username web/history". Otherwise the graphs of Tor History used
+in network_history.php will not get created.
 
 8) Setup a way for scheduled local-cache (database) refreshes to take place. 
 You have two options here. Number one is to simply run the "tns_agent.php" 
