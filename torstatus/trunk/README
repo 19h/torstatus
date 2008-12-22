@@ -191,7 +191,9 @@ Hidden Service link will be displayed on the site.
 -- $TorNetworkStatus_Version: A version string which displays at the bottom 
 of each page.
 
-7) Setup a way for scheduled local-cache (database) refreshes to take place. 
+7) If you want to use TOR History, make sure that the user running tns_update.pl has write access to web/history/, e.g. by executing "chown username web/history". Otherwise the graphs of TOR History used in network_history.php will not get created.
+
+8) Setup a way for scheduled local-cache (database) refreshes to take place. 
 You have two options here. Number one is to simply run the "tns_agent.php" 
 file using stand-alone PHP, and allow it to continue running in the 
 background. On Unix type systems, you'll probably want to start this as a 
@@ -203,14 +205,14 @@ things this way, the refresh interval you've specified in the config file
 will have no bearing. It will be up to you to setup your task scheduling 
 mechanism at the interval you want.
 
-8) Set up the cgi-bin directory to be an actual cgi-bin directory with your
+9) Set up the cgi-bin directory to be an actual cgi-bin directory with your
 webserver.  TorStatus will point to /cgi-bin/perlgraph/plot.pl to create Perl
 based graphs.
 
-9) You're done! Load the site in a browser, and if all is well, it should 
+10) You're done! Load the site in a browser, and if all is well, it should 
 work. 
 
-10) Optionally, it may make you feel better to delete the "sql" subdirectory. 
+11) Optionally, it may make you feel better to delete the "sql" subdirectory. 
 Everything else is required.
 
 

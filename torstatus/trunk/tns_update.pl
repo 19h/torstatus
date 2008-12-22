@@ -1178,7 +1178,6 @@ sub drawHistory {
         my $graphfile = $config{'TNS_Path'} . "web/history/";
 
 	if ($type eq 'Running') {
-		print "DEBUG: creatin $type graph, time = $time\n";
 		RRDs::graph(
 	           $graphfile . "running_" . $time . ".png",
         	   "--title=Running Servers in the last " . $timeExt,
@@ -1190,7 +1189,6 @@ sub drawHistory {
         	);
 	} 
 	else {
-                print "DEBUG: creatin $type graph, time = $time\n";
 	        RRDs::graph(
         	    $graphfile . "run$type" . "_" . $time . ".png",
 	            "--title=Running $type Servers in the last " . $timeExt,

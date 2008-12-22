@@ -175,6 +175,116 @@ include("header.php");
         </td>
 </tr>
 
+<!-- Country Selection -->
+<tr>
+	<td>
+		<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
+		<tr>
+			<td class="HRN">Country Statistics</td>
+		<tr>
+			<td class='TRSCN'>
+			<br/>
+			<table class="bwhistory">
+			<tr>
+				<td>
+				<form action="<?php echo $Self; ?>" method="get" name="lookup">
+				Please select a country for further informations:
+				<select name="country" size="1">
+				<option value="none" selected>none</option>
+				<option value="US">USA</option>
+				<option value="DE">Germany</option>
+				<option value="CN">China</option>
+				<option value="FR">France</option>
+				<option value="SE">Sweden</option>
+				<option value="RU">Russia</option>
+				<option value="NL">Netherlands</option>
+				<option value="CA">Canada</option>
+				<option value="GB">Great Britain</option>
+				<option value="IT">Italy</option>
+				<option value="AT">Austria</option>
+				<option value="Other">OTHER</option>
+				</select>
+				<input name="submit" type="submit" value="Apply">
+				</form>
+				</td>
+			</tr>
+			</table>
+			<?php 
+			echo "<table class=\"bwhistory\">";
+			if  ( isset($_GET["country"]) ) {
+				$country = $_GET["country"];
+				if ($country != "none") {
+				echo "<br><br>";
+				echo "<h3>Running "; echo $country; echo " Servers</h3>";
+				echo "<tr>";
+					echo "<td>";
+					echo "<img src=\"history/countries/running_"; echo $country; echo "_6h.png\"; alt=\"Running Servers in the last 6 Hours\" />";
+					echo "</td>";
+	
+					echo "<td>";
+                	                echo "<img src=\"history/countries/running_"; echo $country; echo "_1d.png\"; alt=\"Running Servers in the last 24 Hours\" />";
+					echo "</td>";
+				echo "</tr>";
+				echo "<tr>";
+					echo "<td>";
+					echo "<img src=\"history/countries/running_"; echo $country; echo "_1w.png\"; alt=\"Running Servers in the last Week\" />";
+					echo "</td>";
+	
+	                                echo "<td>";
+        	                        echo "<img src=\"history/countries/running_"; echo $country; echo "_1m.png\"; alt=\"Running Servers in the last Months\" />";
+                	                echo "</td>";
+				echo "</tr>";
+                                	echo "<td>";
+	                                echo "<img src=\"history/countries/running_"; echo $country; echo "_3m.png\"; alt=\"Running Servers in the last 3 Months\" />";
+        	                        echo "</td>";
+
+                	                echo "<td>";
+                        	        echo "<img src=\"history/countries/running_"; echo $country; echo "_1y.png\"; alt=\"Running Servers in the last Year\" />";
+                                	echo "</td>";
+	                        echo "</tr>";
+				echo "</table>";
+				echo "<br><br>";
+				echo "<h3>Running "; echo $country; echo " Exit Servers</h3><br>";
+
+				echo "<table class=\"bwhistory\">";
+        	                echo "</tr>";
+                	                echo "<td>";
+                        	        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_6h.png\"; alt=\"Running Exit Servers in the last 6 Hours\" />";
+                                	echo "</td>";
+
+	                                echo "<td>";
+        	                        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1d.png\"; alt=\"Running Exit Servers in the last 24 Hours\" />";
+                	                echo "</td>";
+                        	echo "</tr>";
+
+	                        echo "</tr>";
+        	                        echo "<td>";
+                	                echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1w.png\"; alt=\"Running Exit Servers in the last Week\" />";
+                        	        echo "</td>";
+	
+	                                echo "<td>";
+        	                        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1m.png\"; alt=\"Running Exit Servers in the last Months\" />";
+                	                echo "</td>";
+                        	echo "</tr>";
+
+	                        echo "</tr>";
+        	                        echo "<td>";
+                	                echo "<img src=\"history/countries/runExit_"; echo $country; echo "_3m.png\"; alt=\"Running Exit Servers in the last 3 Months\" />";
+                        	        echo "</td>";
+
+	                                echo "<td>";
+        	                        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1y.png\"; alt=\"Running Exit Servers in the last Year\" />";
+                	                echo "</td>";
+                        	echo "</tr>";
+				}
+			}
+			?>				
+
+			</table>
+		</tr>
+		</table>
+	</td>
+</tr>
 
 <!-- Footer -->
 		<br/>
