@@ -879,7 +879,7 @@ $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DN
 ################# Tor History #################
 
 if ($config{'TorHistory'} eq "true") {
-print "okay";
+
 # check for RRD Files, and create it if not found
 my $serverflagfile = $config{'TNS_Path'} . "serverflags.rrd";
 my $servernumberfile = $config{'TNS_Path'} . "servernumbers.rrd";
