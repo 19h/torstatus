@@ -32,7 +32,7 @@
 #  * LWP::Simple from CPAN
 #  * Date::Parse from CPAN
 #  * Geo::IP   ** Geo::IP::PurePerl should be used for those without
-#                 access to the C version of GeoIP.
+#		  access to the C version of GeoIP.
 #  * Compress::Zlib from CPAN required to decompress GeoIP files after updating
 #
 # Included Perl packages
@@ -95,13 +95,13 @@ while (<$config_handle>)
 close ($config_handle);
 
 # Determine whether bandwidth history is enabled
-if ($config{'BandwidthHistory'} eq "true")
+if ($config{'BandwidthHistory'} eq "true" || $config{'TorHistory'} eq "true")
 {
 	use RRDs;
 }
 
 # Loop through until killed
-while (1 == 1)
+while (1)
 {
 
 # Don't die on errors
@@ -237,8 +237,8 @@ $updateCounter++;
 
 # Initiate a connection to the Tor server
 my $torSocket = IO::Socket::INET->new(
-	PeerAddr 	=> $config{'LocalTorServerIP'},
-	PeerPort 	=> $config{'LocalTorServerControlPort'},
+	PeerAddr	=> $config{'LocalTorServerIP'},
+	PeerPort	=> $config{'LocalTorServerControlPort'},
 	Proto		=> "tcp",
 	Type		=> SOCK_STREAM)
 	or die "Could not connect to Tor server: $!\n";
@@ -547,8 +547,8 @@ while (<$torSocket>)
 		# for this router
 		# A second Tor control stream will be opened
 		my $digestSocket = IO::Socket::INET->new(
-			PeerAddr 	=> $config{'LocalTorServerIP'},
-			PeerPort 	=> $config{'LocalTorServerControlPort'},
+			PeerAddr	=> $config{'LocalTorServerIP'},
+			PeerPort	=> $config{'LocalTorServerControlPort'},
 			Proto		=> "tcp",
 			Type		=> SOCK_STREAM)
 			or die "Could not connect to Tor server: $!\n";
@@ -903,12 +903,12 @@ my $graphfile = $config{'TNS_Path'} . "web/history/";
 unless (-e $serverflagfile) {
 	my $err = RRDs::create(
 		$serverflagfile,
-		"--start=1199145600", 		# start on Jan 1, 2008
-		"--step=300", 	      		# maybe change to $config{$Cache_Expire_Time}, and heartbeat to 2times|3times expire time ???
-	        "DS:run:GAUGE:900:0:U",		# number of running servers
-		"DS:runExit:GAUGE:900:0:U", 	# number of running exits
-        	"DS:runGuard:GAUGE:900:0:U",	# number of guard nodes
-	        "DS:runFast:GAUGE:900:0:U",	# number of fast nodes
+		"--start=1199145600",		# start on Jan 1, 2008
+		"--step=300",			# maybe change to $config{$Cache_Expire_Time}, and heartbeat to 2times|3times expire time ???
+		"DS:run:GAUGE:900:0:U",		# number of running servers
+		"DS:runExit:GAUGE:900:0:U",	# number of running exits
+		"DS:runGuard:GAUGE:900:0:U",	# number of guard nodes
+		"DS:runFast:GAUGE:900:0:U",	# number of fast nodes
 		"RRA:AVERAGE:0.5:1:288",	# every 5 minutes, for 1 day
 		"RRA:AVERAGE:0.5:12:168",	# every hour, for 1 week
 		"RRA:AVERAGE:0.5:48:558",	# every 4 hours, for 93 days
@@ -921,38 +921,38 @@ unless (-e $serverflagfile) {
 unless (-e $servernumberfile) {
 	my $err = RRDs::create(
 		$servernumberfile,
-		"--start=1199145600",          	# start on Jan 1, 2008
-		"--step=300",                   # maybe change to $config{$Cache_Expire_Time}, and heartbeat to 2times|3times expire time ???
+		"--start=1199145600",		# start on Jan 1, 2008
+		"--step=300",			# maybe change to $config{$Cache_Expire_Time}, and heartbeat to 2times|3times expire time ???
 		"DS:runUS:GAUGE:900:0:U",	# number of servers in: US
 		"DS:runExitUS:GAUGE:900:0:U",	# US - Exit
-		"DS:runDE:GAUGE:900:0:U",       # DE
-		"DS:runExitDE:GAUGE:900:0:U",   # DE - Exit
-		"DS:runCN:GAUGE:900:0:U",       # CN
-		"DS:runExitCN:GAUGE:900:0:U",   # CN - Exit
-		"DS:runFR:GAUGE:900:0:U",       # FR
-		"DS:runExitFR:GAUGE:900:0:U",   # FR - Exit
-		"DS:runSE:GAUGE:900:0:U",       # SE
-		"DS:runExitSE:GAUGE:900:0:U",   # SE - Exit
-		"DS:runRU:GAUGE:900:0:U",       # RU
-		"DS:runExitRU:GAUGE:900:0:U",   # RU - Exit
-		"DS:runNL:GAUGE:900:0:U",       # NL
-		"DS:runExitNL:GAUGE:900:0:U",   # NL - Exit
-		"DS:runCA:GAUGE:900:0:U",       # CA
-		"DS:runExitCA:GAUGE:900:0:U",   # CA - Exit
-		"DS:runGB:GAUGE:900:0:U",       # GB
-		"DS:runExitGB:GAUGE:900:0:U",   # GB - Exit
-		"DS:runIT:GAUGE:900:0:U",       # IT
-		"DS:runExitIT:GAUGE:900:0:U",   # IT - Exit
-		"DS:runAT:GAUGE:900:0:U",       # AT
-		"DS:runExitAT:GAUGE:900:0:U",   # AT - Exit
+		"DS:runDE:GAUGE:900:0:U",	# DE
+		"DS:runExitDE:GAUGE:900:0:U",	# DE - Exit
+		"DS:runCN:GAUGE:900:0:U",	# CN
+		"DS:runExitCN:GAUGE:900:0:U",	# CN - Exit
+		"DS:runFR:GAUGE:900:0:U",	# FR
+		"DS:runExitFR:GAUGE:900:0:U",	# FR - Exit
+		"DS:runSE:GAUGE:900:0:U",	# SE
+		"DS:runExitSE:GAUGE:900:0:U",	# SE - Exit
+		"DS:runRU:GAUGE:900:0:U",	# RU
+		"DS:runExitRU:GAUGE:900:0:U",	# RU - Exit
+		"DS:runNL:GAUGE:900:0:U",	# NL
+		"DS:runExitNL:GAUGE:900:0:U",	# NL - Exit
+		"DS:runCA:GAUGE:900:0:U",	# CA
+		"DS:runExitCA:GAUGE:900:0:U",	# CA - Exit
+		"DS:runGB:GAUGE:900:0:U",	# GB
+		"DS:runExitGB:GAUGE:900:0:U",	# GB - Exit
+		"DS:runIT:GAUGE:900:0:U",	# IT
+		"DS:runExitIT:GAUGE:900:0:U",	# IT - Exit
+		"DS:runAT:GAUGE:900:0:U",	# AT
+		"DS:runExitAT:GAUGE:900:0:U",	# AT - Exit
 		# ADD OTHERS HERE ...
 		"DS:runOther:GAUGE:900:0:U",		# other countries
 		"DS:runExitOther:GAUGE:900:0:U",	# other countries - Exit
-		"RRA:AVERAGE:0.5:1:288",        # every 5 minutes, for 1 day
-		"RRA:AVERAGE:0.5:12:168",       # every hour, for 1 week
-		"RRA:AVERAGE:0.5:48:558",       # every 4 hours, for 93 days
-		"RRA:AVERAGE:0.5:144:732",      # every 12 hours, for 1 year
-		"RRA:AVERAGE:0.5:576:549"       # every 48 hours, for 3 years
+		"RRA:AVERAGE:0.5:1:288",	# every 5 minutes, for 1 day
+		"RRA:AVERAGE:0.5:12:168",	# every hour, for 1 week
+		"RRA:AVERAGE:0.5:48:558",	# every 4 hours, for 93 days
+		"RRA:AVERAGE:0.5:144:732",	# every 12 hours, for 1 year
+		"RRA:AVERAGE:0.5:576:549"	# every 48 hours, for 3 years
 		);
 	print "RRDs::create error: $err\n" if $err and $err != 1;
 
@@ -1097,7 +1097,7 @@ close($torSocket);
 
 };
 if ($@) {
-	print "The TorStatus database was not updated properly.  An error has occured.  I will continue to try to update, however.\n";
+	print "The TorStatus database was not updated properly.  An error has occured.	I will continue to try to update, however.\n";
 }
 
 # Sleep for the desired time from the configuration file
