@@ -2235,8 +2235,8 @@ Good job, you do not have JavaScript enabled!
 <a class='plain' href='#CustomQuery' onclick='javascript:caqoToggle = 0;toggleCAQO();'>Advanced Query Options</a> |
 <a class='plain' href='column_set.php'>Advanced Display Options</a> |
 <a class='plain' href='#Stats' onclick='javascript:anssToggle = 0;toggleANSS();'>Network Statistic Summary</a> |
-<a class='plain' href='network_detail.php'>Network Statistic Graphs</a> |
-<a class='plain' href='network_history.php'>Network History</a><br/>
+<a class='plain' href='network_detail.php'>Network Statistic Graphs</a><?php if ($TorHistory == "true") { ?> |
+<a class='plain' href='network_history.php'>Network History</a><?php } ?><br/>
 <a class='plain' href='query_export.php/Tor_query_EXPORT.csv'>CSV List of Current Result Set</a> |
 <a class='plain' href='ip_list_all.php/Tor_ip_list_ALL.csv'>CSV List of All Current Tor Server IP Addresses</a> |
 <a class='plain' href='ip_list_exit.php/Tor_ip_list_EXIT.csv'>CSV List of All Current Tor Server Exit Node IP Addresses</a>
