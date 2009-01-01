@@ -85,6 +85,9 @@ $Cache_Expire_Time = 300;
 // Comment the following line if you do not want to save Tor Network History
 $TorHistory = true;
 
+$TorHistoryURL = "history/";
+$SSLTorHistoryURL = "history/";
+
 // }}}
 
 // ++++++++++ Interface ++++++++++ {{{

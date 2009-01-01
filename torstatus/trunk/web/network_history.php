@@ -26,29 +26,29 @@ include("header.php");
 			<td class='TRSCN'>
 			<br/>
 			<table class="bwhistory">
-		        <tr>
-		        	<td>
-		                <img src="history/running_6h.png"; alt="Running Servers in the last 6 Hours"/>
-		                </td>
-		                <td>
-		        	<img src="history/running_1d.png"; alt="Running Servers in the last 24 Hours"/>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>running_6h.png"; alt="Running Servers in the last 6 Hours"/>
 				</td>
-		        </tr>
-		        <tr>
-		         	<td>
-				<img src="history/running_1w.png"; alt="Running Servers in the last Week"/>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>running_1d.png"; alt="Running Servers in the last 24 Hours"/>
 				</td>
-		                <td>
-		                <img src="history/running_1m.png"; alt="Running Servers in the last Month"/>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>running_1w.png"; alt="Running Servers in the last Week"/>
 				</td>
-		     	</tr>
-		        <tr>
-		                <td>
-				<img src="history/running_3m.png"; alt="Running Servers in the last 3 Months"/>		                
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>running_1m.png"; alt="Running Servers in the last Month"/>
 				</td>
-		                <td>
-				<img src="history/running_1y.png"; alt="Running Servers in the last Year"/>
-		                </tr>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>running_3m.png"; alt="Running Servers in the last 3 Months"/>				
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>running_1y.png"; alt="Running Servers in the last Year"/>
+				</tr>
 			</table>
 		</tr>
 		</table>
@@ -58,121 +58,121 @@ include("header.php");
 <!-- Running Exit Servers -->
 <tr>
 	<td>
-                <table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
-                <tr>
-                        <td class="HRN">Running Exit Servers</td>
-                </tr>
-                <tr>
-                        <td class='TRSCN'>
-                        <br/>
-                        <table class="bwhistory">
-                        <tr>
+		<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
+		<tr>
+			<td class="HRN">Running Exit Servers</td>
+		</tr>
+		<tr>
+			<td class='TRSCN'>
+			<br/>
+			<table class="bwhistory">
+			<tr>
 				<td>
-				<img src="history/runExit_6h.png"; alt="Running Exit Servers in the last 6 Hours"/>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runExit_6h.png"; alt="Running Exit Servers in the last 6 Hours"/>
 				</td>
-                                <td>
-                                <img src="history/runExit_1d.png"; alt="Running Exit Servers in the last 24 Hours"/>
-                                </td>
-                        </tr>
-                        <tr>
-                                <td>
-                                <img src="history/runExit_1w.png"; alt="Running Exit Servers in the last Week"/>
-                                </td> 
-			       	<td>
-                                <img src="history/runExit_1m.png"; alt="Running Exit Servers in the last Month"/>
-                                </td>
-                        </tr>   
-                        <tr>
-                                <td>
-                                <img src="history/runExit_3m.png"; alt="Running Exit Servers in the last 3 Months"/>
-                                </td>
-			       	<td>
-                                <img src="history/runExit_1y.png"; alt="Running Exit Servers in the last Year"/>
-                                </td>
-                        </table>
-                </tr>   
-                </table>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runExit_1d.png"; alt="Running Exit Servers in the last 24 Hours"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runExit_1w.png"; alt="Running Exit Servers in the last Week"/>
+				</td> 
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runExit_1m.png"; alt="Running Exit Servers in the last Month"/>
+				</td>
+			</tr>	
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runExit_3m.png"; alt="Running Exit Servers in the last 3 Months"/>
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runExit_1y.png"; alt="Running Exit Servers in the last Year"/>
+				</td>
+			</table>
+		</tr>	
+		</table>
 	</td>
 </tr>
 
 <!-- Running Guard Servers -->
 <tr>
-        <td>
-                <table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
-                <tr>
-                        <td class="HRN">Running Guard Servers</td>
-                </tr>
-                <tr>
-                        <td class='TRSCN'>
-                        <br/>
-                        <table class="bwhistory">
-                        <tr>
-                                <td>
-                                <img src="history/runGuard_6h.png"; alt="Running Guard Servers in the last 6 Hours"/>
-                                </td>
-                                <td>
-                                <img src="history/runGuard_1d.png"; alt="Running Guard Servers in the last 24 Hours"/>
-                                </td>
-                        </tr>
-                        <tr>
-                                <td>
-                                <img src="history/runGuard_1w.png"; alt="Running Guard Servers in the last Week"/>
-                                </td>                         
-			        <td>
-                                <img src="history/runGuard_1m.png"; alt="Running Guard Servers in the last Month"/>
-                                </td>
-                        </tr>
-                        <tr>
-                                <td>
-                                <img src="history/runGuard_3m.png"; alt="Running Guard Servers in the last 3 Months"/>
-                                </td>
+	<td>
+		<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
+		<tr>
+			<td class="HRN">Running Guard Servers</td>
+		</tr>
+		<tr>
+			<td class='TRSCN'>
+			<br/>
+			<table class="bwhistory">
+			<tr>
 				<td>
-                                <img src="history/runGuard_1y.png"; alt="Running Guard Servers in the last Year"/>
-                                </td>
-                        </table>
-                </tr>
-                </table>
-        </td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runGuard_6h.png"; alt="Running Guard Servers in the last 6 Hours"/>
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runGuard_1d.png"; alt="Running Guard Servers in the last 24 Hours"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runGuard_1w.png"; alt="Running Guard Servers in the last Week"/>
+				</td>			      
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runGuard_1m.png"; alt="Running Guard Servers in the last Month"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runGuard_3m.png"; alt="Running Guard Servers in the last 3 Months"/>
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runGuard_1y.png"; alt="Running Guard Servers in the last Year"/>
+				</td>
+			</table>
+		</tr>
+		</table>
+	</td>
 </tr>
 
 <!-- Running Fast Servers -->
 <tr>
-        <td>
-                <table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
-                <tr>
-                        <td class="HRN">Running Fast Servers</td>
-                </tr>
-                <tr>
-                        <td class='TRSCN'>
-                        <br/>
-                        <table class="bwhistory">
-                        <tr>
-                                <td>
-                                <img src="history/runFast_6h.png"; alt="Running Fast Servers in the last 6 Hours"/>
-                                </td>
-                                <td>
-                                <img src="history/runFast_1d.png"; alt="Running Fast Servers in the last 24 Hours"/>
-                                </td>
-                        </tr>
-                        <tr>
-                                <td>
-                                <img src="history/runFast_1w.png"; alt="Running Fast Servers in the last Week"/>
-                                </td>
-                                <td>
-                                <img src="history/runFast_1m.png"; alt="Running Fast Servers in the last Month"/>
-                                </td>
-                        </tr>
-                        <tr>
-                                <td>
-                                <img src="history/runFast_3m.png"; alt="Running Fast Servers in the last 3 Months"/>
-                                </td>
-                                <td>
-                                <img src="history/runFast_1y.png"; alt="Running Fast Servers in the last Year"/>
-                                </td>
-                        </table>
-                </tr>
-                </table>
-        </td>
+	<td>
+		<table class="displayTable" width='100%' cellspacing='0' cellpadding='0' align='center'>
+		<tr>
+			<td class="HRN">Running Fast Servers</td>
+		</tr>
+		<tr>
+			<td class='TRSCN'>
+			<br/>
+			<table class="bwhistory">
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runFast_6h.png"; alt="Running Fast Servers in the last 6 Hours"/>
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runFast_1d.png"; alt="Running Fast Servers in the last 24 Hours"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runFast_1w.png"; alt="Running Fast Servers in the last Week"/>
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runFast_1m.png"; alt="Running Fast Servers in the last Month"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runFast_3m.png"; alt="Running Fast Servers in the last 3 Months"/>
+				</td>
+				<td>
+				<img src="<?php echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; ?>runFast_1y.png"; alt="Running Fast Servers in the last Year"/>
+				</td>
+			</table>
+		</tr>
+		</table>
+	</td>
 </tr>
 
 <!-- Country Selection -->
@@ -218,64 +218,64 @@ include("header.php");
 				echo "<h3>Running "; echo $country; echo " Servers</h3>";
 				echo "<tr>";
 					echo "<td>";
-					echo "<img src=\"history/countries/running_"; echo $country; echo "_6h.png\"; alt=\"Running Servers in the last 6 Hours\" />";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/running_"; echo $country; echo "_6h.png\"; alt=\"Running Servers in the last 6 Hours\" />";
 					echo "</td>";
 	
 					echo "<td>";
-                	                echo "<img src=\"history/countries/running_"; echo $country; echo "_1d.png\"; alt=\"Running Servers in the last 24 Hours\" />";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/running_"; echo $country; echo "_1d.png\"; alt=\"Running Servers in the last 24 Hours\" />";
 					echo "</td>";
 				echo "</tr>";
 				echo "<tr>";
 					echo "<td>";
-					echo "<img src=\"history/countries/running_"; echo $country; echo "_1w.png\"; alt=\"Running Servers in the last Week\" />";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/running_"; echo $country; echo "_1w.png\"; alt=\"Running Servers in the last Week\" />";
 					echo "</td>";
 	
-	                                echo "<td>";
-        	                        echo "<img src=\"history/countries/running_"; echo $country; echo "_1m.png\"; alt=\"Running Servers in the last Months\" />";
-                	                echo "</td>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/running_"; echo $country; echo "_1m.png\"; alt=\"Running Servers in the last Months\" />";
+					echo "</td>";
 				echo "</tr>";
-                                	echo "<td>";
-	                                echo "<img src=\"history/countries/running_"; echo $country; echo "_3m.png\"; alt=\"Running Servers in the last 3 Months\" />";
-        	                        echo "</td>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/running_"; echo $country; echo "_3m.png\"; alt=\"Running Servers in the last 3 Months\" />";
+					echo "</td>";
 
-                	                echo "<td>";
-                        	        echo "<img src=\"history/countries/running_"; echo $country; echo "_1y.png\"; alt=\"Running Servers in the last Year\" />";
-                                	echo "</td>";
-	                        echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/running_"; echo $country; echo "_1y.png\"; alt=\"Running Servers in the last Year\" />";
+					echo "</td>";
+				echo "</tr>";
 				echo "</table>";
 				echo "<br><br>";
 				echo "<h3>Running "; echo $country; echo " Exit Servers</h3><br>";
 
 				echo "<table class=\"bwhistory\">";
-        	                echo "</tr>";
-                	                echo "<td>";
-                        	        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_6h.png\"; alt=\"Running Exit Servers in the last 6 Hours\" />";
-                                	echo "</td>";
+				echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/runExit_"; echo $country; echo "_6h.png\"; alt=\"Running Exit Servers in the last 6 Hours\" />";
+					echo "</td>";
 
-	                                echo "<td>";
-        	                        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1d.png\"; alt=\"Running Exit Servers in the last 24 Hours\" />";
-                	                echo "</td>";
-                        	echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/runExit_"; echo $country; echo "_1d.png\"; alt=\"Running Exit Servers in the last 24 Hours\" />";
+					echo "</td>";
+				echo "</tr>";
 
-	                        echo "</tr>";
-        	                        echo "<td>";
-                	                echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1w.png\"; alt=\"Running Exit Servers in the last Week\" />";
-                        	        echo "</td>";
+				echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/runExit_"; echo $country; echo "_1w.png\"; alt=\"Running Exit Servers in the last Week\" />";
+					echo "</td>";
 	
-	                                echo "<td>";
-        	                        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1m.png\"; alt=\"Running Exit Servers in the last Months\" />";
-                	                echo "</td>";
-                        	echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/runExit_"; echo $country; echo "_1m.png\"; alt=\"Running Exit Servers in the last Months\" />";
+					echo "</td>";
+				echo "</tr>";
 
-	                        echo "</tr>";
-        	                        echo "<td>";
-                	                echo "<img src=\"history/countries/runExit_"; echo $country; echo "_3m.png\"; alt=\"Running Exit Servers in the last 3 Months\" />";
-                        	        echo "</td>";
+				echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/runExit_"; echo $country; echo "_3m.png\"; alt=\"Running Exit Servers in the last 3 Months\" />";
+					echo "</td>";
 
-	                                echo "<td>";
-        	                        echo "<img src=\"history/countries/runExit_"; echo $country; echo "_1y.png\"; alt=\"Running Exit Servers in the last Year\" />";
-                	                echo "</td>";
-                        	echo "</tr>";
+					echo "<td>";
+					echo "<img src=\""; echo $UsingSSL?$SSLTorHistoryURL:$TorHistoryURL; echo "countries/runExit_"; echo $country; echo "_1y.png\"; alt=\"Running Exit Servers in the last Year\" />";
+					echo "</td>";
+				echo "</tr>";
 				}
 			}
 			?>				
