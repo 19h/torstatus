@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# plot.pl for TorStatus
+# bandwidthgraph.pl for TorStatus
 # Copyright (c) Kasimir Gabert 2009
 #
 #    This program is free software: you can redistribute it and/or modify
