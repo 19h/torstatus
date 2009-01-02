@@ -619,23 +619,23 @@ else
 	<table class="bwhistory">
 		<tr>
 			<td>
-			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_d.png"; ?>" alt="Past Day's Bandwidth"/>
+			<img src="<?php echo $BandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=day"; ?>" alt="Past Day's Bandwidth"/>
 			</td>
 			<td>
-			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_w.png"; ?>" alt="Past Week's Bandwidth"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_m.png"; ?>" alt="Past Month's Bandwidth"/>
-			</td>
-			<td>
-			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_3m.png"; ?>" alt="Past Three Month's Bandwidth"/>
+			<img src="<?php echo $BandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=week"; ?>" alt="Past Week's Bandwidth"/>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<img src="<?php echo $BandwidthURL . strtoupper($Fingerprint) . "_y.png"; ?>" alt="Past Year's Bandwidth"/>
+			<img src="<?php echo $BandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=month"; ?>" alt="Past Month's Bandwidth"/>
+			</td>
+			<td>
+			<img src="<?php echo $BandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=3months"; ?>" alt="Past Three Month's Bandwidth"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			<img src="<?php echo $BandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=year"; ?>" alt="Past Year's Bandwidth"/>
 			</td>
 			<td>
 			</td>
