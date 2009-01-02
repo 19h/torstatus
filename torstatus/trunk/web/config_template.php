@@ -56,11 +56,10 @@ $UseTorDNSEL = 1;
 
 // Comment the following line if you do not provide a WHOIS service
 define("WHOISPath","whois.php?ip=");
-// If you want to provide a bandwidth history, uncomment the followin lines
+// If you wish to provide a bandwidth history, uncomment the following lines
 //$BandwidthHistory = "true";
-$BandwidthURL = "bandwidthgraph/";
-$SSLBandwidthURL = "bandwidthgraph/";
-
+$BandwidthURL = "/cgi-bin/perlgraph/bandwidthgraph.pl";
+$SSLBandwidthURL = "/cgi-bin/perlgraph/bandwidthgraph.pl";
 
 // }}}
 
