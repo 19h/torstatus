@@ -698,7 +698,7 @@ while (<$torSocket>)
 		# Update the read and write bandwidth history
 		# Only do this once every 900*10 seconds to retain
 		# speed, and more frequent updates are not necessary
-		if ($config{'BandwidthHistory'} eq "true" && $updateCounter % 10 == 1)
+		if ($config{'BandwidthHistory'} eq "true" && $updateCounter % 5 == 1)
 		{
 		updateBandwidth( $currentRouter{'Fingerprint'},
 			$currentRouter{'write'},
@@ -1261,7 +1261,6 @@ sub updateBandwidth {
 
 	# Determine whether a bandwidth history file for this router exists
 	my $bwfile = $config{'TNS_Path'} . "bandwidthhistory/$fingerprint.rrd";
-	my $graphfile = $config{'TNS_Path'} . "web/bandwidthgraph/$fingerprint";
 	
 	unless (-e $bwfile)
 	{
@@ -1323,58 +1322,4 @@ sub updateBandwidth {
 			print "RRDs::update error: $err\n" if $err;
 		}
 	}
-	# Declare the common graph arguments
-	my @graphargs = (
-		"--lower-limit=0",
-		"--end=now",
-		"--height=130",
-		"DEF:read=$bwfile:read:AVERAGE",
-		"DEF:write=$bwfile:write:AVERAGE",
-		"--color=BACK#FFFFFF",
-		"--color=FRAME#FFF368",
-		"--color=SHADEA#FFF368",
-		"--color=SHADEB#FFF368",
-		"--color=FONT#0000BF",
-		"--color=ARROW#000000",
-		"AREA:read#0000BF:Read History",
-		"LINE2:write#FFF368:Write History"
-	);
-
-	# Create a new RRD graph for the router
-	RRDs::graph(
-		$graphfile . "_y.png",
-		"--title=Past Year's Bandwidth for $name",
-		"--vertical-label=Bandwidth (KBps)",
-		"--start=end-1y",
-		@graphargs
-	);
-	RRDs::graph(
-		$graphfile . "_3m.png",
-		"--title=Past Three Month's Bandwidth for $name",
-		"--vertical-label=Bandwidth (KBps)",
-		"--start=end-3m",
-		@graphargs
-	);
-	RRDs::graph(
-		$graphfile . "_m.png",
-		"--title=Past Month's Bandwidth for $name",
-		"--vertical-label=Bandwidth (KBps)",
-		"--start=end-1m",
-		@graphargs
-	);
-	RRDs::graph(
-		$graphfile . "_w.png",
-		"--title=Past Week's Bandwidth for $name",
-		"--vertical-label=Bandwidth (KBps)",
-		"--start=end-1w",
-		@graphargs
-	);
-	RRDs::graph(
-		$graphfile . "_d.png",
-		"--title=Past Day's Bandwidth for $name",
-		"--vertical-label=Bandwidth (KBps)",
-		"--start=end-1d",
-		@graphargs
-	);
-
 }
