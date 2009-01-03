@@ -58,6 +58,64 @@ if (strlen($Fingerprint) != 40)
 	$Fingerprint = null;
 }
 
+if (isset($_GET['bandwidthgraph']))
+{
+	$Name = $_GET['name'];
+
+	if ($_GET['bandwidthgraph'] == 1)
+	{
+		// This page consists only of the option to choose dates to display
+		?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
+	<head>
+		<title>Display a date range</title>
+		<link rel="stylesheet" type="text/css" href="xaprb/select-free.css" />
+		<link rel="stylesheet" type="text/css" href="xaprb/datechooser.css" />
+		<script src="xaprb/date-functions.js" type="text/javascript"></script>
+		<script src="xaprb/datechooser.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<form name="bwhistory" action="?" method="get">
+		<!-- Date chooser from http://www.xaprb.com/blog/2005/09/29/javascript-date-chooser/ -->
+		Display the bandwidth history between<br/>
+		<input id="start" name="start" size="10" maxlength="10" type="text"><img src="xaprb/calendar.gif" onclick="showChooser(this, 'start', 'chooserSpan', 2000, <?php echo date("Y"); ?>, 'Y-m-d', false);" alt="Date Chooser" />
+		<div id="chooserSpan" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;">
+		</div> and 
+		<input id="end" name="end" size="10" maxlength="10" type="text"><img src="xaprb/calendar.gif" onclick="showChooser(this, 'end', 'chooserSpanEnd', 2000, <?php echo date("Y"); ?>, 'Y-m-d', false);" alt="Date Chooser" />
+		<div id="chooserSpanEnd" class="dateChooser select-free" style="display: none; visibility: hidden; width: 160px;">
+		</div><br/>
+		<input type="hidden" name="FP" value="<?php echo $Fingerprint; ?>" />
+		<input type="hidden" name="name" value="<?php echo $Name; ?>" />
+		<input type="hidden" name="bandwidthgraph" value="display" />
+		<input type="submit" value="Display Graph" />
+		</form>
+	</body>
+</html>
+<?php
+		exit;
+	}
+	else if ($_GET['bandwidthgraph'] == "display")
+	{
+		// Show the graph with the given start and end dates
+		$start = explode("-",$_GET['start']);
+		$end = explode("-",$_GET['end']);
+		$starttime = mktime(0,0,0,$start[1],$start[2],$start[0]);
+		$endtime = mktime(0,0,0,$end[1],$end[2],$end[0]);
+		?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
+        <head>
+		<title>Custom time graph</title>
+	</head>
+	<body>
+		<div style="padding: 0px; margin: 0px;"><img src="<?php echo $UsingSSL?$BandwidthURL:$SSLBandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=custom&start=" . $starttime . "&end=" . $endtime; ?>" alt="Custom time image" /><br/><a href="?bandwidthgraph=1&name=<?php echo urlencode($Name) . "&FP=" . $Fingerprint?>">Choose another date range</a></div>
+	</body>
+</html><?php
+		exit;
+	}
+}
+
 // Get active tables from database
 $link = mysql_connect($SQL_Server, $SQL_User, $SQL_Pass) or die('Could not connect: ' . mysql_error());
 mysql_select_db($SQL_Catalog) or die('Could not open specified database');
@@ -634,10 +692,11 @@ else
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td style="vertical-align: top;">
 			<img src="<?php echo $BandwidthURL . "?fp=" . strtoupper($Fingerprint) . "&name=" . urlencode($Name) . "&time=year"; ?>" alt="Past Year's Bandwidth"/>
 			</td>
 			<td>
+			<iframe style="padding: 0px; margin: 0px; border: none;" src="?FP=<?php echo $Fingerprint; ?>&name=<?php echo $Name; ?>&bandwidthgraph=1" width="520px" height="250px"></iframe>
 			</td>
 		</tr>
 	</table>
