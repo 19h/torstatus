@@ -52,8 +52,12 @@ use Date::Parse;
 use RRDs;
 use Compress::Zlib;
 
-# Temporary Debugging
-$| = 1;
+# Debugging Control
+my $debugging = 0;
+if ($debugging == 1)
+{
+	$| = 1;
+}
 
 # Set the constant to break out of getting the hostnames
 use constant TIMEOUT => 1;
@@ -110,6 +114,11 @@ eval
 
 # Find the initial time
 my $start_time = time();
+
+if ($debugging == 1)
+{
+	my $curtime = time() - $start_time; print "[$curtime] starting...\n"; # DEBUG
+}
 
 # Initiate a connection to the MySQL server
 $dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$config{'SQL_Server'},$config{'SQL_User'},$config{'SQL_Pass'}, {
@@ -181,6 +190,11 @@ if ($config{'AutomaticallyUpdateGeoIPDatbase'} eq "yes")
 	}
 }
 
+if ($debugging == 1)
+{
+	my $curtime = time() - $start_time; print "[$curtime] mirror?\n"; # DEBUG
+}
+
 # Determine whether or not the mirror list needs to be updated
 if ($updateCounter % 20 == 0)
 {
@@ -235,6 +249,11 @@ if ($updateCounter == 0)
 }
 $updateCounter++;
 
+if ($debugging == 1)
+{
+	my $curtime = time() - $start_time; print "[$curtime] connecting to Tor\n"; # DEBUG
+}
+
 # Initiate a connection to the Tor server
 my $torSocket = IO::Socket::INET->new(
 	PeerAddr	=> $config{'LocalTorServerIP'},
@@ -242,6 +261,11 @@ my $torSocket = IO::Socket::INET->new(
 	Proto		=> "tcp",
 	Type		=> SOCK_STREAM)
 	or die "Could not connect to Tor server: $!\n";
+
+if ($debugging == 1)
+{
+	my $curtime = time() - $start_time; print "[$curtime] authenticating with Tor\n"; # DEBUG
+}
 
 # Prepare all of the database information, which Descriptor table, make sure
 # database is installed, etc
@@ -281,6 +305,11 @@ my $response = <$torSocket>;
 if ($response !~ /250/)
 {
 	die "Unable to authenticate with the Tor server.";
+}
+
+if ($debugging == 1)
+{
+	my $curtime = time() - $start_time; print "[$curtime] starting descriptions\n"; # DEBUG
 }
 
 ############ Updating router descriptions ####################################
@@ -456,6 +485,7 @@ while (<$torSocket>)
 			my $numtime = $time - $offset;
 			push @readhistory, "$numtime:$num";
 			$offset += $increment;
+			$currentRouter{'bandwidthcounter'} += $num;
 		}
 		$currentRouter{'read'} = join(' ',@readhistory);
 
@@ -465,14 +495,10 @@ while (<$torSocket>)
 		# Serialize the last part of the data
 		@readhistory = split(/,/,$4);
 		$currentRouter{'ReadHistorySERDATA'} = serialize(\@readhistory);
+		
 		# Add to the observed bandwidth counter
-		foreach my $num (@readhistory)
-		{
-			$currentRouter{'bandwidthcounter'} += $num;
-		}
 		$currentRouter{'rh'} = \@readhistory;
 		$currentRouter{'readnumber'} = scalar(@readhistory);
-
 	}
 
 	# Format for the write-history line
@@ -493,6 +519,7 @@ while (<$torSocket>)
 			my $numtime = $time - $offset;
 			push @writehistory, "$numtime:$num";
 			$offset += $increment;
+			$currentRouter{'bandwidthcounter'} += $num;
 		}
 		$currentRouter{'write'} = join(' ',@writehistory);
 		
@@ -502,11 +529,8 @@ while (<$torSocket>)
 		# Serialize the last part of the data
 		@writehistory = split(/,/,$4);
 		$currentRouter{'WriteHistorySERDATA'} = serialize(\@writehistory);
+		
 		# Add to the observed bandwidth counter
-		foreach my $num (@writehistory)
-		{
-			$currentRouter{'bandwidthcounter'} += $num;
-		}
 		$currentRouter{'wh'} = \@writehistory;
 		$currentRouter{'writenumber'} = scalar(@writehistory);
 	}
@@ -588,6 +612,7 @@ while (<$torSocket>)
 					my $numtime = $time - $offset;
 					push @readhistory, "$numtime:$num";
 					$offset += $increment;
+					$currentRouter{'bandwidthcounter'} += $num;
 				}
 				$currentRouter{'read'} = join(' ',@readhistory);
 			
@@ -597,11 +622,8 @@ while (<$torSocket>)
 				# Serialize the last part of the data
 				@readhistory = split(/,/,$4);
 				$currentRouter{'ReadHistorySERDATA'} = serialize(\@readhistory);
+				
 				# Add to the observed bandwidth counter
-				foreach my $num (@readhistory)
-				{
-					$currentRouter{'bandwidthcounter'} += $num;
-				}
 				$currentRouter{'rh'} = \@readhistory;
 				$currentRouter{'readnumber'} = scalar(@readhistory);
 			}
@@ -624,6 +646,7 @@ while (<$torSocket>)
 					my $numtime = $time - $offset;
 					push @writehistory, "$numtime:$num";
 					$offset += $increment;
+					$currentRouter{'bandwidthcounter'} += $num;
 				}
 				$currentRouter{'write'} = join(' ',@writehistory);
 				
@@ -633,11 +656,8 @@ while (<$torSocket>)
 				# Serialize the last part of the data
 				@writehistory = split(/,/,$4);
 				$currentRouter{'WriteHistorySERDATA'} = serialize(\@writehistory);
+				
 				# Add to the observed bandwidth counter
-				foreach my $num (@writehistory)
-				{
-					$currentRouter{'bandwidthcounter'} += $num;
-				}
 				$currentRouter{'wh'} = \@writehistory;
 				$currentRouter{'writenumber'} = scalar(@writehistory);
 			}
@@ -714,6 +734,11 @@ while (<$torSocket>)
 		# Clear the old data
 		%currentRouter = ();
 	}
+}
+
+if ($debugging == 1)
+{
+	$curtime = time() - $start_time; print "[$curtime] starting status\n"; # DEBUG
 }
 
 ############ Updating network status #########################################
@@ -876,6 +901,11 @@ $dbh->do("UPDATE Status SET LastUpdate = UTC_TIMESTAMP(), LastUpdateElapsed = ($
 # Rename the DNSEL table so it is used
 $dbh->do("RENAME TABLE DNSEL TO tmp_table, DNSEL_INACT TO DNSEL, tmp_table TO DNSEL_INACT;");
 
+if ($debugging == 1)
+{
+	$curtime = time() - $start_time; print "[$curtime] starting history\n"; #DEBUG
+}
+
 ################# Tor History #################
 
 if ($config{'TorHistory'} eq "true") {
@@ -962,29 +992,29 @@ unless (-e $servernumberfile) {
 
 # get the values from the database
 # serverflags.rrd
-	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1'; ";
-	$dbresponse = $dbh->prepare($query);
+$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1'; ";
+$dbresponse = $dbh->prepare($query);
 $dbresponse->execute();
-	my $run = $dbresponse->fetchrow();
-	$dbresponse->finish();
+my $run = $dbresponse->fetchrow();
+$dbresponse->finish();
 
-	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FExit = '1' ";
-	$dbresponse = $dbh->prepare($query);
-	$dbresponse->execute();
-	my $runExit = $dbresponse->fetchrow();
-	$dbresponse->finish();
+$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FExit = '1' ";
+$dbresponse = $dbh->prepare($query);
+$dbresponse->execute();
+my $runExit = $dbresponse->fetchrow();
+$dbresponse->finish();
 
-	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FGuard = '1' ";
-	$dbresponse = $dbh->prepare($query);
-	$dbresponse->execute();
-	my $runGuard = $dbresponse->fetchrow();
-	$dbresponse->finish();
+$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FGuard = '1' ";
+$dbresponse = $dbh->prepare($query);
+$dbresponse->execute();
+my $runGuard = $dbresponse->fetchrow();
+$dbresponse->finish();
 	
-	$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FFast = '1' ";
-	$dbresponse = $dbh->prepare($query);
-	$dbresponse->execute();
-	my $runFast = $dbresponse->fetchrow();
-	$dbresponse->finish();
+$query = "SELECT count( * ) FROM NetworkStatus${descriptorTable} WHERE FRunning = '1' AND FFast = '1' ";
+$dbresponse = $dbh->prepare($query);
+$dbresponse->execute();
+my $runFast = $dbresponse->fetchrow();
+$dbresponse->finish();
 
 #servernumbers.rrd
 # US
@@ -1095,6 +1125,11 @@ print "RRDs::update error: $err\n" if $err and $err != 1;
 $dbh->disconnect();
 close($torSocket);
 
+if ($debugging == 1)
+{
+	$curtime = time() - $start_time; print "[$curtime] done\n"; # DEBUG
+}
+
 };
 if ($@) {
 	print "The TorStatus database was not updated properly.  An error has occured.	I will continue to try to update, however.\n";
@@ -1144,7 +1179,7 @@ sub country_exit_query {
 	return $temp;
 }
 
-# Takes care of creatin the right graphs ...
+# Takes care of creating the right graphs ...
 sub graph_multiplier {
 	my ($country) = @_;
 
