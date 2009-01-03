@@ -44,7 +44,7 @@ if ((length $fp) != 40 || $fp =~ /[^[A-Z0-9]/)
 	exit;
 }
 # Make sure that the date is an allowed one
-unless ($time eq "day" || $time eq "week" || $time eq "month" || $time eq "3months" || $time eq "year")
+unless ($time eq "day" || $time eq "week" || $time eq "month" || $time eq "3months" || $time eq "year" || $time eq "custom")
 {
 	print "Content-type: text/html\n\n";
 	print "Unknown time period.";
@@ -104,6 +104,15 @@ elsif ($time eq "year")
 	push @timeargs,
 	"--title=Past Year's Bandwidth for $name",
 	"--start=end-1y";
+}
+elsif ($time eq "custom")
+{
+	my $starttime = $cgi->param('start');
+	my $endtime = $cgi->param('end');
+	push @timeargs,
+	"--title=Bandwidth from $starttime to $endtime for $name",
+	"--start=$starttime",
+	"--end=$endtime";
 }
 
 
