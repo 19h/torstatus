@@ -121,10 +121,18 @@ if ($debugging == 1)
 }
 
 # Initiate a connection to the MySQL server
-$dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$config{'SQL_Server'},$config{'SQL_User'},$config{'SQL_Pass'}, {
-	PrintError => 0,
-	RaiseError => 1
-}) or die "Unable to connect to MySQL server";
+if ($debugging == 1) {
+	$dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$config{'SQL_Server'},$config{'SQL_User'},$config{'SQL_Pass'}, {
+		PrintError => 1,
+		RaiseError => 1
+	}) or die "Unable to connect to MySQL server";
+} else {
+	$dbh = DBI->connect('DBI:mysql:database='.$config{'SQL_Catalog'}.';host='.$config{'SQL_Server'},$config{'SQL_User'},$config{'SQL_Pass'}, {
+        	PrintError => 0,
+	        RaiseError => 1
+	}) or die "Unable to connect to MySQL server";
+}
+
 
 $query;
 $dbresponse;
